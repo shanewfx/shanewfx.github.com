@@ -115,7 +115,10 @@ google_analytics_tracking_id: UA-29234594-1
 facebook_like: false
 
 # JiaThis
-jiathis: true
+//jiathis: true
+
+#bshare
+bshare: true
 
 # douban
 douban_user: shanewfx
