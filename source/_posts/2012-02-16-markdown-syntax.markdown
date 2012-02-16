@@ -8,6 +8,7 @@ categories: markdown
 
 在用**Octopress**搭建起来的Blog中写文章时要做一些格式的排版可以通过**Markdown**来实现。
 
+<!-- more -->
 
 Markdown基本语法
 ----------------
