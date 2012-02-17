@@ -19,7 +19,7 @@ date_format: "ordinal"
 subscribe_rss: /atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
-email:
+email: shanewfx@gmail.com
 
 # ----------------------- #
 #    Jekyll & Plugins     #
@@ -49,8 +49,8 @@ default_asides: [custom/asides/about.html, asides/recent_posts.html, custom/asid
 
 # Each layout uses the default asides, but they can have their own asides instead. Simply uncomment the lines below
 # and add an array with the asides you want to use.
-# blog_index_asides:
-# post_asides:
+blog_index_asides: [custom/asides/about.html, asides/recent_posts.html, custom/asides/weibo.html, asides/github.html, asides/twitter.html, asides/delicious.html, asides/pinboard.html, asides/googleplus.html]
+post_asides: [custom/asides/about.html, asides/recent_posts.html, custom/asides/weibo.html, asides/github.html, asides/twitter.html, asides/delicious.html, asides/pinboard.html, asides/googleplus.html]
 # page_asides:
 
 # ----------------------- #
@@ -58,7 +58,7 @@ default_asides: [custom/asides/about.html, asides/recent_posts.html, custom/asid
 # ----------------------- #
 
 # Github repositories
-github_user:
+github_user: shanewfx
 github_repo_count: 0
 github_show_profile_link: true
 github_skip_forks: true
@@ -77,7 +77,7 @@ google_plus_one_size: medium
 
 # Google Plus Profile
 # Hidden: No visible button, just add author information to search results
-googleplus_user:
+googleplus_user: 
 googleplus_hidden: false
 
 # Pinboard
