@@ -1,10 +1,15 @@
 ---
 layout: post
-title: "bulid blog by octopress"
+title: "搭Blog 学Git"
 date: 2012-02-16 14:45
 comments: true
-categories: octopress
+categories: 
+- octopress 
+- git
 ---
+
+
+
 
 - cd f:
 
