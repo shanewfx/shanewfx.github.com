@@ -1,38 +1,25 @@
 ---
 layout: post
-title: "Markdown语法简介"
+title: "用Markdown来写博客文章"
 date: 2012-02-16 15:27
 comments: true
 categories: markdown
 ---
 
-在用**Octopress**搭建起来的Blog中写文章时要做一些格式的排版可以通过**Markdown**来实现。
+**Octopress一大亮点是支持博客使用[Markdown](http://daringfireball.net/projects/markdown/syntax)作为源文件语言。**
+
+**Markdown**语言由于其**简单**，**易读**和**清晰**的脉络结构的特点，被许多网站采用，比如**Github**，**Google Code**，**StackOverflow**。
+
+**Markdown**是一个很好的文档语言，可以写出很漂亮的文档出来。
+
+实际使用下来发现: **用Markdown来写博客文章是一件很爽的事!**
 
 <!-- more -->
 
-Markdown基本语法
-----------------
+[Markdown基本语法](http://www.ituring.com.cn/article/details/775)
 
-*1. 标题
+看一看实际的示例：[dillinger](http://dillinger.io/)
 
-   在标题文字下使用=或者-组成的线条或者使用#来表示。 
+要看本博客文章如何使用Markdown的，请看看[博客的源代码](https://github.com/shanewfx/shanewfx.github.com)吧。
 
-   #的个数代表标题的级数，目前最多支持6级。
-
-*2. 文字格式
-
-    使用双*号在文字两侧表示文字**加黑**，使用单*号在文字两侧表示文字*斜体*
-
-*3. 列表
-
-    使用单*或+或-在每一项前。
-
-*4. 超链接
-
-    使用方括号将文字包括起来，在后面的圆括号里加入超链接的地址；
-    
-    另外也可以使用ID来表示。
-
-
-
-
+另外需要了解的是，我们除了可以使用Markdown来写文章，而且可以使用Octopress提供的一些[Plugins](http://octopress.org/docs/blogging/plugins/)来实现一些特殊的效果，具体请查看[Octopress的官方文档](http://octopress.org/docs/blogging/plugins/)吧。
