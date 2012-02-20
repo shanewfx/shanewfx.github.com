@@ -10,9 +10,7 @@ categories: octopress
 
 有时，我们需要在不同电脑上对自己博客进行维护或者发表博文。
 
-这时，如果要在一台之前没有用于博客维护的电脑上进行上述的操作，如没有安装Git或者Ruby运行环境等。
-
-这种情况下, 我们除了需要根据[上一篇文章](http://shanewfx.github.com/blog/2012/02/16/bulid-blog-by-octopress/)介绍的那样来安装必要的Git和Ruby运行环境，还需要从Github上克隆一份自己博客，以便进行维护。
+如果要在一台陌生的电脑(如没有安装Git或者Ruby运行环境等)上进行博客维护，这种情况下, 我们除了需要根据[上一篇文章](http://shanewfx.github.com/blog/2012/02/16/bulid-blog-by-octopress/)介绍的那样来安装必要的Git和Ruby运行环境，还需要从Github上克隆一份自己博客，以便进行维护。
 
 <!--more-->
 
@@ -38,7 +36,8 @@ git checkout source
 
 根据提示输入: git@github.com:shanewfx/shanewfx.github.com.git
 
-*上述的设置完成后，除了删除了本地的博客文件夹，否则以后在本地就可以不用再进行设置，对博客的维护直接进行下面的操作即可。*
+*上述的设置完成后，除了删除了本地的博客文件夹，否则以后在本地就可以不用再进行设置，对博客的维护直接进行下面的操作即可。不过，在对博客维护前，最好要从Github上获得最新的博客内容，使用下面这个命令即可: *
+`git pull origin source`
 
 ####对博客进行维护，如修改配置、写博文等
 {% codeblock %}
