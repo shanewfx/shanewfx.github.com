@@ -50,7 +50,7 @@ CC的控制字基本可以分为以下几类：
 
 - Display Format：SWF、SDF、SDP、SSM、SHS、SVS
 - Color：BKF、RDF、GRF、YLF、BLF、MGF、CNF、WHF、COL、RCS、POL
-- Curor Position：APB、APF、APD、APU、APR、APS、PAPF、ACPS
+- Cursor Position：APB、APF、APD、APU、APR、APS、PAPF、ACPS
 - Character Set：LS0、LS1、SS2、SS3、ESC
 - Character Size：SSZ、MSZ、NSZ、SZX
 - Display Effect：ORN、SCR、FLC、HLC、SPL、STL （可选）
@@ -93,6 +93,7 @@ ACPS指定了Cursor在Caption Plane中的绝对位置（字符的左下角坐标
 ###CC字符集相关的控制字
 
 LS0、LS1、SS2、SS3控制调用指明了的字符集（G0、G1、G2、G3）到GL或者GR中。
+
 - LS0调用G0对应的字符集到GL中；
 - LS1调用G1对应的字符集到GL中；
 - SS2临时调用G2中的字符到GL中；
