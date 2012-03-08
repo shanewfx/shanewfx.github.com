@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "ISDB-T/SBTVD-T Closed Caption"
+title: "ARIB Closed Caption"
 date: 2012-03-07 16:40
 comments: true
 categories:
@@ -12,6 +12,8 @@ categories:
 
 目前，Closed Caption的标准主要有ATSC定义的608和708，日本ARIB STD-B24等，而巴西的数字电视标准SBTVD-T是在日本的ISDB-T标准基础上稍作修改而来，因此，巴西数字电视的Closed Caption标准也是采用了ARIB STD-B24。
 
+ARIB STD-B24定义的Closed Caption下面被简称为ARIB CC。
+
 <!--more-->
 
 ATSC CC与ARIB CC的数据传输区别在于:
@@ -21,17 +23,22 @@ ATSC CC与ARIB CC的数据传输区别在于:
 
 下面将介绍ARIB STD-B24标准中Closed Caption的一些细节内容。
 
+###ARIB CC传输层
+
 ARIB CC数据首先被打包为Synchronized PES（Independent PES），然后，Synchronized PES会继续被打包为PES packet中，该PES packet的stream id为0xBD，同时PES packet header中需要含有PTS，最后，该PES会被打包为TS packet，在TS中进行传输。
 
 如果TS流中含有Closed Caption，则在TS流的PMT和EIT中会有相应的descriptors进行描述。载有Closed Caption的ES流在PMT中的stream type值为0x06，因此，可通过在PMT表中查找stream type为0x06的Closed Caption ES对应的PID，从而，可从TS流中过滤出Closed Caption ES对应的TS packet。
 
-ARIB CC数据的结构:
-Synchronized PES -> Data Group -> Caption Management
-                               -> Caption Statement -> data_unit
+###ARIB CC Data的语法结构:
 
-Caption Management包含了Closed Caption的全局信息，并以一定的时间间隔来发送。另外，Caption Management中一般不会含有Closed Caption字符编码数据。
+Synchronized PES -> Data Group -> Caption Management
+Synchronized PES -> Data Group -> Caption Statement -> data_unit
+
+Caption Management包含了Closed Caption的全局信息，并以一定的时间间隔来发送。另外，Caption Management中一般不会含有Closed Caption字符编码数据（没有包含data_unit）。
 
 Caption Statement是Closed Caption数据传输的主要载体。CC数据主要由Control Code（控制字）和Character Code（字符码）组成，其中，控制字规定了CC的字符集、显示位置及文本格式等信息，而通过字符码可以从指定的字符集中取得CC字符。Closed Caption的控制字和字符码都在data_unit中。
+
+###ARIB CC的控制字
 
 ARIB CC的整个字符集被分为4个区域：C0、GL、C1、GR，其中C0和C1对应是Control Code，而GL和GR对应的则是CC当前使用的字符集。可以使用不同的控制字（LS0、LS1、LS1R、LS2、LS3、LS2R、LS3R、SS2、SS3）将不同的字符集(G0、G1、G2、G3)调用到GL和GR中，而G0、G1、G2、G3具体对应哪一个字符集则可以用ESC控制字来指明。
 
@@ -49,29 +56,41 @@ CC的控制字基本可以分为以下几类：
 - Display Effect：ORN、SCR、FLC、HLC、SPL、STL （可选）
 - Clear Screen：CS
 
-SWF指定了Caption Plane的大小和Caption Text的Print Direction;
+###CC显示相关的控制字
 
-SDF指定了Caption Display Window的size, Caption Display Window始终在Caption Plane内;
-
-SDP指定了Caption display window左上角的坐标，该坐标值是相对于Caption Plane的左上角坐标（0, 0）;
-
-根据SDF和SDP就可以确定Caption display window在Caption Plane内的位置及Size;
-
-SSM指定了Normal Font的Size;
-
-SHS指定了同一行字符之间的间隔;
-
-SVS指定了行与行之间的间隔;
+- SWF指定了Caption Plane的大小和Caption Text的Print Direction;
+- SDF指定了Caption Display Window的size, Caption Display Window始终在Caption Plane内;
+- SDP指定了Caption display window左上角的坐标，该坐标值是相对于Caption Plane的左上角坐标（0, 0）;
+- 根据SDF和SDP就可以确定Caption display window在Caption Plane内的位置及Size;
+- SSM指定了Normal Font的Size;
+- SHS指定了同一行字符之间的间隔;
+- SVS指定了行与行之间的间隔;
 
 根据SSM、SHS、SVS可以知道每个字符所占Size, 不同字体大小的字符Size也不尽相同;
 
-通过上面的这些控制字，则可以推断出在Caption display window内所能够容纳的字符个数（包括每行字符的个数以及总的行数）。
+上述的这些控制字一般在每个Caption Statement的开始都会出现，通过这些控制字，则可以推断出在Caption display window内所能够容纳的字符个数，即总的行数和每行可以显示字符的最大个数。
+
+###CC字符的颜色和背景色控制字
 
 BKF、RDF、GRF、YLF、BLF、MGF、CNF、WHF这8个控制字指定字符的前景色(foreground color)，而字符的背景色(background color)和half foreground color及half background color均是通过COL控制字来指定。
 
 Closed Caption总共使用了128种颜色，这些控制字除了指定了color值，同时也指定了改color值在Color map table中Index的低4位（CMLA），而Color map table Index的高4位（Pallete Number）也由COL来指定（取值范围：0~7）。
 
-APB、APF、APD、APU、APR、APS、PAPF、ACPS控制了下一个字符在caption display window中插入的位置。APB、APF、APD、APU分别控制了当前Curor向后、向前、向下、向上移动一个字符的位置；APR控制了字符的换行；APS控制了新的Caption起始的Curor位置；PAPF跟有一个参数P1，控制了当前Curor向前移动其参数P1指定的字符个数；ACPS指定了Cursor在Caption Plane中的绝对位置（字符的左下角坐标）。
+###CC字符显示位置的控制字
+
+APB、APF、APD、APU、APR、APS、PAPF、ACPS控制了下一个字符在caption display window中插入的位置。
+
+APB、APF、APD、APU分别控制了当前Cursor向后、向前、向下、向上移动一个字符的位置；
+
+APR控制了字符的换行；
+
+APS控制了新的Caption起始的Cursor位置；
+
+PAPF跟有一个参数P1，控制了当前Cursor向前移动其参数P1指定的字符个数；
+
+ACPS指定了Cursor在Caption Plane中的绝对位置（字符的左下角坐标）。
+
+###CC字符集相关的控制字
 
 LS0、LS1、SS2、SS3控制调用指明了的字符集（G0、G1、G2、G3）到GL或者GR中。
 - LS0调用G0对应的字符集到GL中；
@@ -83,7 +102,11 @@ LS0、LS1、SS2、SS3控制调用指明了的字符集（G0、G1、G2、G3）到
 
 ESC控制字除了上述用来扩展字符集调用命令控制字外，还可以用来指明G0、G1、G2、G3分别对应何种字符集。G0、G1、G2、G3、GL、GR的初始值在Spec中也指定了。
 
-SSZ、MSZ、NSZ、SZX用于控制了相对于SSM指定的Normal Font Size的字符大小。SSZ、MSZ、NSZ分别指定了字符的大小为samll、middle、normal。
+###CC字符Font相关的控制字
+
+SSZ、MSZ、NSZ、SZX用于控制了相对于SSM指定的Normal Font Size的字符大小。
+
+SSZ、MSZ、NSZ分别指定了字符的大小为samll、middle、normal。
 
 - - -
 
