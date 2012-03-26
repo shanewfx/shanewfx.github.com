@@ -15,7 +15,7 @@ categories:
 
 之前已经讲过如何搭建VS2005下64位编程环境，看[这里](http://shanewfx.github.com/blog/2012/03/18/64bit-programming/)。
 
-<--!more-->
+<!--more-->
 
 ##关于Windows下64位编程，有如下几篇文章可做参考：
 
@@ -23,11 +23,11 @@ categories:
 
 - [Lessons on development of 64-bit C/C++ applications](http://www.viva64.com/en/l/full/), [中文学习笔记](http://www.cnblogs.com/walfud/articles/2291839.html)
 
-- [Programming Guide for 64-bit Windows](http://msdn.microsoft.com/en-us/library/bb427430(v=vs.85).aspx)
+- [Programming Guide for 64-bit Windows](http://msdn.microsoft.com/en-us/library/bb427430.aspx)
 
-- [Getting Ready for 64-bit Windows](http://msdn.microsoft.com/en-us/library/aa384198(v=vs.85).aspx)
+- [Getting Ready for 64-bit Windows](http://msdn.microsoft.com/en-us/library/aa384198.aspx)
 
-- [Migration Tips](http://msdn.microsoft.com/en-us/library/aa384214(v=vs.85).aspx)
+- [Migration Tips](http://msdn.microsoft.com/en-us/library/aa384214.aspx)
 
 - [用VC进行64位编程](http://www.usidcbbs.com/read.php?tid=5247)
 
@@ -41,10 +41,12 @@ Windows 32位平台下使用的是ILP32模型，而Windows 64位平台下使用L
 
 在LLP64模型中，只有指针为64位，其余的类型则保证和32位平台一致:
 
+{% codeblock %}
 char   -> 1byte
 short  -> 2bytes
 int    -> 4bytes
 long   -> 4bytes
+{% endcodeblock %}
 
 Windows平台为开发者提供了很多的数据类型别名，合理使用这些数据类型为我们编写32位和64位共用代码是有帮助的。
 
@@ -92,9 +94,9 @@ POINTER_32、POINTER_64
 
 x64平台函数calling convention与x86平台函数calling convention是不同的。
 
-在x86平台下，函数调用约定有：__cdecl、__stdcall、__fastcall、__thiscall等，而x64下的调用约定只作如下限制：
+在x86平台下，函数调用约定有：`__cdecl、__stdcall、__fastcall、__thiscall`等，而x64下的调用约定只作如下限制：
 
-1. 前4个整数参数（从左至右）通过4个寄存器传递：RCX、RDX、R8、R9，前4个以外的整数参数将传递到堆栈, 指针被视为整数参数;
+- 前4个整数参数（从左至右）通过4个寄存器传递：RCX、RDX、R8、R9，前4个以外的整数参数将传递到堆栈, 指针被视为整数参数;
 
 对于浮点参数，前4个参数将传入XMM0到XMM3的寄存器，后续的浮点参数也是通过堆栈传递。
 
@@ -102,10 +104,11 @@ x64平台函数calling convention与x86平台函数calling convention是不同�
 
 当然，如果要传递4个以上的参数，则必须为其预额外的堆栈空间。
 
-2. 调用者负责椎栈空间的分配与回收，被调用函数不需要自己负责平衡堆栈（仅用于传递参数的这部分堆栈空间）
+- 调用者负责椎栈空间的分配与回收，被调用函数不需要自己负责平衡堆栈（仅用于传递参数的这部分堆栈空间）
 
 注意，被调用函数中有局部变量和保存其他寄存器时，其空间是由被调用函数来分配，并在结束时由自己去回收这部分堆栈空间
 
+{% codeblock %}
 |参数6| <-------------------- rsp + 48  <------------ 栈底 
 |参数5| <-------------------- rsp + 40
 |参数4| <-------------------- rsp + 32 (R9)
@@ -114,9 +117,11 @@ x64平台函数calling convention与x86平台函数calling convention是不同�
 |参数1| <-------------------- rsp + 8  (RCX)
 |函数返回地址| <------------- rsp
 |局部变量...|  <------------- rsp会向低地址移动，上述的取参数的偏移地址也需要改动
+{% endcodeblock %}
 
 如int foo(int a, int b, int c, int d, int e, int f) { int i, j; return 0; }
 
+{% codeblock %}
 |参数f| <-------------------- rbp + 80  <------------ 栈底 
 |参数e| <-------------------- rbp + 72
 |参数d| <-------------------- rbp + 64 (R9)
@@ -130,6 +135,7 @@ x64平台函数calling convention与x86平台函数calling convention是不同�
 |保存RDI|      <------------- rbp - 0  ==> 分配局部变量空前的rsp，并将rsp保存到rbp中         
 |局部变量j|    <------------- rbp - 8   <------------ rsp' + 8
 |局部变量i|    <------------- rbp - 24  <------------ rsp'     (局部变量先定义的在低地址)
+{% endcodeblock %}
 
 {% codeblock %}
 MOV [RSP+ 8], RCX
