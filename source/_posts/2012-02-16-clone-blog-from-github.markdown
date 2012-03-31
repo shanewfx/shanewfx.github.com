@@ -36,6 +36,8 @@ git checkout source
 
 根据提示输入: git@github.com:shanewfx/shanewfx.github.com.git
 
+**到这里，如果rake无法使用，说明octopress依赖的工具还没有被安装好，需要从github上clone一份octopress，并参考[上篇][1]文章中安装octopress部分安装所需的工具。**
+
 *上述的设置完成后，除了删除了本地的博客文件夹，否则以后在本地就可以不用再进行设置，对博客的维护直接进行下面的操作即可。不过，在对博客维护前，最好要从Github上获得最新的博客内容，使用下面这个命令即可:*
 `git pull origin source`
 
@@ -48,3 +50,5 @@ rake preview
 
 ####更新博客至Github
 {% gist 1863884 %}
+
+[1]:http://shanewfx.github.com/blog/2012/02/16/bulid-blog-by-octopress/
