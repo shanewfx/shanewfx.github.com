@@ -7,7 +7,7 @@ sharing: true
 footer: true
 ---
 
-{% img right /images/blogImgs/about.jpg %}
+{% img top /images/blogImgs/me.jpg %}
 
 80后，目前混迹于苏州金鸡湖畔
 
@@ -28,26 +28,19 @@ C++程序员，在Windows上搞音视频开发4年有余
 喜欢"滴水穿石"的寓言，因为感觉自己现在最缺的就是那份持之以恒的精神
 
 
-##联系我:
+- 通过如下方式可以找到我
 
-> **新浪微博**: [shanewfx](http://weibo.com/shanewfx)
+**Gmail:** <shanewfx@gmail.com>
 
-> **我在豆瓣**: [shanewfx](http://www.douban.com/people/shanewfx/)
+**Github:** [@shanewfx](https://github.com/shanewfx)
 
-> **网络文摘**: [http://shanewfx.360doc.com](http://shanewfx.360doc.com)
-
-> **Email**: <shanewfx@gmail.com>
+**新浪微博:** [@shanewfx](http://weibo.com/shanewfx)
 
 
+- 在下面的地方也会发现我的足迹
 
-##乔帮主名言:
+**我在豆瓣**: [shanewfx](http://www.douban.com/people/shanewfx/)
 
-{% blockquote %}
-Stay hungry. Stay foolish.
+**我在知乎**: [shanewfx](http://www.zhihu.com/people/shanewfx)
 
-把每一天都当成生命中的最后一天，你就会轻松自在。
-
-拥有追随自己内心与直觉的勇气，你的内心与直觉多少已经知道你真正想要成为什么样的人。
-{% endblockquote %}
-
-
+**网络文摘**: [http://shanewfx.360doc.com](http://shanewfx.360doc.com)
