@@ -1,54 +1,71 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
+/*
 @font-face {
   font-family: "League";
   src: url('/font/LeagueGothic.otf');
 }
 
 a:visited, #content .blog-index article h1 a:hover { color: #1863A1; }
-
+*/
 
 /* ----- main layout ----- */
 
 
-html { background: #262C33 url("/images/line-tile.png"); }
+html {
+  background: #262C33 url("/images/wood.jpg"); //整体背景 
+}
 
-body { font-size: 1em; }
+body { 
+  font-size: 1em; //整体字体大小
+}
 
-body > div { background-image: none; }
+body > div { background-image: none; } //侧边栏
 
-body > div > div { background-image: none; }
+body > div > div { //文章内容
+  background-image: none; 
+//background: #262C33; 
+  background: url("/images/textbg.jpg");
+}
 
 
 /* ----- header ----- */
 
 
-body > header{
-  background: none;
+body > header{ //页面头部
+//background: url("/images/nav.jpg");
+  background: none; //none表示透明
   padding: 1.6em 0 1em 0
 }
 
+
 body > header h1{
   font-size: 2.8em;
+  color: #3A1D00;
   padding-left: 20px;
   text-shadow: rgba(0, 0, 0, 0.8) 0 0 8px;
 }
 
 body > header h2{
-  font-size: 0.5em;
+  font-size: 1em;
+  color: #4F2916;
   letter-spacing: 1px;
-  margin-top: -1.4em;
+  margin-top: 0em;
   padding-left: 20px;
 }
 
+
 body > nav {
-  padding-top: .15em;
-  padding-bottom: .15em;
+  background: url("/images/nav.jpg");
+  color: #D9D9D9;
+//padding-top: .15em;
+//padding-bottom: .15em;
 }
 
 body > nav a{
   font-size: 1em;
-  line-height: 1.4em;
+  line-height: 2.4em;
+  color: #D9D9D9;
 }
 
 body > nav form .search{
@@ -58,7 +75,7 @@ body > nav form .search{
 
 /* ----- Content ----- */
 
-
+/*
 #content .blog-index article h1 {
   font-size: 1.8em;
   font-weight: normal;
@@ -85,11 +102,11 @@ article p {
   text-align:justify;
   margin-bottom: 1em;
 }
-
+*/
 
 /* ----- Sidebar ----- */
 
-
+/*
 aside.sidebar section h1 { letter-spacing: 0.1em; }
 
 aside.sidebar a { text-decoration: none; }
@@ -107,38 +124,42 @@ aside.sidebar{
   -webkit-border-radius: 0 0.4em 0 0;
   border-radius: 0 0.4em 0 0;
 }
-
+*/
 
 /* ----- Footer ----- */
 
 
-body > footer{
+body > footer{ //页面底部
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   border-radius:0;
   margin-bottom: 0;
+  text-align: center;
+  background: none; //none表示透明
+  font-weight: bold;
+  color: #2E2E29;
 }
 
 
 /* ----- 404 ----- */
 
-
+/*
 .notfound404 article{
   margin-left: 0 !important;
 }
-
+*/
 
 /* ----- Media queries ----- */
 
-
+/*
 @media only screen and (min-width: 550px) {
 
   body > header h1{
-      background: url("/favicon.png") no-repeat 0 8px;
+//    background: url("/images/blogImgs/about.jpg") no-repeat 0 8px;
       padding-left: 60px;
   }
 
-  body > header h2 { padding-left: 60px; }
+  body > header h2 { padding-left: 80px; }
 
   body > footer { margin-bottom: 3em; }
 }
@@ -178,4 +199,4 @@ body > footer{
       border-radius: 6px;
   }
 }
-
+*/
