@@ -151,11 +151,11 @@ body > footer{ //页面底部
 
 /* ----- Media queries ----- */
 
-/*
+
 @media only screen and (min-width: 550px) {
 
   body > header h1{
-//    background: url("/images/blogImgs/about.jpg") no-repeat 0 8px;
+      //background: url("/images/blogImgs/title.jpg") no-repeat 0 8px;
       padding-left: 60px;
   }
 
@@ -165,12 +165,12 @@ body > footer{ //页面底部
 }
 
 @media only screen and (min-width: 1040px) {
-
+/*
   body > nav {
     -moz-border-radius: 0.4em;
     -webkit-border-radius: 0.4em;
-    border-radius:0.4em;
-    margin-bottom: 2em;
+    border-radius:0.4em 0.4em 0em 0em;
+    margin-bottom: 0em;
   }
 
   body > footer{
@@ -183,14 +183,14 @@ body > footer{ //页面底部
   #main{
       -moz-border-radius-topleft: 0.4em;
       -moz-border-radius-topright: 0.4em;
-      -webkit-border-radius: 0.4em 0.4em 0 0;
-      border-radius: 0.4em 0.4em 0 0;
+      -webkit-border-radius: 0.4em 0.4em 0em 0em;
+      border-radius: 0.4em 0.4em 0em 0em;
   }
 
   #content{
       -moz-border-radius-topleft: 0.4em;
-      -webkit-border-radius: 0.4em 0 0 0;
-      border-radius: 0.4em 0 0 0;
+      -webkit-border-radius: 0.4em 0.4em 0.4em 0.4em;
+      border-radius: 0.4em 0.4em 0.4em 0.4em;
   }
 
   #content .blog-index a[rel="full-article"]{
@@ -198,5 +198,6 @@ body > footer{ //页面底部
       -moz-border-radius: 6px;
       border-radius: 6px;
   }
-}
 */
+}
+
