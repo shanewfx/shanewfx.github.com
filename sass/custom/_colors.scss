@@ -43,7 +43,8 @@
 //$pre-color: $base1;
 
 //Pick your favorite color. If you picked a thoughtful blue, try again. 
-//$main-color:  #6c71c4;
+$main-color:  #ffffff;
+//$main-color:  #8fc17a;
 
 //This controls the background. 
 //$page-bg: lighten($main-color,20);
@@ -54,8 +55,9 @@
 //$subtitle-color: lighten($title-color,0);
 
 //This controls the navigation bar
-//$nav-bg: desaturate(darken($main-color, 10), 60);
-//$nav-bg-back: linear-gradient(lighten($nav-bg, 8), $nav-bg, darken($nav-bg, 11));
+//$nav-bg: desaturate(darken($main-color, 0), 50);
+$nav-bg: desaturate(lighten($main-color, 18), 5);
+//$nav-bg-back: linear-gradient(lighten($nav-bg, 80), $nav-bg, darken($nav-bg, 91));
 //$nav-link-color: darken($main-color, 20);
 //$nav-link-color-hover: lighten($main-color, 20);
 //$nav-link-color-visited: darken($main-color, 20);

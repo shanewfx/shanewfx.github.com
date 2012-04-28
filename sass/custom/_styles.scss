@@ -35,7 +35,7 @@ body > div > div { //文章内容
 body > header{ //页面头部
 //background: url("/images/nav.jpg");
   background: none; //none表示透明
-  padding: 1.6em 0 1em 0
+  padding: 1.8em 0 1.2em 0
 }
 
 
@@ -50,22 +50,22 @@ body > header h2{
   font-size: 1em;
   color: #4F2916;
   letter-spacing: 1px;
-  margin-top: 0em;
+  margin-top: .2em;
   padding-left: 20px;
 }
 
 
 body > nav {
-  background: url("/images/nav.jpg");
-  color: #D9D9D9;
-//padding-top: .15em;
-//padding-bottom: .15em;
+background: url("/images/nav.jpg");
+//color: #D9D9D9;
+padding-top: 0.15em;
+padding-bottom: .15em;
 }
 
 body > nav a{
-  font-size: 1em;
-  line-height: 2.4em;
-  color: #D9D9D9;
+  font-size: 1.5em;
+  line-height: 1.5em;
+//color: #D9D9D9;
 }
 
 body > nav form .search{
@@ -128,7 +128,7 @@ aside.sidebar{
 
 /* ----- Footer ----- */
 
-
+/*
 body > footer{ //页面底部
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
@@ -139,7 +139,7 @@ body > footer{ //页面底部
   font-weight: bold;
   color: #2E2E29;
 }
-
+*/
 
 /* ----- 404 ----- */
 
@@ -151,7 +151,7 @@ body > footer{ //页面底部
 
 /* ----- Media queries ----- */
 
-/*
+
 @media only screen and (min-width: 550px) {
 
   body > header h1{
@@ -169,8 +169,8 @@ body > footer{ //页面底部
   body > nav {
     -moz-border-radius: 0.4em;
     -webkit-border-radius: 0.4em;
-    border-radius:0.4em;
-    margin-bottom: 2em;
+    margin-bottom: 0em;
+    border-radius: 0.4em 0.4em 0 0;
   }
 
   body > footer{
@@ -180,6 +180,7 @@ body > footer{ //页面底部
       border-radius: 0 0 0.4em 0.4em;
   }
 
+/*
   #main{
       -moz-border-radius-topleft: 0.4em;
       -moz-border-radius-topright: 0.4em;
@@ -198,5 +199,6 @@ body > footer{ //页面底部
       -moz-border-radius: 6px;
       border-radius: 6px;
   }
-}
 */
+}
+

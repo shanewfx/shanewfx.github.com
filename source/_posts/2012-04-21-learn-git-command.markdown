@@ -23,7 +23,7 @@ categories:
 
 我学习Git的起点是从阅读[Pro Git](http://progit.org/book/zh/)开始，感觉各种概念讲解的还是蛮清楚的，涉及Git的很多方面，是一份很不错的资料。
 
-另外，[Git Magic](http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_tw/index.html)也值得参考一下。
+另外，[git community book](http://gitbook.liuhui998.com/index.html)和[Git Magic](http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_tw/index.html)也值得参考一下。
 
 还有一份[Git使用指南](http://files.cnblogs.com/phphuaibei/git%E6%90%AD%E5%BB%BA.pdf) 作为使用Git管理Code的入门资料也是很不错的。
 
@@ -71,7 +71,7 @@ Git作为一个版本控制软件，相比其他版本控制软件有什么不�
 
 - 采用**"直接记录快照，而非差异比较"**的版本控制策略，内部只关心**文件数据的整体是否发生改变，而不是文件内容的具体差异**（Git内部被实现为一种微型的文件系统）；
 
-- Git工作时就是在**工作目录（工作树、work tree）、暂存区（索引、index file）、本地仓库**三者之间管理文件的变化情况，Git会监视工作目录中的文件变化(增加新文件，删除文件，修改文件等)，需要我们自己手动将变化的文件添加(git add)到暂存区中（这就是文件快照），然后再提交(git  commit)到本地仓库中；上述过程，涉及Git内部的三种对象：commit对象、tree对象和blob对象，blob对象会对应的文件快照中那些变化的文件内容，tree对象记录了文件快照中各个目录和文件的结构关系，从概念上讲，tree对象和blob对象组成了文件快照，commit对象则记录了这次要提交到本地仓库的文件快照，同时也会指向上次的commit对象，它也是Git内部进行版本控制的重点（Git内部会记录各个commit对象，并用HEAD来指示当前分支中最新的commit对象），很多重要的功能，如分支、版本回溯、Git仓库内部状态等都是在commit对象基础上实现的；上述的每一个对象都对应一个独一无二的ID，该ID是一个20个字节的哈希码，由SHA-1算法计算而来；Git能够通过ID的前几个字节就识别出对应的对象；
+- Git工作时就是在**工作目录（工作区、work tree）、暂存区（索引、index file）、本地仓库**三者之间管理文件的变化情况，Git会监视工作目录中的文件变化(增加新文件，删除文件，修改文件等)，需要我们自己手动将变化的文件添加(git add)到暂存区中（这就是文件快照），然后再提交(git  commit)到本地仓库中；上述过程，涉及Git内部的三种对象：commit对象、tree对象和blob对象，blob对象会对应的文件快照中那些变化的文件内容，tree对象记录了文件快照中各个目录和文件的结构关系，从概念上讲，tree对象和blob对象组成了文件快照，commit对象则记录了这次要提交到本地仓库的文件快照，同时也会指向上次的commit对象，它也是Git内部进行版本控制的重点（Git内部会记录各个commit对象，并用HEAD来指示当前分支中最新的commit对象），很多重要的功能，如分支、版本回溯、Git仓库内部状态等都是在commit对象基础上实现的；上述的每一个对象都对应一个独一无二的ID，该ID是一个由40个字符组成的哈希码，由SHA-1算法计算而来；Git能够通过ID的前几个字符就识别出对应的对象；
 
 - Git的分支功能很强大，很灵活，切换速度非常快，并且实现成本很低，这也是Git比其他版本控制软件要受欢迎的原因之一；
 
@@ -273,11 +273,17 @@ master: 0 --> master: 1 --> master: 2
 ###19. 查看仓库中commit对象、tree对象和blob对象
 
 在我们将文件提交到Git仓库后，我们可以通过每次的commit对象的ID来查看文件快照的内容。
+
 具体的方法就是：
+
 - 先通过`git log`查看提交历史，选择需要查看的commit-id
+
 - `git cat-file -t id`可以知道拥有该ID的对象是属于哪种类型：**commit、tree、blob**
+
 - `git cat-file commit id`可以查看到该commit对象指向的tree对象的ID
+
 - `git ls-tree tree-id`可以查看该tree中的blob对象的ID和其他tree对象的ID（如果有）
+
 - `git cat-file blob blob-id`
 
 
@@ -305,3 +311,4 @@ master: 0 --> master: 1 --> master: 2
 
 上述的这些命令应该能够帮助我们实现多数的版本控制需求，当然其中的每一个命令都会有一些其他的选项功能这里没有提到，希望在以后使用Git的过程中能够慢慢发掘，感受Git的强大！
 
+很多内容是基于自己的理解，如有误请指正。
