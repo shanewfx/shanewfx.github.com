@@ -5,7 +5,7 @@ date: 2012-02-16 14:45
 comments: true
 categories: 
 - octopress 
-- git
+- Git
 ---
 
 想要有一个自己的独立博客是很久之前的事。
