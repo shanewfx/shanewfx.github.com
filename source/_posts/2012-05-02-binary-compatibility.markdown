@@ -1,0 +1,134 @@
+---
+layout: post
+title: "库的可扩展性与二进制兼容性"
+date: 2012-05-02 15:44
+comments: true
+categories:
+- C++
+- Design 
+---
+
+读了[陈硕](http://www.cnblogs.com/Solstice/)写的关于库的**二进制兼容(binary compatibility)**方面的文章，深感此内容的重要性，值得在以后的设计中多加考虑和实践。
+
+在此，记录一下读后感，总结一下在设计库接口时应该考虑的事项，以备后用。
+
+参考的文章如下:
+
+- [二进制兼容性](http://www.cnblogs.com/Solstice/archive/2011/03/09/1978024.html)
+
+- [避免使用虚函数作为库的接口](http://www.cnblogs.com/Solstice/archive/2011/03/13/1982563.html)
+
+另外，作者将其博文整理出一份[C++工程实践经验谈](http://cloud.github.com/downloads/chenshuo/documents/CppPractice.pdf)，很值得一读。
+
+<!--more-->
+
+以往开发directshow filter时，其接口通常都是采用由纯虚函数组成接口类的方式来实现，其主要原因应该是directshow是以COM为基础而设计出来的框架。
+
+对于一个filter，在发布时，通常要提供一个header file和一个.ax结尾的dll文件，header file告诉AP该filter提供了哪些接口和相关数据结构。
+
+这时，如果有一个新功能需求，需要在原filter的基础上增加，并且新版本的filter要能够直接在AP中直接替换老版本，而不影响AP原有功能（新功能会在下一版AP中被添加），这时，我们该怎么办？
+
+参考陈硕文章中的做法，应该可以这样实现: 新的功能在新的接口中定义，并且新的接口要继承于旧的接口。
+
+大概的实现应该是这样的（略去了其他细节）:
+
+**老版本:**
+
+{% codeblock %}
+class interface1 {
+public:
+     virtual int func1() = 0;
+};
+
+class filter : public interface1 {
+     virtual int func1();
+};
+{% endcodeblock %}
+
+**新版本:**
+
+{% codeblock %}
+class interface2 : public interface1 {
+public:
+     virtual int func2() = 0;
+};
+
+class filter : public interface2 {
+     virtual int func1();
+     virtual int func2();
+};
+{% endcodeblock %}
+
+这样做基本满足了要求（二进制兼容的），但这种做法引进了新的接口，而且为了向下兼容，还需要继承老的接口，如果日后新的需求不断出现，则会有更多的接口被引入，长期下去容易引起混乱，对于后续维护的人而言，也可能会造成困惑，因此，这种带版本的接口似乎不是一个很完美的方案。
+
+对于那些老的采用虚函数作为接口的项目，如果后来又新需要，则上述的方法是可取的，因为，你不太可能去修改之前经过测试的稳定代码。
+
+如果是新的项目，可以在设计的时候多考虑一些库的可扩展性和二进制兼容性问题。
+
+二进制兼容性问题是在库扩展新功能或修复bug后更新版本时需要考虑的。
+
+为什么要考虑这样的问题？
+
+因为使用库的项目有很多个，不太能因为某个库的更新而要求所有使用该库的项目全部重新编译，通常，只是要告之用新版本替换相应的老版本库即可，而要达到这样的目的，就需要该库做到接口的二进制兼容。
+
+典型的例子就是那些支持热插拔的plug-in系统，更新插件不需要其宿主也跟着要改变。
+
+**下面是不影响二进制兼容的安全做法:**
+
+- 增加新的class
+
+- 增加non-virtual成员函数或者static成员函数
+
+- 修改数据成员名称（二进制兼容，但会引起源代码级的不兼容，也容易产生问题）
+
+- 增加新的全局函数（自由函数）
+
+
+**下面是一定影响二进制兼容的不安全做法（容易造成crash问题）:**
+
+- 接口采用虚函数，并在接口中添加新的虚函数（影响了vtable[offset]），就算在尾部添加也是有问题的，因为不能保证该接口没有被继承
+
+- 修改接口中使用的数据结构，如数据类型从short改为int（改变的内部布局）
+
+
+为了保证库的可扩展性和二进制兼容，在设计库的接口时，可考虑下面的做法：
+
+**1. 用class的non-virtual成员函数作为接口，并且所有的操作放在一个内部class来代理实现**
+
+**老版本:**
+
+{% codeblock %}
+class Interface {
+public:
+    Interface() : pImpl(new Impl) {}
+    ~Interface() { delete pImpl; }
+    int func1() { return pImpl->func1(); }
+
+private:
+    class Impl;
+    Impl* pImpl;
+};
+{% endcodeblock %}
+
+**新版本:**
+
+{% codeblock %}
+class Interface {
+public:
+    Interface() : pImpl(new Impl) {}
+    ~Interface() { delete pImpl; }
+    int func1() { return pImpl->func1(); }
+    int func2() { return pImpl->func2(); }
+
+private:
+    class Impl;
+    Impl* pImpl;
+};
+{% endcodeblock %}
+
+**2. 使用全局函数作为接口（这种做法在C语言中是最为常见的），内部还是按C++的方式来实现**
+
+**3. 不得以的情况下，可以使用虚函数做为接口**
+
+
+(全文完)

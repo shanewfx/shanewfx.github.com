@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "ARIB Closed Caption"
+title: "ISDB-T/SBTVD-T Closed Caption"
 date: 2012-03-07 16:40
 comments: true
 categories:
