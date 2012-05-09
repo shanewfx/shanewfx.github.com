@@ -74,6 +74,8 @@ categories:
 
 在Users & Groups中，Users下是用来创建用户或修改用户密码等，每个用户对应一个Username和其Password，已有的用户会在上面的列表中显示出来；Groups下用于创建组，可以在每个Group下添加或移除用户，已有的Group也会在列表中显示出来。
 
+<a href="http://www.flickr.com/photos/shanewfx/7163525050/" title="Flickr 上 shanewfx 的 gitstack_1.5"><img src="http://farm9.staticflickr.com/8164/7163525050_4e0a696de9.jpg" width="500" height="370" alt="gitstack_1.5"></a>
+
 
 ###牛刀小试
 
