@@ -13,3 +13,5 @@ vendor
 node_modules
 source/images/Thumbs.db
 source/images/blogImgs/Thumbs.db
+source/images/blogImgs/201204/Thumbs.db
+*.db
