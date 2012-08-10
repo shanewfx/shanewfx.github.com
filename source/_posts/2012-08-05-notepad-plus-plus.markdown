@@ -22,7 +22,7 @@ categories:
 
 Notepad++是最近才开始使用，在Windows下使用代替系统的Notepad是非常不错的，支持多文件同时打开，打开大文件的速度比较快，支持多种语法高亮，搜索功能也比较好用，支持插件扩展，其中HEX-Editor用来以16进制查看文件也是可以和UltraEdit相媲美的。
 
-{% img /images/blogImgs/201208/notepad++.jpg %}
+{% img /images/blogImgs/201208/notepad.jpg %}
 
 使用下来，Notepad++还是比较顺手的，也将会是我今后的常用软件之一。
 
