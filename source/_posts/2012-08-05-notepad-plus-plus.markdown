@@ -1,11 +1,12 @@
 ---
 layout: post
-title: "善用佳软之一: Notepad++"
+title: "善用佳软 Notepad++"
 date: 2012-08-05 11:40
 comments: true
 categories:
 - Notepad++
 - FreeSoftware
+- 开源软件
 ---
 
 软件开发过程中少不了要通过查看Log文件来定位Bug，这当然需要有一个好用的文本编辑软件来配合。
