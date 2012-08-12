@@ -1,18 +1,10 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
 
-// Import IcoMoom & footnotes plugin & table style
-//@import "icomoon";
-//@import "footnotes";
-//@import "tablestyle";
-
-// color
-$footer-construction: hsl(0.00, 0.00%, 6.27%);
-$header-banner-bg: hsl(0.00, 0.00%, 23.14%);
 
 // Main layout
 html {
-  background: #262C33 url("/images/wood.jpg");
+  background: url("/images/wood.jpg");
   body > div > div {
     //border-right: none;
   }
@@ -20,105 +12,21 @@ html {
 // Header
   body > header {
     background: none;
-    h1, h2 {
+	h1 {
       @include text-shadow(0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135);
     }
     h2 {
       margin-top: .5em;
       display: none;
     }
-    section {
-      #banner{
-        font-size: .6em;
-        color: #ccc;
-        position: relative;
-        background: $header-banner-bg;
-        border: 1px solid #000;
-        border-top: 1px solid hsl(0, 0%, 30%);
-        @include text-shadow(0 1px 0 rgba(0, 0, 0, .5));
-        @include border-radius(.4em);
-        @include single-box-shadow(#000, 1px, 3px, 5px);
-        padding: 20px 15px;
-        line-height: 40px;
-        text-align: left;
-        display: none;
-        margin-top: 2.5em;
-        &:after, &:before {
-          bottom: 100%;
-          border: solid transparent;
-          content: " ";
-          height: 0;
-          width: 0;
-          position: absolute;
-          pointer-events: none;
-        }
-        &:after {
-          border-bottom-color: #3B3B3B;
-          border-width: 13px;
-          left: 15%;
-          margin-left: -13px;
-        }
-        &:before {
-          border-bottom-color: hsl(0, 0%, 30%);
-          border-width: 14px;
-          left: 15%;
-          margin-left: -13px;
-        }
-        // 因為項目清單會自動縮進，所以這部份要還原
-        ul, ul ul, ul ol, ol, ol ul, ol ol {
-        margin-left: 0;
-        }
-        //@include transition(color, .3s);
-        &:hover {
-          background: lighten($header-banner-bg, 2);
-          &:after {
-            border-bottom-color: lighten($header-banner-bg, 2);
-          }
-        }
-        a{
-          color: #A0A0A0;
-          //@include transition(color, .3s);
-          &:hover{
-            text-decoration: underline;
-            color: hsl(213.87, 79.49%, 54.12%);
-          }
-        }
-        small{
-          position: absolute;
-          right: 15px;
-          bottom: 0;
-        }
-        .loading{
-          //background: image-url('loading_pacman.gif') center no-repeat;
-          text-indent: -9999px;
-        }
-        .container{
-          height: 40px;
-          overflow: hidden;
-          position: relative;
-          display: none;
-          .feed{
-            list-style: none;
-            position: absolute;
-            top: 0;
-            width: 100%;
-            li{
-              position: relative;
-              small{
-                position: absolute;
-                right: 0;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 
 // Navigation
 body > nav {
-  @include single-box-shadow(#000, 1px, 3px, 5px);
+  //@include single-box-shadow(#000, 1px, 3px, 5px);
+  //background: url("/images/nav.jpg");
+  //background: #555555;
   ul.main-navigation {
     padding-left: 3px;
   }
@@ -144,140 +52,19 @@ body > nav {
         hsl(209.01, 86.94%, 52.04%) 0px 0px 9px,
         hsl(209.01, 86.94%, 52.04%) 0px 0px 11px,
         hsl(0, 0%, 0%) 0 0 2px;
-      &.icon-home, &.icon-book-alt, &.icon-user {
-        padding-right: 5px;
-      }
     }
   }
 }
 
-// Article
-body > div#main {
-  @include single-box-shadow(#000, 1px, 3px, 5px);
-}
+body > div { 
+  background-image: none; 
+//background: #F5F5D5
+} //侧边栏
 
-article {
-  line-height: 1.618em;
-  overflow: hidden;
-  div.entry-content {
-    text-align:justify;
-    text-justify: inter-ideograph;
-    text-rendering: optimizeLegibility;
-  }
-  h2, h3, h4, h5, h6 {
-    font-family: $serif;
-    line-height: 1em;
-  }
-  h2 {
-    margin-bottom: .8em;
-  }
-  i {
-    &.icon-twitter {
-      color: hsl(209.01, 86.94%, 48.04%);
-    }
-
-    &.icon-facebook {
-      color: hsl(220.88, 36.84%, 48.43%);
-    }
-
-    &.icon-google-plus {
-      color: hsl(12.99, 66.24%, 46.47%);
-    }
-
-    &.icon-github {
-      color: hsl(0.00, 0.00%, 25.00%);
-    }
-  }
-
-  section#details { // insert `<section id="details"></section>` into HTML or Markdown file.
-    height: 54px;
-    width: 1000px;
-    background: url('../images/construction.png') repeat-x 50% 0;
-    background-size: 116px 54px;
-    margin-left: -100px;
-  }
-
-  blockquote {
-    font-style: normal;
-    font-size: 1em;
-    line-height: 1.618em;
-    color: hsl(0, 0%, 40%);
-    footer > strong {
-      font-style: italic;
-    }
-  }
-  div.footnotes {
-    color: hsl(0, 0%, 53%);
-    padding-top: 1.5em;
-    background: url('images/favicon.png') top center no-repeat;
-  }
-}
-
-// Footer
-body > footer {
-  overflow: hidden;
-  p {
-    margin-bottom: 0;
-  }
-  @include border-bottom-radius(0px);
-  p span.theme-version {
-    float: right;
-    color: #9C9EA2;
-  }
-  @include single-box-shadow(#000, 1px, 3px, 5px)
-}
-
-section {
-  &.contruction-wrap {
-    height: 52px;
-    width:200px;
-    position: absolute;
-    right: 0;
-    top: 14px;
-  }
-  div.contruction {
-    height: 15px;
-    width: 200px;
-    position: relative;
-    margin-left: 105px;
-    background-color: hsl(39.59, 100.00%, 47.84%);
-    @include rotate(-45deg);
- /*   @include background-image(linear-gradient(
-      45deg,
-      $footer-construction 6.25%,
-      transparent 6.25%,
-      transparent 12.5%,
-      $footer-construction 12.5%,
-      $footer-construction 18.75%,
-      transparent 18.75%,
-      transparent 25%,
-      $footer-construction 25%,
-      $footer-construction 31.25%,
-      transparent 31.25%,
-      transparent 37.5%,
-      $footer-construction 37.5%,
-      $footer-construction 43.75%,
-      transparent 43.75%,
-      transparent 50%,
-      $footer-construction 50%,
-      $footer-construction 56.25%,
-      transparent 56.25%,
-      transparent 62.5%,
-      $footer-construction 62.5%,
-      $footer-construction 68.75%,
-      transparent 68.75%,
-      transparent 75%,
-      $footer-construction 75%,
-      $footer-construction 81.25%,
-      transparent 81.25%,
-      transparent 87.5%,
-      $footer-construction 87.5%,
-      $footer-construction 93.75%,
-      transparent 93.75%,
-      transparent 100%
-      ));*/
-    @include box-shadow(hsla(0, 0%, 100%, 0.2) 0px 1px 2px 1px inset, hsla(0, 0%, 0%, 0.2) 0px -1px 1px 1px inset);
-  }
+body > div > div { //文章内容
+  background-image: none; 
+//background: #F5F5D5; 
+//background: url("/images/textbg.jpg");
 }
 
 // Responsive design
@@ -289,22 +76,4 @@ section {
   body > footer {
     @include border-bottom-radius(.4em);
   }
-}
-
-@media only screen and (min-width: 550px) {
-  body > header > hgroup {
-    section div#banner {
-      display: none;
-    }
-  }
-}
-
-// Selection
-::selection {
-  color: hsl(0, 0, 100%);
-  background: hsl(0, 0, 0); /* Safari */
-  }
-::-moz-selection {
-  color: hsl(0, 0, 100%);
-  background: hsl(0, 0, 0); /* Firefox */
 }
