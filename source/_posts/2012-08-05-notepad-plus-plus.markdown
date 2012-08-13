@@ -7,6 +7,7 @@ categories:
 - Notepad++
 - FreeSoftware
 - 开源软件
+tags: [开源软件, 善用佳软]
 ---
 
 软件开发过程中少不了要通过查看Log文件来定位Bug，这当然需要有一个好用的文本编辑软件来配合。
