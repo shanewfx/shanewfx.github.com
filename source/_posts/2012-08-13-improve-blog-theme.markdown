@@ -16,7 +16,7 @@ Octopress是一个非常不错的博客系统，具有很好的扩展性，默�
 
 Octopress支持SASS语法，改造Octopress主题基本是通过修改“sass\custom“下以scss为后缀名的文件来完成，大多数的改造是在_styles.scss这个文件中来实现。
 
-1. 为博客添加背景图片
+##1. 为博客添加背景图片
 
 ```
 html {
@@ -36,7 +36,7 @@ body > div > div { //文章内容
 }
 ```
 
-2. 改造博客的Header区域
+##2. 改造博客的Header区域
 
 ```
 html {
@@ -54,7 +54,7 @@ html {
 }
 ```
 
-3. 改造导航栏
+##3. 改造导航栏
 
 ```
 body > nav {
@@ -90,7 +90,7 @@ body > nav {
 }
 ```
 
-4. 倒圆角
+##4. 倒圆角
 
 ```
 @media only screen and (min-width: 1040px) {
@@ -104,7 +104,7 @@ body > nav {
 }
 ```
 
-5. 给博客加上LOGO图片
+##5. 给博客加上LOGO图片
 
 ```
 @media only screen and (min-width: 550px) {
@@ -118,7 +118,7 @@ body > nav {
 }
 ```
 
-6. 改造侧边栏
+##6. 改造侧边栏
 
 在”source\_includes\asides“下创建侧边栏相关模块的html文件，修改博客根目录下的_config.yml文件，主要是default_asides、blog_index_asides、post_asides这几项。
 
@@ -128,7 +128,7 @@ blog_index_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/r
 post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_posts.html, custom/asides/category_cloud.html, custom/asides/recent_comment.html, custom/asides/blog_link.html, custom/asides/douban.html, custom/asides/license.html]
 ```
 
-在custom/asides/about.html中添加About Me信息
+- 在custom/asides/about.html中添加About Me信息
 
 ```
 <section>
@@ -141,7 +141,7 @@ post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_
 </section>
 ```
 
-在custom/asides/weibo.html中添加新浪微博模块
+- 在custom/asides/weibo.html中添加新浪微博模块
 
 ```
 <section>
@@ -152,7 +152,7 @@ post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_
 
 其中，iframe中的代码是来自新浪微博中”账号->我的工具->微博秀“，可以做一些简单的设置，并自动产生出嵌入代码。
 
-在custom/asides/douban.html中添加豆瓣读书列表
+- 在custom/asides/douban.html中添加豆瓣读书列表
 
 ```
 {% if site.douban_user %}
@@ -161,14 +161,15 @@ post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_
 <div>
 <script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=wishlist&amp;n=9&amp;columns=3&amp;hidelogo=yes&amp;cat=movie|book" ></script>
 </div>
-```
 </section>
 {% endif %}
 ```
+
 其中，div中的代码来自[豆瓣](http://www.douban.com/service/badgemakerjs)。
 同时，要在_config.yml中添加douban_user: XXX (XXX为你的豆瓣用户名)。
 
-在custom/asides/blog_link.html中添加友情链接
+- 在custom/asides/blog_link.html中添加友情链接
+
 ```
 <section>
   <h1>大牛博客</h1>
@@ -189,7 +190,8 @@ post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_
 </section>
 ```
 
-在custom/asides/recent_comment.html中添加Disqus评论
+- 在custom/asides/recent_comment.html中添加Disqus评论
+
 ```
 <section>
   <h1>最新评论</h1>
@@ -201,7 +203,9 @@ post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_
 disqus_short_name: XXX (XXX为你的Disqus用户名)
 disqus_show_comment_count: true
 
-7. 增加一键分享
+增加文章的评论需要将该文章对应的markdown文件开始部分中的comments设置为true（冒号后需有一个空格）。
+
+##7. 增加一键分享
 
 我目前使用的是[bshare](http://www.bshare.cn/)。
 
@@ -213,11 +217,11 @@ disqus_show_comment_count: true
     <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
 {% endif %}
 ```
-其中，if中的代码由bshare产生，可以自己选择所需的外观。
+上述的代码由bshare产生，可以自己选择所需的外观。
 这样，在每一篇文章的最下方会出现一个分享的小工具。
 
 
-8. 添加标签云
+##8. 添加标签云
 
 这部分需要第三方的plugin支持，目前我还没有解决中文标签在上传到github上连接出错的问题，在本地是OK的。
 具体可参看[这篇文章](http://tinyxd.me/blog/2012/06/25/octopress-add-tag-cloud/)。
