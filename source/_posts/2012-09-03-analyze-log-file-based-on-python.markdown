@@ -6,7 +6,7 @@ comments: true
 categories: 
 - Python
 - Matplotlib
-- Regex
+- Sed
 ---
 
 最近因为项目需要经常分析数据量很大的Log文件，以往靠手工目测的分析方法已不太可能快速分析和定位问题。
@@ -22,7 +22,7 @@ categories:
 
 需要的工具如下：
 
-- python（版本是2.7.3，自带一个简单的IDE）（官网为什么会被墙？）
+- [Python](http://www.python.org/)（版本是2.7.3，自带一个简单的IDE）
 
 - 数值运算库[numpy](http://sourceforge.net/projects/numpy/files/NumPy/)，matplotlib依赖这个库
 
