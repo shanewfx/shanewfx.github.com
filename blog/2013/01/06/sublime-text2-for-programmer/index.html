@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>程序员的代码编辑器--Sublime Text 2 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="===目录=== 在Windows/Ubuntu上安装Sublime Text 2
+在Windows/Ubuntu上搭建Sublime Text 2的C/C++编译环境
+使用Sublime Text 2编写、编译、运行C++代码
+推荐几个程序员喜欢的Sublime Text 2插件 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2013/01/06/sublime-text2-for-programmer">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">程序员的代码编辑器--Sublime Text 2</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-06T15:43:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4>===目录===</h4>
+
+<ul>
+<li>在Windows/Ubuntu上安装Sublime Text 2</li>
+<li>在Windows/Ubuntu上搭建Sublime Text 2的C/C++编译环境</li>
+<li>使用Sublime Text 2编写、编译、运行C++代码</li>
+<li>推荐几个程序员喜欢的Sublime Text 2插件</li>
+<li>使用Sublime Text 2浏览Source Code</li>
+<li>使用Sublime Text 2和Github Gist管理代码片段</li>
+<li>开启Sublime Text 2中的VIM功能</li>
+<li>Sublime Text 2与坚果云和HK4WIN的配合使用</li>
+</ul>
+
+
+<h3>0.序言</h3>
+
+<p>元旦小长假前几天偶然中接触到<a href="http://www.sublimetext.com/">Sublime Text 2</a>， 初步使用下来感觉很不错，是又一款比较适合程序员使用的文本编辑器。</p>
+
+<p>在Sublime Text 2之前，一直比较喜欢使用VIM和Notepad++，其中VIM主要用来查看一些源代码文件或编辑一些文本，</p>
+
+<p>而Notepad++更多是用来替代UltraEdit查看Log文件，目前使用下来感觉还不错，搜索功能同样强大。</p>
+
+<p>当然现在VIM还基本属于初步上手阶段，主要是VIM需要记忆的命令太多，而自己在Windows上使用VIM的频率也不怎么高。</p>
+
+<!--more-->
+
+
+<h3>1.在Windows/Ubuntu上安装Sublime Text 2</h3>
+
+<p>到<a href="http://www.sublimetext.com/2">Sublime Text 2官网</a>上下载Sublime Text 2，目前的版本是2.0.1。</p>
+
+<p>Windows上我下载的是portable版本，解压后即可运行，这样我结合同步工具就可以再多台机器上共享Sublime Text 2的配置和插件了。</p>
+
+<p>Ubuntu我是通过在虚拟机VirtualBox中安装的，版本是10.04，虽然版本旧了一点，但相对于新版的UI，我还是喜欢这版的。</p>
+
+<p>Ubuntu上下载Sublime Text 2的Linux 32Bit版本即可，解压后即可运行。</p>
+
+<h3>2.在Windows/Ubuntu上搭建Sublime Text 2的C/C++编译环境</h3>
+
+<p>这里C/C++编译器使用的是gcc/g++。</p>
+
+<p>在Windows上使用gcc/g++，可以安装<a href="http://www.mingw.org/">MinGW</a>，安装时要勾选上g++，默认没选择g++，安装好后需要在系统环境变量<strong>Path</strong>中加上<code>C:\MinGW\bin</code>，这里是假设MinGW被安装在C盘中。</p>
+
+<p>打开Windows的命令控制台，输入<code>g++ -v</code>来查看g++是否安装成功。</p>
+
+<p>当然在Windows中也可以使用VC++中的编译器，如何在命令行下使用VC++编译器请自行google之。</p>
+
+<p>如果在命令行下可以使用VC++编译器，这样我们可以在Sublime Text 2中新建一个C++编译配置，以实现在Sublime Text 2中使用VC++编译器。</p>
+
+<p>在Ubuntu下安装gcc/g++，在终端命令行中执行<code>sudo apt-get install build-essential</code>即可。</p>
+
+<p>Windows下，要在Sublime Text 2中实现编译、运行C/C++代码，需要修改或新建一个C++编译配置。</p>
+
+<p>具体是：</p>
+
+<p>Sublime Text 2中Tools –> Build System –> New Build System…</p>
+
+<p>输入如下内容，并将文件保存为C++Bulider.sublime-bulid。</p>
+
+<p>在Windows中，该文件被保存在Sublime Text 2目录下的Data\Packages\User中。</p>
+
+<p>在Ubuntu下，该文件被保证在当前用户目录下的.Config/sublime-text-2/Packages/User中。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>     "cmd": ["g++", "${file}", "-o", "${file_path}/${file_base_name}"], // For GCC On Windows and Linux
+</span><span class='line'>     //"cmd": ["CL", "/Fo${file_base_name}", "/O2", "${file}"],     // For CL on Windows Only
+</span><span class='line'>     "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+</span><span class='line'>     "working_dir": "${file_path}",
+</span><span class='line'>     "selector": "source.c, source.c++",
+</span><span class='line'>
+</span><span class='line'>     "variants":
+</span><span class='line'>     [
+</span><span class='line'>          {
+</span><span class='line'>               "name": "Run",
+</span><span class='line'>               //"cmd": ["bash", "-c", "g++ '${file}' -o '${file_path}/${file_base_name}' && '${file_path}/${file_base_name}'"]  // Linux Only
+</span><span class='line'>               "cmd": ["CMD", "/U", "/C", "g++ ${file} -o ${file_base_name} && ${file_base_name}"]  // For GCC On Windows Only
+</span><span class='line'>               //"cmd": ["CMD", "/U", "/C", "CL /Fo${file_base_name} /O2 ${file} && ${file_base_name}"]   // For CL On Windows Only
+</span><span class='line'>          }
+</span><span class='line'>     ]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我的机器上直接使用sublime Text 2默认的C++编译配置也是正常的，应该是我之前安装了Git的原因。</p>
+
+<p>ubuntu下也是可以直接使用sublime Text 2默认的C++编译配置的。</p>
+
+<p>搭建好C/C++编译环境后，Sublime Text 2中编译运行C/C++代码了。</p>
+
+<h3>3.使用Sublime Text 2编写、编译、运行C++代码</h3>
+
+<p>如在Sublime Text 2中新一个Demo.cpp文件，在其中输入代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#include &lt;stdio.h>
+</span><span class='line'>
+</span><span class='line'>int main()
+</span><span class='line'>{
+</span><span class='line'>     printf("hello world!\n");
+</span><span class='line'>     return 0;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>勾选Tools –> Build System –>C++或者C++Bulider，使用<code>Ctrl + B</code>编译代码，<code>Ctrl + Shift + B</code>执行程序。</p>
+
+<h3>4.推荐几个程序员喜欢的Sublime Text 2插件</h3>
+
+<p>和VIM、Notepad++等一样，Sublime Text 2也支持通过插件来扩展其功能。</p>
+
+<p>Sublime Text 2中安装插件前可先安装<strong>Package Control</strong>，然后通过Package Control来查找、安装插件。</p>
+
+<p>安装Package Control的方法是：</p>
+
+<p>在Sublime Text 2中按Ctrl + `，调出Sublime Text 2的命令行，在其中输入如下内容后，回车即可。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import urllib2,os; pf='Package Control.sublime-package'; ipp=sublime.installed_packages_path(); os.makedirs(ipp) if not os.path.exists(ipp) else None; urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler())); open(os.path.join(ipp,pf),'wb').write(urllib2.urlopen('http://sublime.wbond.net/'+pf.replace(' ','%20')).read()); print 'Please restart Sublime Text to finish installation'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装成功后，重启Sublime text 2，这时，在Preferences下看到Package Control了。</p>
+
+<p>在Windows中，Package Control被安装在Sublime Text 2目录下的Data\Installed Packages中；</p>
+
+<p>在Ubuntu中，Package Control被安装在当前用户目录下的.Config/sublime-text-2/Installed Packages中。</p>
+
+<p>而Sublime Text 2中其他的插件，在Windows中都被安装在Sublime Text 2目录下的Data\Packages中，</p>
+
+<p>在Ubuntu中被安装在当前用户目录下的.Config/sublime-text-2/Packages中。</p>
+
+<p>执行<code>Ctrl + Shift + P</code>调出命令窗口,输入install，根据提示选择Package Control: Install Package;</p>
+
+<p>稍等一下，就会弹出Sublime Text 2的插件列表，在其中选择需要的插件即可完成安装。</p>
+
+<p>下面是几个比较适合程序员使用的Sublime Text 2插件：</p>
+
+<ul>
+<li><p>Alignment: 用于代码对齐</p></li>
+<li><p>CTags: 用于方便浏览源代码</p></li>
+<li><p>Git：源代码版本控制</p></li>
+<li><p>Gist：Github中代码片段管理、分享工具</p></li>
+</ul>
+
+
+<p>要使Sublime Text 2中的CTags插件可用，需要在系统中安装CTags工具。</p>
+
+<p>到<a href="http://ctags.sourceforge.net/">这里</a>下载CTags工具，Windows选择ctags58.zip，解压后将其中的ctags.exe拷贝到C:\MinGW\Bin下。</p>
+
+<p>Ubuntu选择ctags-5.8.tar.gz，解压后, 在Bash中进入ctags-5.8目录，</p>
+
+<p>通过执行<code>./configure</code>, <code>make</code>, <code>make install</code>来安装ctags。</p>
+
+<p>安装好Gist插件后，需要修改Gist.sublime-settings这个配置文件，在username后输入Github的登陆用户名，在password后输入Github登陆密码，保存即可。</p>
+
+<p>安装好插件后，通过<code>Ctrl + Shift + P</code>调出命令窗口，然后输入插件名，根据提示可选择相应的插件功能。</p>
+
+<h3>5.使用Sublime Text 2浏览Source Code</h3>
+
+<p>这里主要是利用Sublime Text 2中打开文件夹和快速搜索等功能，配合CTags插件来使用。</p>
+
+<p>对于一个已存在的工程，可以通过Sublime Text 2的Open Folder这个功能来打开工程的全部文件，其中目录结构也同样保留，这个功能对于查看开源代码是非常有帮助的。</p>
+
+<p>而Sublime Text 2的快速搜索功能对于定位代码中的函数、变量等是非常有帮助的，结合CTags插件使用则会更加方便。</p>
+
+<p>使用<code>Ctrl + P</code>可调出Sublime Text 2的快速搜索界面，其功能主要包括：</p>
+
+<ul>
+<li><p>可以快速跳转到当前项目中的任意文件，可进行关键词匹配</p></li>
+<li><p>用 @ 可以快速列出/跳转到某个函数</p></li>
+<li><p>用 # 可以在当前文件中进行搜索</p></li>
+<li><p>用 : 加上数字可以跳转到相应的行</p></li>
+<li><p>可通过关键字转到某个文件同时加上 @ 来列出/跳转到目标文件中的某个函数，或是同时加上 # 来在目标文件中进行搜索，或是同时加上 : 和数字来跳转到目标文件中相应的行</p></li>
+</ul>
+
+
+<h3>6.使用Sublime Text 2和Github Gist管理代码片段</h3>
+
+<p>通过<code>Ctrl + Shift + P</code>调出命令窗口，在其中输入Gist，选择Gist: Open Gist会列出Github上Gist中已存在的代码片段，选择一个可用Sublime Text 2打开查看或修改。</p>
+
+<p>修改后通过Gist: Update File上传到Github的Gist中。</p>
+
+<p>要增加一个新的代码片段，可在Sublime Text 2中新建一个文件并在其中放入代码片段，或打开一个已存在的文件。</p>
+
+<p>然后使用Gist: Create Public Gist，然后输入描述文件和文件名即可。</p>
+
+<p>这里，顺便推荐一款在<strong>Chrome浏览器</strong>中使用Github Gist的插件 &#8211; <a href="https://github.com/simplelife7/EasyGist">EasyGist</a>。</p>
+
+<p>使用下来感觉还不错，很适合在Chrome中来管理代码片段。</p>
+
+<p>在Google网上应用点里搜索EasyGist，选择扩展程序，然后安装即可。</p>
+
+<p>初次使用需要登录一下。</p>
+
+<h3>7.开启Sublime Text 2中的VIM功能</h3>
+
+<p>通过<code>Ctrl + Shift + P</code>调出命令窗口，在其中输入Preferences，选择Preferences Settings - User</p>
+
+<p>将打开的文件内容修改为如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>     "ignored_packages":
+</span><span class='line'>     [
+</span><span class='line'>     ],
+</span><span class='line'>     "vintage_start_in_command_mode": true
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样，在Sublime Text 2中也可以使用VIM的相关命令了。</p>
+
+<p>如插入文本前需要使用<code>i</code>进入插入模式，用<code>Esc</code>回到正常模式中。</p>
+
+<h3>8.Sublime Text 2与坚果云和HK4WIN的配合使用</h3>
+
+<p>在Windows中，云同步工具一直在使用<a href="https://jianguoyun.com/">坚果云</a>，在国内算是做的不错的一个，支持多目录同步。</p>
+
+<p>由于我使用的是Sublime Text 2的portable版，这样将Sublime Text 2放入到坚果云的同步目录中。</p>
+
+<p>这样，我在Sublime Text 2中安装的插件和修改的相关配置都会被同步到云端，</p>
+
+<p>这样家中的机器也会自动进行同步，然后可继续使用Sublime Text 2。</p>
+
+<p>为了使用方便，我一直使用<a href="http://www.songruihua.com/hk4win.html">HK4WIN</a>来管理键盘快捷键。</p>
+
+<p>在HK4WIN的配置文件中加入启动Sublime Text 2的快捷键，这样，以后启动Sublime Text 2就很方便了。</p>
+
+<p>（完）</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-06T15:43:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/freesoftware/'>FreeSoftware</a>, <a class='category' href='/blog/categories/sublime-text2/'>Sublime-Text2</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/11/23/mfc-custom-control/" title="Previous Post: 使用MFC Custom Control实现界面的自绘">&laquo; 使用MFC Custom Control实现界面的自绘</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2013/01/06/sublime-text2-for-programmer/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2013/01/06/sublime-text2-for-programmer/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

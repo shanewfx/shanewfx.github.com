@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>搭Blog 学Git - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="想要有一个自己的独立博客是很久之前的事。 以前也在其他网站上写过自己的博客，但总觉得用的不顺手，感觉少了归属感，最主要是提供的界面感觉都不怎么好。 最近想学学Git，知道了Github，开始以为就是个代码仓库，后来才发现还提供了page服务，可以用来在上面搭建自己的独立博客。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/02/16/bulid-blog-by-octopress">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">搭Blog 学Git</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-16T14:45:00+08:00" pubdate data-updated="true">Feb 16<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>想要有一个自己的独立博客是很久之前的事。</p>
+
+<p>以前也在其他网站上写过自己的博客，但总觉得用的不顺手，感觉少了归属感，最主要是提供的界面感觉都不怎么好。</p>
+
+<p>最近想学学<strong>Git</strong>，知道了<strong>Github</strong>，开始以为就是个代码仓库，后来才发现还提供了page服务，可以用来在上面搭建自己的<strong>独立博客</strong>。</p>
+
+<p>在Github上搭建博客可以利用<a href="https://github.com/mojombo/jekyll/wiki">Jekyll</a>或者<a href="http://octopress.org/">Octopress</a>，Octopress是在Jekyll上建立起来的，即使没有网站设计经验的人也能够快速搭建起自己的博客。</p>
+
+<p>Jekyll和Octopress都是利用<strong>Ruby</strong>实现的，因此在搭建自己博客的过程中难免要接触到一些Ruby的东西，嗯，这说不定也是一个让自己开始了解Ruby的契机。</p>
+
+<p>整个博客的内容和设置都是通过Git进行版本管理的，其中当然需要了解一些基本的Git操作，其实也没有几个常用的命令。</p>
+
+<!--more-->
+
+
+<p>由于我平时的工作环境都是在Windows上，所以这次搭建博客也在Windows上完成的(我使用的OS是Windows XP)。</p>
+
+<p>下面是我用Octopress搭建博客的过程:</p>
+
+<h2>安装和设置Git</h2>
+
+<p>下载<a href="http://code.google.com/p/msysgit/">Git for Windows</a>，安装完成后就可以在本地使用Git了，但要将内容放到Github上，必须先在Github上注册个账户，然后在本机使用Git创建SSH Key。</p>
+
+<p>在Git Bash上输入命令:</p>
+
+<pre><code>ssh-keygen -C "username@email.com" -t rsa
+</code></pre>
+
+<p>Note: username@email.com需要更换成你自己的在Github上注册的Email地址</p>
+
+<p>这样会在用户目录(C:\Documents and Settings\UserName)下产生一个.ssh文件夹，里面为对应的SSH Keys，其中id_rsa.pub是Github需要的SSH公钥文件。</p>
+
+<p>在Github的Account Settings里选择SSH Keys，在其中将id_rsa.pub文件里内容拷贝至
+其中的Key里。</p>
+
+<p>这样以后就可以直接使用Git和GitHub了。</p>
+
+<h2>安装Ruby环境</h2>
+
+<p>下载<a href="http://rubyforge.org/frs/?group_id=167">RubyInstaller</a>和<a href="https://github.com/oneclick/rubyinstaller/downloads/">DevKit</a>。</p>
+
+<p>Octopress需要的Ruby版本为1.9.2，所以选rubyinstaller-1.9.2-p290.exe，DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe。</p>
+
+<p>先安装RubyInstaller，然后解压缩DevKit(路径中不能有中文)。</p>
+
+<p>在&#8221;Start Command Prompt with Ruby&#8221;命令行中进入DevKit解压缩的目录，然后运行以下命令:</p>
+
+<pre><code>ruby dk.rb init
+ruby dk.rb install
+gem install rdiscount --platform=ruby
+</code></pre>
+
+<p>如果安装成功，就可以使用一些Ruby的工具了，也为后面搭建博客提供了基础环境。</p>
+
+<h2>安装Octopress</h2>
+
+<p>先通过Git从Github上克隆一份Octopress</p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+</code></pre>
+
+<p>然后安装一些依赖的工具</p>
+
+<pre><code>cd octopress
+ruby --version # Should report Ruby 1.9.2
+gem install bundler
+bundle install
+</code></pre>
+
+<p>安装Octopress默认的Theme</p>
+
+<pre><code>rake install
+</code></pre>
+
+<h2>配置Octopress</h2>
+
+<p>通过修改_config.yml来配置博客，具体可以在<a href="https://github.com/shanewfx/shanewfx.github.com">我的Github</a>上查看具体的配置内容。</p>
+
+<h2>开始写博文</h2>
+
+<p>通过<code>rake new_post["title"]</code>来在<strong>source/_post</strong>下创建一个新的Post，文件名如下面的格式:<strong>2012-02-16-title.markdown</strong>。</p>
+
+<p>然后可以用VIM打开该文件，并在其中输入/编辑文章内容。</p>
+
+<p>写文章时，可以使用<a href="http://daringfireball.net/projects/markdown/">Markdown</a>和<a href="http://octopress.org/docs/blogging/plugins/">Octopress Plugins</a>来对内容进行格式排版。</p>
+
+<h2>预览效果</h2>
+
+<p>在修改设置或者写完文章后，想看看具体效果，可以通过如下命令来完成:</p>
+
+<pre><code>rake generate
+rake preview
+</code></pre>
+
+<p>然后在浏览器中打开http://localhost:4000/来看一看效果。</p>
+
+<h2>将博客部署到Github上</h2>
+
+<p>在预览的效果符合自己的预期后，就可以通过如下命令将内容部署到Github上了。</p>
+
+<p>第一次部署前需要先要在Github上创建一个<strong>username.github.com</strong>的repository，
+然后通过<code>rake setup_github_pages</code>将自己的Blog与上述的repository关联起来。
+在其过程中根据提示输入<strong>username.github.com</strong>。</p>
+
+<p>然后就可以通过下面的命令来部署自己的博客内容至Github了:</p>
+
+<pre><code>rake deploy
+git status
+git add .
+git commit -a -m 'comment'
+git push origin source
+</code></pre>
+
+<h2>开始浏览自己的博客</h2>
+
+<p>在浏览器的地址栏中输入<strong>username.github.com</strong>，打开的网站就是自己的博客了，此刻一个独立博客就如此问世了!</p>
+
+<p>以后就可以享受这种以Geek方式来写博客的生活了!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-16T14:45:00+08:00" pubdate data-updated="true">Feb 16<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/git/'>Git</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/02/16/clone-blog-from-github/" title="next Post: 如何维护Github上博客">如何维护Github上博客 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/02/16/bulid-blog-by-octopress/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/02/16/bulid-blog-by-octopress/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Sed | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/sed/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用Python图形化分析大Log文件]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/09/03/analyze-log-file-based-on-python/"/>
+    <updated>2012-09-03T14:14:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/09/03/analyze-log-file-based-on-python</id>
+    <content type="html"><![CDATA[<p>最近因为项目需要经常分析数据量很大的Log文件，以往靠手工目测的分析方法已不太可能快速分析和定位问题。</p>
+
+<p>由于和我一起做这个项目的同事，会使用Python，编写的Python脚本能够将Log中的相关数据以图形的方式显示出来，这样就便于我们快速检测出是否输入、输出有异常情况发生。
+这样，也就加快了解决问题的效率。</p>
+
+<p>为此，在这里简要记录一下具体的方法，以便以后在需要的时候能够做参考。</p>
+
+<!--more-->
+
+
+<h2>工具准备</h2>
+
+<p>需要的工具如下：</p>
+
+<ul>
+<li><p><a href="http://www.python.org/">Python</a>（版本是2.7.3，自带一个简单的IDE）</p></li>
+<li><p>数值运算库<a href="http://sourceforge.net/projects/numpy/files/NumPy/">numpy</a>，matplotlib依赖这个库</p></li>
+<li><p>类似matlab的图形库<a href="http://matplotlib.sourceforge.net/">matplotlib</a></p></li>
+<li><p>文本编辑工具<a href="http://gnuwin32.sourceforge.net/packages/sed.htm">sed</a></p></li>
+</ul>
+
+
+<p>有了这些工具，还需要了解一些正则表达式，可参看<a href="http://shanewfx.github.com/blog/2012/09/01/learning-regex/">这里</a>。</p>
+
+<p>当然，基本的Python脚本编程功底的需要的。网上关于Python的教程有很多，我参考了如下几篇：</p>
+
+<ul>
+<li><p><a href="http://woodpecker.org.cn/abyteofpython_cn/chinese/">简明Python教程</a></p></li>
+<li><p><a href="http://docs.linuxtone.org/ebooks/Python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.pdf">Python学习笔记</a></p></li>
+<li><p><a href="http://woodpecker.org.cn/diveintopython/">Dive into Python</a></p></li>
+</ul>
+
+
+<p>从这几天学习的效果来看，Python应该算是比较容易上手的语言。</p>
+
+<p>可能是Python里面的语法和概念和C++有相似之处，所以很多语法基本只有了解一下怎么写就可以了。</p>
+
+<p>其中，列表、序列、字典这几种Python中的数据结构要用熟，另外，在Python中不需要再关心数据的类型，直接用就好了。</p>
+
+<p>终于体会到一点“学好C++之后再学其他语言要相对容易”的感觉。</p>
+
+<p>看了上述的教程，现在写一些简单的脚本也是很容易的了。</p>
+
+<h2>分析Log文件的过程</h2>
+
+<ul>
+<li>编写批处理文件，使用Sed命令从Log文件中提取出需要的数据，将所有匹配数据所在的行都打印出来，写并到其他的文件中</li>
+</ul>
+
+
+<p>参考下面的代码，其中，Sed命令中引号的内容为要匹配文本的正则表达式，正则表达式在两个斜杠之间，后面的p是打印的命令，Sed命令执行的结果被重定向到后面的文件中。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>del /f/s/q Video.txt
+</span><span class='line'>del /f/s/q Audio.txt&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>del /f/s/q VideoRecv.txt
+</span><span class='line'>del /f/s/q AudioRecv.txt&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>del /f/s/q videopts.txt
+</span><span class='line'>del /f/s/q audiopts.txt&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sed -n "/Video.&lt;em>New Frame/p" tsmux.txt>>Video.txt
+</span><span class='line'>sed -n "/Audio.&lt;/em>New Frame/p" tsmux.txt>>Audio.txt&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sed -n "/nType : ESTYPE_VIDEO/p" tsmux.txt>>VideoRecv.txt
+</span><span class='line'>sed -n "/nType : ESTYPE_AUDIO/p" tsmux.txt>>AudioRecv.txt&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sed -n "/origin pts: .&lt;em>, video/p" tsmux.txt>>videopts.txt
+</span><span class='line'>sed -n "/origin pts: .&lt;/em>, audio/p" tsmux.txt>>audiopts.txt</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这个批处理的脚本要和要分析的Log文件放在同一文件夹下，这样双击执行脚本，文件夹中会多了5个文件，这几个文件就是我们下面Python脚本需要用到的。</p>
+
+<ul>
+<li>编写分析Log数据的Python脚本，该脚本运行后会以图形的方法显示出相关数据的分析结果</li>
+</ul>
+
+
+<p>下面这个例子要完成的功能就是前端输入PTS的总体趋势是否正确，有无明显跳变。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import re
+</span><span class='line'>import matplotlib.pyplot as plt&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>print "analyse video input pts!..."&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>regex  = re.compile('video pts : (\d+)')
+</span><span class='line'>regex1 = re.compile('audio pts : (\d+)')&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>video_index = []
+</span><span class='line'>video_pts   = []&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>'''
+</span><span class='line'>file = open("videopts.txt", "rb")
+</span><span class='line'>log = file.readline()
+</span><span class='line'>while log:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>found = regex.search(log)
+</span><span class='line'>if found:
+</span><span class='line'>    video_index.append(len(video_index))
+</span><span class='line'>    video_pts.append(found.group(1))
+</span><span class='line'>log = file.readline()
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>file.close()
+</span><span class='line'>'''&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>file  = open("videopts.txt", "rb")
+</span><span class='line'>log = file.read()
+</span><span class='line'>file.close()&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>m = regex.findall(log)
+</span><span class='line'>if m:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>print "video match success"
+</span><span class='line'>for pts in m:
+</span><span class='line'>    video_index.append(len(video_index))
+</span><span class='line'>    video_pts.append(pts)
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>else:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>print "not match"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>audio_index = []
+</span><span class='line'>audio_pts   = []&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>file1 = open("audiopts.txt", "rb")
+</span><span class='line'>log1 = file1.read()
+</span><span class='line'>file1.close()&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>m1 = regex1.findall(log1)
+</span><span class='line'>if m1:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>print "audio match success"
+</span><span class='line'>for pts1 in m1:
+</span><span class='line'>    audio_index.append(len(audio_index))
+</span><span class='line'>    audio_pts.append(pts1)
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>else:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>print "audio not match"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>print "begin to plot"&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>fig = plt.figure()
+</span><span class='line'>video_pts_plot = fig.add_subplot(211)
+</span><span class='line'>video_pts_plot.plot(video_index, video_pts, 'r')
+</span><span class='line'>audio_pts_plot = fig.add_subplot(212)
+</span><span class='line'>audio_pts_plot.plot(video_index, video_pts, 'b')
+</span><span class='line'>plt.show()</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>运行这个Python脚本后，可看到输入的Video/Audio PTS以图形的方式被显示出来。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/7919967470/" title="Flickr 上 shanewfx 的 python"><img src="http://farm9.staticflickr.com/8169/7919967470_a8847583ce.jpg" width="500" height="498" alt="python"></a></p>
+
+<p>在这个例子中，我们可以看到要使用到Python的正则表达式库re，图形绘制库matplotlib，还需要了解python中文件的操作，列表的使用等。</p>
+
+<p>具体的用法请google其他资料。</p>
+
+<p>（完）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[正则表达式初学笔记]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/09/01/learning-regex/"/>
+    <updated>2012-09-01T13:43:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/09/01/learning-regex</id>
+    <content type="html"><![CDATA[<p>最近一直在做MPEG2 TS-Mux，在开发调试的过程中有大量的log数据需要分析，特别是长时间测试，log文件往往会达到几百兆。</p>
+
+<p>这时遇到问题，要自己逐行去分析log定位问题往往是不太现实的事情。</p>
+
+<p>为了提高log文件分析的效率，我们利用Python编写分析log的脚本，每个脚本分析log文件中一类信息，如从前端Encoder中接受到的PTS，分析PTS是否有错误或跳变等情况。</p>
+
+<p>为了从原始的log文件中提取出我们关心的log部分，使用了一个命令行工具<a href="http://gnuwin32.sourceforge.net/packages/sed.htm">Sed</a>。</p>
+
+<p>Sed(streams editor)的具体使用方法可参考这篇文章<a href="http://blog.csdn.net/cxqdong/article/details/2007884">sed命令+正则表达式</a>。</p>
+
+<p>在一个数据量很大的文本中要查找出所有符合特定规则的文本，使用文本编辑器中简单查找功能往往很难达到要求。</p>
+
+<p>不过现在的文本编辑器也越来越强大，我熟悉的如VIM、Notepad++、UltraEdit等都是支持使用<a href="http://deerchao.net/tutorials/regex/regex.htm">正则表达式</a>来完成复杂的、自定义规则的文本查找功能。
+上述的Sed也是使用正则表达式来实现强大的文本查找功能。</p>
+
+<p>下面将会简单介绍一些关于正则表达式的知识，以后有时间会写一篇关于如何使用Python和matplotlib库来分析log数据并图形化显示分析结果的文章。</p>
+
+<!--more-->
+
+
+<p>对于正则表达式，我基本也是属于初学，这里主要是记录一下正则表达式的基本语法，学会如何使用这些基本语法来构建符合自己查找意图的正则表达式。</p>
+
+<p>网上关于正则表达式的教程有很多，我主要参考了如下几篇：</p>
+
+<ul>
+<li><p><a href="http://deerchao.net/tutorials/regex/regex.htm">正则表达式30分钟入门教程</a></p></li>
+<li><p><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></p></li>
+</ul>
+
+
+<h2>什么是正则表达式?</h2>
+
+<p>正则表达式(Regular Expression)，实际上就是一个描述待查找文本特征的字符串，这些字符串就构成了查找的规则，如下面的这些例子：</p>
+
+<ul>
+<li><p>abc                ->  描述了待查找文本的特征是：待查找的就是包含abc的文本</p></li>
+<li><p>\d...\s123         ->  描述了待查找文本的特征是：以数字开关(在0至9范围内)，后面跟3个任意字符，再跟一个任意类型的空格，之后跟着123</p></li>
+<li><p>[1-9][0-9]{4, 11}  ->  描述了待查找文本的特征是：以1至9范围内任一数字为开头，后面最少跟4个，最多跟11个数字(在0至9范围内)</p></li>
+<li><p>\d{4}-?\d{7, 8}    ->  描述了待查找文本的特征是：以4个数字开头，中间可以有也可以没有-，后面最少跟7个，最多跟8个数字(在0至9范围内)</p></li>
+</ul>
+
+
+<p>如果之前没有接触过正则表达式，初次看到上述的这几个字符串，肯定不知所云，觉得莫名其妙。
+没关系，我相信大多数人在开始学习正则表达式时会有这样的感觉。</p>
+
+<p>实际上，通过上述的一些解释，我们可以看到正则表达式中使用了一些特殊的符号来表示一类字符，如使用\d来表示0至9范围内的数字等。</p>
+
+<p>要想对正则表达式有深入了解，我们需要去学习一下正则表达式的基本语法，熟悉之后，我们就可以根据实际的需要来构建自己的正则表达式。</p>
+
+<h2>正则表达式的基本语法</h2>
+
+<p>注：文中的部分例子来自于<a href="http://deerchao.net/tutorials/regex/regex.htm">正则表达式30分钟入门教程</a>。</p>
+
+<h3>元字符</h3>
+
+<p>元字符是正则表达式中一种特殊的字符，是用来表示其他字符的字符，实际查找的文本并不包含自身，相当于是信息的一种描述。</p>
+
+<p>在正则表达式中，有如下几种元字符：
+<code>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+元字符    |     描述的特征
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  .      |     匹配除换行符以外的任意字符
+  \w     |     匹配字母或数字或下划线或汉字
+  \s     |     匹配任意的空白符
+  \d     |     匹配数字
+  \b     |     匹配单词的开始或结束
+  ^      |     匹配字符串的开始
+  $      |     匹配字符串的结束
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</code></p>
+
+<h3>转义字符</h3>
+
+<p>元字符是用来表示其他的字符，而不能用来表达自身，因此，如果我们查找的文本中的确是要包含元字符时，这时就需要使用转义字符。</p>
+
+<p>熟悉C/C++的同学应该对转义字符会很熟悉，转义字符就是使用反斜杠'\'来取消元字符的特殊意义，而表达自身的一种方法，类似上述元字符中的\w,\s,\d,\b。</p>
+
+<p>上述的这几个在形式上类似转义字符的元字符在实际中是不需要转义的，因为它们相当于是2个字符，而如果要查找的文本中要包含., ^, $，则需要转义., \<sup>,</sup> \$。</p>
+
+<h3>指定重复的次数</h3>
+
+<p>在正则表达式中，允许使用特殊的符合来指定其面前一个字符或一个组合单元重复的次数。</p>
+
+<p>有如下几种指定重复次数的方法：
+<code>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 限定符   |     描述的特征
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   *     |     重复0零次或更多次
+   +     |     重复1次或更多次
+   ?     |     重复0次或1次
+  {n}    |     重复n次
+  {n,}   |     重复n次或更多次
+  {n,m}  |     重复n到m次
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</code></p>
+
+<h3>指定字符集</h3>
+
+<p>如果我们事先知道在查找文本规则的特定位置的字符是在某个具体范围内，如某个位置上出现的字符只能是a,b,c,1,2,3中的一个时，正则表达式允许我们指定出这个字符集。</p>
+
+<p>方法也很简单，就是将可能出现的字符放在方括号之中，如[abc123]即可。</p>
+
+<p>对于连续的数字和字母，也可以用更简单的方法，如[0-9]表示出现的字符在数字0至9中的一个，类似的有[a-z]，[A-Z]。</p>
+
+<p>还可以将上面的组合起来，如[0-9a-zA-Z]。</p>
+
+<p>正则表达式中的那些有特殊意义的符合也可以不用转义直接放在其中，如[.?+]可匹配., ?, +。</p>
+
+<h3>组合字符</h3>
+
+<p>我们已经知道，要重复单个字符，可直接在这个字符后加上指定重复次数的限定符即可。</p>
+
+<p>如果我们要指定一组连续的字符的重复次数，该如何做呢？</p>
+
+<p>方法是先将这组连续的字符放到圆括号()中，然后在后面加上指定重复次数的限定符就可以了。</p>
+
+<p>如(abc){2}，就描述了重复2次abc, 即abcabc。</p>
+
+<p>更复杂的一个例子：(?0\d{2}[) -]?\d{8}</p>
+
+<p>这个正则表达式可以这样来分析：</p>
+
+<p>首先是一个转义字符(, 它能出现0次或1次(?), 然后是一个0，后面跟着2个数字(\d{2})，然后是)或-或空格中的一个，它出现1次或不出现(?)，最后是8个数字(\d{8})。</p>
+
+<h3>匹配多个正则表达式中的一个</h3>
+
+<p>有时候一个正则表达式可能匹配出比我们预想要多的文本，如用于匹配电话号码的正则表达式(?0\d{2}[)-]?\d{8}，不仅可匹配(010)88886666、022-22334455、02912345678等正常的号码，还会匹配出010)12345678或(022-87654321等这样的"不正确"的格式。</p>
+
+<p>要解决这个问题，我们可以明确指定出每一种电话号码的匹配规则，各个匹配规则之间用'|'来分隔，这样只有符合指定规则中的一种时才会被匹配，这有点类似于C/C++中的'或'运算。</p>
+
+<p>例如，0\d{2}-\d{8}|0\d{3}-\d{7}这个表达式能匹配两种以连字号分隔的电话号码：一种是三位区号，8位本地号(如010-12345678)，一种是4位区号，7位本地号(0512-6733445)。</p>
+
+<h3>取反</h3>
+
+<p>如果我们事先知道要查找的文本中肯定没有哪些字符，或者是要匹配除了某某字符之外的任意字符这种情况时，我们可以用类似C/C++中的'取反'运算来实现。</p>
+
+<p>正则表达式允许的'取反'：
+<code>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+元字符    |     描述的特征
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  \W     |     匹配任意不是字母，数字，下划线，汉字的字符
+  \S     |     匹配任意不是空白符的字符
+  \D     |     匹配任意非数字的字符
+  \B     |     匹配不是单词开头或结束的位置
+ [^x]    |     匹配除了x以外的任意字符
+ [^abc]  |     匹配除了abc这几个字母以外的任意字符
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</code>
+一些例子：</p>
+
+<p>\S+        匹配不包含空白符的字符串</p>
+
+<p>&lt;a[<sup>>]+></sup>   匹配用尖括号括起来的以a开头的字符串</p>
+
+<h3>两种匹配模式：贪婪和懒惰</h3>
+
+<p>当正则表达式中包含能接受重复的限定符时，通常的行为是（在使整个表达式能得到匹配的前提下）匹配尽可能多的字符。</p>
+
+<p>例如，"a.*b" 它将会匹配最长的以a开始，以b结束的字符串。如果用它来搜索aabab的话，它会匹配整个字符串aabab。这被称为贪婪匹配。</p>
+
+<p>如果我们希望匹配尽可能少的字符，只需在之前的限定符后加个问号'?'，这样将会以懒惰模式进行匹配。</p>
+
+<p>例如，a.*?b 匹配最短的，以a开始，以b结束的字符串。如果把它应用于aabab的话，它会匹配aab（第一到第三个字符）和ab（第四到第五个字符）。
+```
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 限定符   |     描述的特征
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   *?   |     重复任意次，但尽可能少重复
+   +?    |     重复1次或更多次，但尽可能少重复
+   ??    |     重复0次或1次，但尽可能少重复
+  {n,}?  |     重复n次以上，但尽可能少重复
+  {n,m}? |     重复n到m次，但尽可能少重复
+++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+
+<h2>```</h2>
+
+<p>这些语法应该是正则表达式的最基础部分，还有一些高级的特性文中并没有涉及。</p>
+
+<p>如果能够掌握并熟练使用上述的这些正则表达式的基本语法的话，我相信对于大多数的情况，正则表达式能够帮助我们快速的从复杂的文本中匹配出我们需要的内容。</p>
+
+<p>从现在开始，慢慢感受正则表达式的强大吧!</p>
+
+<p>(完)</p>
+]]></content>
+  </entry>
+  
+</feed>

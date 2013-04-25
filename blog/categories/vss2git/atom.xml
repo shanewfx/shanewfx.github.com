@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: VSS2Git | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/vss2git/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[迁移VSS版本库到Git]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/05/09/migrate-from-vss-to-git/"/>
+    <updated>2012-05-09T16:10:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/05/09/migrate-from-vss-to-git</id>
+    <content type="html"><![CDATA[<p>公司最近有意将版本控制工具从VSS和CVS切换到Git上，由于之前的项目一直是使用VSS和CVS进行版本管理，这次迁移免不了要涉及VSS和CVS版本库向Git进行转换的工作。</p>
+
+<p>带着这个目的，我先尝试着找到VSS到Git迁移的可行方案，因为我之前的项目一直也是用VSS进行版本管理，相对于从没有使用过的CVS而言，应该更容易上手一些。至于CVS如何迁移到Git会在后面进行研究。</p>
+
+<!--more-->
+
+
+<p>之前在学习使用GitStack搭建Git服务器时，在其官方网站上看到一篇讲如何<a href="http://gitstack.com/migrate-from-svn-to-git/">迁移SVN版本库到Git</a>的文章，文中有提到git svn命令，可见Git内部已经有了对SVN版本库进行操作的支持，继而顺着这个思路，试着去找找有没有支持对VSS和CVS的操作，结果发现Git没有对VSS的操作支持，对于CVS倒是有git cvsimport，但在Git Bash中却不认识该命令，运行<code>git help vcsimport</code>也没有相关的文档，而使用<code>git help vcs-migration</code>倒是有文档，其中也提到了git cvsimport，难道是我是在Windows上使用的Git（安装的是msysGit 1.7.10），而在Windows上还不支持该命令吗？不知道在Linux上的情况是怎么样的？</p>
+
+<p>这个问题暂时先搁置，先研究一下如何将原有的VSS版本库迁移到Git上。</p>
+
+<p>既然Git没有对VSS的支持，那么VSS转Git应该是需要第三方的工具来帮助实现这个转换工作（该工具要读取并分析VSS仓库的数据，然后按照Git版本库的内部结构来存放之前VSS版本库中的数据），按照这个思路，在Google上搜索了一下，果然发现有一个这样的工具，那就是<a href="http://code.google.com/p/vss2git/">vss2git</a>，而且是个开源的项目，很对我的胃口。</p>
+
+<p>下载下来并试用了一下，结果成功将之前的一个用VSS管理的项目转换为Git仓库，并且<strong>之前VSS的历史信息也被保留下来</strong>，基本是满足了要求。</p>
+
+<h3>VSS版本库到Git的迁移</h3>
+
+<p>打开VSS2Git，其界面就是一个对话框，在其中作一些必要的设置，主要是设置VSS版本库所在的路径、要转换VSS版本库中哪一个项目（也可以是整个VSS版本库中全部的项目）、转换结果的存放位置、转换Log存放的位置、转换过程中创建Git提交对象时所需的email的domain等，设置好这些之后，点击Go按键即可开始VSS到Git仓库的转换。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/7163442740/" title="Flickr 上 shanewfx 的 VSS2Git"><img src="http://farm8.staticflickr.com/7088/7163442740_845fe43252.jpg" width="500" height="340" alt="VSS2Git"></a></p>
+
+<p>转换所需的时间长短取决于VSS仓库的大小，如果VSS仓库中项目众多，且开发的时间都比较久的话，那么完成整个仓库的转换应该需要的时间会比较长，但如果只是转换其中一个项目到Git，那么时候会比较短。</p>
+
+<p>转换后，通过<code>git log</code>可以看到之前VSS仓库中的历史信息，而且这些历史信息在Git仓库中仍然是按照提交时间的先后来排列的。</p>
+
+<p>在转换过程中，打开存放Git仓库的目录，你会发现工作目录随着时间会在变化，这是因为VSS2Git在转换时会先分析并收集VSS仓库中的各种信息，然后再从VSS仓库中记录的最早的时间点开始Replay（演绎）整个VSS仓库数据形成的过程。</p>
+
+<p>在演绎过程中，应该是先从VSS中取出最初的版本（Git仓库最初为一个空仓库），并将其版本中的文件作为Git工作目录的文件，然后按照Git先对工作目录进行文件快照再提交到Git仓库的做法，按照时间顺序逐个版本进行提交（提交时会取出VSS中对应版本的历史信息），最终将VSS版本库转换为Git仓库。</p>
+
+<p>上述的演绎过程是我自己初步推断的大概过程，实际是否这么实现，请参考VSS2Git的源代码（用C#实现的）。
+另外，VSS仓库内部的数据到底是如何组织的我也没有研究过。</p>
+
+<p><strong>要注意的几点：</strong></p>
+
+<ul>
+<li><p>如果是要将整个VSS仓库中的所有项目都迁移到Git中，那么在VSS2Git界面的Project一项中填上<code>$</code></p></li>
+<li><p>如果只是要将VSS仓库中的某一个项目迁移到Git上，则在Project一项中应填上<code>$/Project1</code> (其中Project1为假设的项目名)，甚至可以仅转换子项目，这样<code>$/Project1/32Bit</code></p></li>
+<li><p>VSS2Git一次要么完成VSS仓库的整体转换，要么只能转换VSS仓库中其中一个项目，这样要实现多个项目的转换就要多次执行VSS2Git</p></li>
+<li><p>VSS2Git的每一次转换会产生一个Git仓库，如果是VSS仓库一次整体转换，则生成的Git仓库中将包含VSS仓库中所有的项目，这样带来的问题是，由于Git仓库中包含了所有的项目，这样以后不同项目的开发人员无法从Git仓库中只checkout出自己负责的那个项目文件，而是要checkout出所有项目的文件，这样对于公司的代码安全是非常不利的，那么，这样就不应该一次将VSS仓库整体转换，而是应该以项目为单位进行逐个转换，这样，对于不同的项目，对其Git仓库就可以为不同的开发人员设置不同的操作权限</p></li>
+<li><p>VSS2Git在生成Git提交信息所需的email时，只是根据从VSS中提取出的User名加上在界面Email domain中填写的内容组合而成，实际生成的email地址未必是有效的（不一定能用来发送email）</p></li>
+</ul>
+
+
+<p>更多的注意事项可至<a href="http://code.google.com/p/vss2git/">VSS2Git的主页</a>查看。</p>
+
+<h3>导入现有的Git仓库到GitStack服务器上</h3>
+
+<p>通过VSS2Git，我们可以将VSS仓库中的项目逐一转换为该项目的Git仓库，这时我们可以将其放置到Git服务器上了，以便后续的开发和维护。</p>
+
+<p>这里，我们假设使用GitStack搭建了Git服务器（如何搭建见<a href="http://shanewfx.github.com/blog/2012/05/03/git-server-based-on-gitstack/">上篇</a>），现在的问题就相当于如何将一个现有的Git仓库导入到GitStack搭建的服务器上。因为正常的流程是在GitStack上先创建裸仓库，然后再向其中提交，如果这样做的话，我们之前的VSS中的历史信息恐怕就要丢失了，而这是我们不希望的结果。</p>
+
+<p>不过幸运的是，GitStack支持导入一个现有的Git仓库到其中，其步骤也很简单，就是先将现有的Git仓库拷贝至C:\GitStack\repositories目录下面，然后登陆到GitStack上，在Repositories列表中会发现我们的Git仓库已经在其中，但Action栏则出现了一个绿色的安装，而非添加用户、查看仓库的那些按钮，这时我们只有点击这个绿色按钮就完成了该Git仓库的导入，之后我们会发现绿色的按钮被正常的添加用户、查看仓库的那些按钮替换掉，这时我们就可以为该Git仓库添加用户并设置访问权限了。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/7163501304/" title="Flickr 上 shanewfx 的 gitstack"><img src="http://farm6.staticflickr.com/5160/7163501304_4d08fab433.jpg" width="500" height="210" alt="gitstack"></a></p>
+
+<p>具体的过程，在GitStack的文档中有详细的阐述，请见<a href="http://gitstack.com/import-an-existing-repository/">Import an existing repository</a>，这里不再赘述。</p>
+
+<p>至此，如何将VSS仓库迁移到Git，并将生成的Git仓库导入到GitStack搭建的服务器上的大概过程就结束了。</p>
+
+<p>（全文完）</p>
+]]></content>
+  </entry>
+  
+</feed>

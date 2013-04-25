@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: FreeSoftware | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/freesoftware/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[程序员的代码编辑器--Sublime Text 2]]></title>
+    <link href="http://shanewfx.github.com/blog/2013/01/06/sublime-text2-for-programmer/"/>
+    <updated>2013-01-06T15:43:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2013/01/06/sublime-text2-for-programmer</id>
+    <content type="html"><![CDATA[<h4>===目录===</h4>
+
+<ul>
+<li>在Windows/Ubuntu上安装Sublime Text 2</li>
+<li>在Windows/Ubuntu上搭建Sublime Text 2的C/C++编译环境</li>
+<li>使用Sublime Text 2编写、编译、运行C++代码</li>
+<li>推荐几个程序员喜欢的Sublime Text 2插件</li>
+<li>使用Sublime Text 2浏览Source Code</li>
+<li>使用Sublime Text 2和Github Gist管理代码片段</li>
+<li>开启Sublime Text 2中的VIM功能</li>
+<li>Sublime Text 2与坚果云和HK4WIN的配合使用</li>
+</ul>
+
+
+<h3>0.序言</h3>
+
+<p>元旦小长假前几天偶然中接触到<a href="http://www.sublimetext.com/">Sublime Text 2</a>， 初步使用下来感觉很不错，是又一款比较适合程序员使用的文本编辑器。</p>
+
+<p>在Sublime Text 2之前，一直比较喜欢使用VIM和Notepad++，其中VIM主要用来查看一些源代码文件或编辑一些文本，</p>
+
+<p>而Notepad++更多是用来替代UltraEdit查看Log文件，目前使用下来感觉还不错，搜索功能同样强大。</p>
+
+<p>当然现在VIM还基本属于初步上手阶段，主要是VIM需要记忆的命令太多，而自己在Windows上使用VIM的频率也不怎么高。</p>
+
+<!--more-->
+
+
+<h3>1.在Windows/Ubuntu上安装Sublime Text 2</h3>
+
+<p>到<a href="http://www.sublimetext.com/2">Sublime Text 2官网</a>上下载Sublime Text 2，目前的版本是2.0.1。</p>
+
+<p>Windows上我下载的是portable版本，解压后即可运行，这样我结合同步工具就可以再多台机器上共享Sublime Text 2的配置和插件了。</p>
+
+<p>Ubuntu我是通过在虚拟机VirtualBox中安装的，版本是10.04，虽然版本旧了一点，但相对于新版的UI，我还是喜欢这版的。</p>
+
+<p>Ubuntu上下载Sublime Text 2的Linux 32Bit版本即可，解压后即可运行。</p>
+
+<h3>2.在Windows/Ubuntu上搭建Sublime Text 2的C/C++编译环境</h3>
+
+<p>这里C/C++编译器使用的是gcc/g++。</p>
+
+<p>在Windows上使用gcc/g++，可以安装<a href="http://www.mingw.org/">MinGW</a>，安装时要勾选上g++，默认没选择g++，安装好后需要在系统环境变量<strong>Path</strong>中加上<code>C:\MinGW\bin</code>，这里是假设MinGW被安装在C盘中。</p>
+
+<p>打开Windows的命令控制台，输入<code>g++ -v</code>来查看g++是否安装成功。</p>
+
+<p>当然在Windows中也可以使用VC++中的编译器，如何在命令行下使用VC++编译器请自行google之。</p>
+
+<p>如果在命令行下可以使用VC++编译器，这样我们可以在Sublime Text 2中新建一个C++编译配置，以实现在Sublime Text 2中使用VC++编译器。</p>
+
+<p>在Ubuntu下安装gcc/g++，在终端命令行中执行<code>sudo apt-get install build-essential</code>即可。</p>
+
+<p>Windows下，要在Sublime Text 2中实现编译、运行C/C++代码，需要修改或新建一个C++编译配置。</p>
+
+<p>具体是：</p>
+
+<p>Sublime Text 2中Tools –> Build System –> New Build System…</p>
+
+<p>输入如下内容，并将文件保存为C++Bulider.sublime-bulid。</p>
+
+<p>在Windows中，该文件被保存在Sublime Text 2目录下的Data\Packages\User中。</p>
+
+<p>在Ubuntu下，该文件被保证在当前用户目录下的.Config/sublime-text-2/Packages/User中。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> "cmd": ["g++", "${file}", "-o", "${file_path}/${file_base_name}"], // For GCC On Windows and Linux
+</span><span class='line'> //"cmd": ["CL", "/Fo${file_base_name}", "/O2", "${file}"],     // For CL on Windows Only
+</span><span class='line'> "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+</span><span class='line'> "working_dir": "${file_path}",
+</span><span class='line'> "selector": "source.c, source.c++",
+</span><span class='line'>
+</span><span class='line'> "variants":
+</span><span class='line'> [
+</span><span class='line'>      {
+</span><span class='line'>           "name": "Run",
+</span><span class='line'>           //"cmd": ["bash", "-c", "g++ '${file}' -o '${file_path}/${file_base_name}' &amp;&amp; '${file_path}/${file_base_name}'"]  // Linux Only
+</span><span class='line'>           "cmd": ["CMD", "/U", "/C", "g++ ${file} -o ${file_base_name} &amp;&amp; ${file_base_name}"]  // For GCC On Windows Only
+</span><span class='line'>           //"cmd": ["CMD", "/U", "/C", "CL /Fo${file_base_name} /O2 ${file} &amp;&amp; ${file_base_name}"]   // For CL On Windows Only
+</span><span class='line'>      }
+</span><span class='line'> ]
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>我的机器上直接使用sublime Text 2默认的C++编译配置也是正常的，应该是我之前安装了Git的原因。</p>
+
+<p>ubuntu下也是可以直接使用sublime Text 2默认的C++编译配置的。</p>
+
+<p>搭建好C/C++编译环境后，Sublime Text 2中编译运行C/C++代码了。</p>
+
+<h3>3.使用Sublime Text 2编写、编译、运行C++代码</h3>
+
+<p>如在Sublime Text 2中新一个Demo.cpp文件，在其中输入代码：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>include &lt;stdio.h>&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>int main()
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> printf("hello world!\n");
+</span><span class='line'> return 0;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>勾选Tools –> Build System –>C++或者C++Bulider，使用<code>Ctrl + B</code>编译代码，<code>Ctrl + Shift + B</code>执行程序。</p>
+
+<h3>4.推荐几个程序员喜欢的Sublime Text 2插件</h3>
+
+<p>和VIM、Notepad++等一样，Sublime Text 2也支持通过插件来扩展其功能。</p>
+
+<p>Sublime Text 2中安装插件前可先安装<strong>Package Control</strong>，然后通过Package Control来查找、安装插件。</p>
+
+<p>安装Package Control的方法是：</p>
+
+<p>在Sublime Text 2中按Ctrl + `，调出Sublime Text 2的命令行，在其中输入如下内容后，回车即可。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import urllib2,os; pf='Package Control.sublime-package'; ipp=sublime.installed_packages_path(); os.makedirs(ipp) if not os.path.exists(ipp) else None; urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler())); open(os.path.join(ipp,pf),'wb').write(urllib2.urlopen('http://sublime.wbond.net/'+pf.replace(' ','%20')).read()); print 'Please restart Sublime Text to finish installation'&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div>
+安装成功后，重启Sublime text 2，这时，在Preferences下看到Package Control了。</p>
+
+<p>在Windows中，Package Control被安装在Sublime Text 2目录下的Data\Installed Packages中；</p>
+
+<p>在Ubuntu中，Package Control被安装在当前用户目录下的.Config/sublime-text-2/Installed Packages中。</p>
+
+<p>而Sublime Text 2中其他的插件，在Windows中都被安装在Sublime Text 2目录下的Data\Packages中，</p>
+
+<p>在Ubuntu中被安装在当前用户目录下的.Config/sublime-text-2/Packages中。</p>
+
+<p>执行<code>Ctrl + Shift + P</code>调出命令窗口,输入install，根据提示选择Package Control: Install Package;</p>
+
+<p>稍等一下，就会弹出Sublime Text 2的插件列表，在其中选择需要的插件即可完成安装。</p>
+
+<p>下面是几个比较适合程序员使用的Sublime Text 2插件：</p>
+
+<ul>
+<li><p>Alignment: 用于代码对齐</p></li>
+<li><p>CTags: 用于方便浏览源代码</p></li>
+<li><p>Git：源代码版本控制</p></li>
+<li><p>Gist：Github中代码片段管理、分享工具</p></li>
+</ul>
+
+
+<p>要使Sublime Text 2中的CTags插件可用，需要在系统中安装CTags工具。</p>
+
+<p>到<a href="http://ctags.sourceforge.net/">这里</a>下载CTags工具，Windows选择ctags58.zip，解压后将其中的ctags.exe拷贝到C:\MinGW\Bin下。</p>
+
+<p>Ubuntu选择ctags-5.8.tar.gz，解压后, 在Bash中进入ctags-5.8目录，</p>
+
+<p>通过执行<code>./configure</code>, <code>make</code>, <code>make install</code>来安装ctags。</p>
+
+<p>安装好Gist插件后，需要修改Gist.sublime-settings这个配置文件，在username后输入Github的登陆用户名，在password后输入Github登陆密码，保存即可。</p>
+
+<p>安装好插件后，通过<code>Ctrl + Shift + P</code>调出命令窗口，然后输入插件名，根据提示可选择相应的插件功能。</p>
+
+<h3>5.使用Sublime Text 2浏览Source Code</h3>
+
+<p>这里主要是利用Sublime Text 2中打开文件夹和快速搜索等功能，配合CTags插件来使用。</p>
+
+<p>对于一个已存在的工程，可以通过Sublime Text 2的Open Folder这个功能来打开工程的全部文件，其中目录结构也同样保留，这个功能对于查看开源代码是非常有帮助的。</p>
+
+<p>而Sublime Text 2的快速搜索功能对于定位代码中的函数、变量等是非常有帮助的，结合CTags插件使用则会更加方便。</p>
+
+<p>使用<code>Ctrl + P</code>可调出Sublime Text 2的快速搜索界面，其功能主要包括：</p>
+
+<ul>
+<li><p>可以快速跳转到当前项目中的任意文件，可进行关键词匹配</p></li>
+<li><p>用 @ 可以快速列出/跳转到某个函数</p></li>
+<li><p>用 # 可以在当前文件中进行搜索</p></li>
+<li><p>用 : 加上数字可以跳转到相应的行</p></li>
+<li><p>可通过关键字转到某个文件同时加上 @ 来列出/跳转到目标文件中的某个函数，或是同时加上 # 来在目标文件中进行搜索，或是同时加上 : 和数字来跳转到目标文件中相应的行</p></li>
+</ul>
+
+
+<h3>6.使用Sublime Text 2和Github Gist管理代码片段</h3>
+
+<p>通过<code>Ctrl + Shift + P</code>调出命令窗口，在其中输入Gist，选择Gist: Open Gist会列出Github上Gist中已存在的代码片段，选择一个可用Sublime Text 2打开查看或修改。</p>
+
+<p>修改后通过Gist: Update File上传到Github的Gist中。</p>
+
+<p>要增加一个新的代码片段，可在Sublime Text 2中新建一个文件并在其中放入代码片段，或打开一个已存在的文件。</p>
+
+<p>然后使用Gist: Create Public Gist，然后输入描述文件和文件名即可。</p>
+
+<p>这里，顺便推荐一款在<strong>Chrome浏览器</strong>中使用Github Gist的插件 -- <a href="https://github.com/simplelife7/EasyGist">EasyGist</a>。</p>
+
+<p>使用下来感觉还不错，很适合在Chrome中来管理代码片段。</p>
+
+<p>在Google网上应用点里搜索EasyGist，选择扩展程序，然后安装即可。</p>
+
+<p>初次使用需要登录一下。</p>
+
+<h3>7.开启Sublime Text 2中的VIM功能</h3>
+
+<p>通过<code>Ctrl + Shift + P</code>调出命令窗口，在其中输入Preferences，选择Preferences Settings - User</p>
+
+<p>将打开的文件内容修改为如下：
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> "ignored_packages":
+</span><span class='line'> [
+</span><span class='line'> ],
+</span><span class='line'> "vintage_start_in_command_mode": true
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这样，在Sublime Text 2中也可以使用VIM的相关命令了。</p>
+
+<p>如插入文本前需要使用<code>i</code>进入插入模式，用<code>Esc</code>回到正常模式中。</p>
+
+<h3>8.Sublime Text 2与坚果云和HK4WIN的配合使用</h3>
+
+<p>在Windows中，云同步工具一直在使用<a href="https://jianguoyun.com/">坚果云</a>，在国内算是做的不错的一个，支持多目录同步。</p>
+
+<p>由于我使用的是Sublime Text 2的portable版，这样将Sublime Text 2放入到坚果云的同步目录中。</p>
+
+<p>这样，我在Sublime Text 2中安装的插件和修改的相关配置都会被同步到云端，</p>
+
+<p>这样家中的机器也会自动进行同步，然后可继续使用Sublime Text 2。</p>
+
+<p>为了使用方便，我一直使用<a href="http://www.songruihua.com/hk4win.html">HK4WIN</a>来管理键盘快捷键。</p>
+
+<p>在HK4WIN的配置文件中加入启动Sublime Text 2的快捷键，这样，以后启动Sublime Text 2就很方便了。</p>
+
+<p>（完）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[善用佳软 Notepad++]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/08/05/notepad-plus-plus/"/>
+    <updated>2012-08-05T11:40:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/08/05/notepad-plus-plus</id>
+    <content type="html"><![CDATA[<p>软件开发过程中少不了要通过查看Log文件来定位Bug，这当然需要有一个好用的文本编辑软件来配合。</p>
+
+<p>目前为止，我使用过的文本编辑软件主要有：UltraEdit、<a href="http://www.vim.org/">VIM</a>、<a href="http://notepad-plus-plus.org/">Notepad++</a>。</p>
+
+<p>虽然UltaEdit功能强大，但可惜是收费软件，而且许多功能平时也用不上，在如今优秀开源软件蓬勃发展的今天完全是可以找到一款替代软件。</p>
+
+<!--more-->
+
+
+<p>在查看Log文件过程中，UltraEdit的搜索功能是比较好用的，所以当然也希望替代的软件能够也拥有强大的搜索功能。</p>
+
+<p>被誉为程序员编辑器的VIM，功能非常强大，开源软件，而且插件也很丰富，完全可以改造为一款IDE，但VIM的上手比较难，需要记住很多命令，且不同的编辑模式也是常人难以习惯的原因之一。
+现在常被用来查看一些开源项目中文件。</p>
+
+<p>Notepad++是最近才开始使用，在Windows下使用代替系统的Notepad是非常不错的，支持多文件同时打开，打开大文件的速度比较快，支持多种语法高亮，搜索功能也比较好用，支持插件扩展，其中HEX-Editor用来以16进制查看文件也是可以和UltraEdit相媲美的。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/7755743596/" title="Flickr 上 shanewfx 的 notepad"><img src="http://farm9.staticflickr.com/8422/7755743596_063f907f38.jpg" width="500" height="344" alt="notepad"></a></p>
+
+<p>使用下来，Notepad++还是比较顺手的，也将会是我今后的常用软件之一。</p>
+
+<p>(完)</p>
+]]></content>
+  </entry>
+  
+</feed>

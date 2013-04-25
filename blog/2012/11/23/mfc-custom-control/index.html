@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用MFC Custom Control实现界面的自绘 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="最近在做一个视频编辑的项目，其中界面部分有点复杂，负责这部分的同事使用了MFC的Custom Control来实现界面的自绘效果，目前DemoAP的初步效果已经出来，感觉还不错。 因为工作以来基本没有接触过UI方面的编程，加之以前也没有使用过Custom Control，这次做一个简单学习和总结， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/11/23/mfc-custom-control">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">使用MFC Custom Control实现界面的自绘</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-23T11:45:00+08:00" pubdate data-updated="true">Nov 23<span>rd</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>最近在做一个视频编辑的项目，其中界面部分有点复杂，负责这部分的同事使用了MFC的Custom Control来实现界面的自绘效果，目前DemoAP的初步效果已经出来，感觉还不错。</p>
+
+<p>因为工作以来基本没有接触过UI方面的编程，加之以前也没有使用过Custom Control，这次做一个简单学习和总结，以便后用。</p>
+
+<!--more-->
+
+
+<h5>1.创建MFC工程</h5>
+
+<p>在VS2005中创建一个基于Dialog的MFC工程，DemoUI；</p>
+
+<h5>2.添加CMyPad类</h5>
+
+<p>在DemoUI上右击选择Add->Class，在类向导中选择MFC Class，
+再点击Add，在Class Name中填入类名，如CMyPad，选择Base class为CWnd，点击Finish，
+这时自动生成MyPad.h和MyPad.cpp。</p>
+
+<h5>3.打开DemoUI.rc，双击Dialog下的IDD_DEMOUI_DIALOG，进入对话框窗口设计界面</h5>
+
+<h5>4.在对话框上加入一个Custom Control控件</h5>
+
+<h5>5.设置Custom Control的属性</h5>
+
+<p>设置如下属性，其他属性使用默认即可：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ID ： IDC_CUSTOM_PAD
+</span><span class='line'>Class: MyDrawPad</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中，这里的MyDrawPad必须与注册窗口时使用的类名一致，否则编译可通过，但无法运行。</p>
+
+<h5>6.在CMyPad类中添加一个用于注册窗口的成员函数BOOL RegisterWndClass()</h5>
+
+<p>具体实现为：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>BOOL CMyPad :: RegisterWndClass()
+</span><span class='line'>{
+</span><span class='line'>       WNDCLASS windowclass ;
+</span><span class='line'>       HINSTANCE hInst = AfxGetInstanceHandle ();
+</span><span class='line'>
+</span><span class='line'>       //Check weather the class is registerd already
+</span><span class='line'>       if (!(::GetClassInfo ( hInst, MYWNDCLASS , &windowclass )))
+</span><span class='line'>       {
+</span><span class='line'>             //If not then we have to register the new class
+</span><span class='line'>             windowclass .style = CS_DBLCLKS; // | CS_HREDRAW | CS_VREDRAW;
+</span><span class='line'>             windowclass .lpfnWndProc = :: DefWindowProc;
+</span><span class='line'>             windowclass .cbClsExtra = windowclass. cbWndExtra = 0;
+</span><span class='line'>             windowclass .hInstance = hInst;
+</span><span class='line'>             windowclass .hIcon = NULL;
+</span><span class='line'>             windowclass .hCursor = AfxGetApp ()->LoadStandardCursor ( IDC_ARROW);
+</span><span class='line'>             windowclass .hbrBackground = ::GetSysColorBrush (COLOR_WINDOW );
+</span><span class='line'>             windowclass .lpszMenuName = NULL;
+</span><span class='line'>             windowclass .lpszClassName = MYWNDCLASS;
+</span><span class='line'>
+</span><span class='line'>             if (!AfxRegisterClass (& windowclass))
+</span><span class='line'>             {
+</span><span class='line'>                   AfxThrowResourceException ();
+</span><span class='line'>                   return FALSE ;
+</span><span class='line'>             }
+</span><span class='line'>       }
+</span><span class='line'>
+</span><span class='line'>       return TRUE ;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中，MYWNDCLASS是在MyPad.h中定义的宏：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#define MYWNDCLASS  L "MyDrawPad"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(工程属性中设置为Unicode，API会调用对应的Unicode版本，因此字符串前需加上L)</p>
+
+<h5>7.在主对话框类CDemoUIDlg中关联自定义控件类CMyPad</h5>
+
+<p>首先在CDemoUIDlg类中添加一个成员：<code>CMyPad m_Pad</code> ;</p>
+
+<p>然后进行关联，方法有两种：</p>
+
+<ul>
+<li><p>在<code>CDemoUIDlg ::OnInitDialog</code>中关联：<code>m_Pad .SubclassDlgItem(IDC_CUSTOM_PAD, this)</code>;</p></li>
+<li><p>在<code>CDemoUIDlg ::DoDataExchange</code>中关联：<code>DDX_Control(pDX, IDC_CUSTOM_PAD, m_Pad)</code>;</p></li>
+</ul>
+
+
+<p>两种方法只能用其中一种，不可同时使用。</p>
+
+<h5>8.为CMyPad添加消息响应函数</h5>
+
+<p>在Class View中选择CMyPad，右击打开其属性界面，选择消息一栏，选择需要响应的消息，并增加对应的消息处理函数。</p>
+
+<p>如选择<code>WM_PAINT</code>，选择<code>&lt;Add&gt;OnPaint</code>，这样就在CMyPad中自动添加了响应WM_PAINT消息的处理函数OnPaint()。</p>
+
+<p>简单测试一下, OnPaint函数的实现如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>void CMyPad:: OnPaint ()
+</span><span class='line'>{
+</span><span class='line'>       CPaintDC dc ( this); // device context for painting
+</span><span class='line'>       // TODO: Add your message handler code here
+</span><span class='line'>       // Do not call CWnd::OnPaint() for painting messages
+</span><span class='line'>       dc .DrawText ( L"test123" , CRect(0,0,100,100), DT_LEFT );
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>9.效果测试</h5>
+
+<p>编译运行，即可看到在Custom Control中绘制出&#8221;test123&#8221;字符。</p>
+
+<p>（完）</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-23T11:45:00+08:00" pubdate data-updated="true">Nov 23<span>rd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mfc/'>MFC</a>, <a class='category' href='/blog/categories/ui/'>UI</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/12/software-design-principle/" title="Previous Post: 软件设计的几点思考和总结">&laquo; 软件设计的几点思考和总结</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/01/06/sublime-text2-for-programmer/" title="next Post: 程序员的代码编辑器--Sublime Text 2">程序员的代码编辑器--Sublime Text 2 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/11/23/mfc-custom-control/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/11/23/mfc-custom-control/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

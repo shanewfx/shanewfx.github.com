@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: markdown | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/markdown/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[用Markdown来写博客文章]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/02/16/markdown-syntax/"/>
+    <updated>2012-02-16T15:27:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/02/16/markdown-syntax</id>
+    <content type="html"><![CDATA[<p><strong>Octopress一大亮点是支持博客使用<a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a>作为源文件语言。</strong></p>
+
+<p><strong>Markdown</strong>语言由于其<strong>简单</strong>，<strong>易读</strong>和<strong>清晰</strong>的脉络结构的特点，被许多网站采用，比如<strong>Github</strong>，<strong>Google Code</strong>，<strong>StackOverflow</strong>。</p>
+
+<p><strong>Markdown</strong>是一个很好的文档语言，可以写出很漂亮的文档出来。</p>
+
+<p>实际使用下来发现: <strong>用Markdown来写博客文章是一件很爽的事!</strong></p>
+
+<!-- more -->
+
+
+<p><a href="http://www.ituring.com.cn/article/details/775">Markdown基本语法</a>很简洁，也很好记。</p>
+
+<p>下面是<a href="http://daringfireball.net/projects/markdown/dingus">Dingus</a>支持的<strong>Markdown Syntax</strong>。</p>
+
+<p><div><script src='https://gist.github.com/2009731.js?file='></script>
+<noscript><pre><code></code></pre></noscript></div>
+</p>
+
+<p>看一看实际的示例：<a href="http://dillinger.io/">dillinger</a></p>
+
+<p>要看本博客文章如何使用Markdown的，请看看<a href="https://github.com/shanewfx/shanewfx.github.com">博客的源代码</a>吧。</p>
+
+<p>另外需要了解的是，我们除了可以使用Markdown来写文章，而且可以使用Octopress提供的一些<a href="http://octopress.org/docs/blogging/plugins/">Plugins</a>来实现一些特殊的效果，具体请查看<a href="http://octopress.org/docs/blogging/plugins/">Octopress的官方文档</a>吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: MFC | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/mfc/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用MFC Custom Control实现界面的自绘]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/11/23/mfc-custom-control/"/>
+    <updated>2012-11-23T11:45:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/11/23/mfc-custom-control</id>
+    <content type="html"><![CDATA[<p>最近在做一个视频编辑的项目，其中界面部分有点复杂，负责这部分的同事使用了MFC的Custom Control来实现界面的自绘效果，目前DemoAP的初步效果已经出来，感觉还不错。</p>
+
+<p>因为工作以来基本没有接触过UI方面的编程，加之以前也没有使用过Custom Control，这次做一个简单学习和总结，以便后用。</p>
+
+<!--more-->
+
+
+<h5>1.创建MFC工程</h5>
+
+<p>在VS2005中创建一个基于Dialog的MFC工程，DemoUI；</p>
+
+<h5>2.添加CMyPad类</h5>
+
+<p>在DemoUI上右击选择Add->Class，在类向导中选择MFC Class，
+再点击Add，在Class Name中填入类名，如CMyPad，选择Base class为CWnd，点击Finish，
+这时自动生成MyPad.h和MyPad.cpp。</p>
+
+<h5>3.打开DemoUI.rc，双击Dialog下的IDD_DEMOUI_DIALOG，进入对话框窗口设计界面</h5>
+
+<h5>4.在对话框上加入一个Custom Control控件</h5>
+
+<h5>5.设置Custom Control的属性</h5>
+
+<p>设置如下属性，其他属性使用默认即可：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ID ： IDC_CUSTOM_PAD
+</span><span class='line'>Class: MyDrawPad</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>其中，这里的MyDrawPad必须与注册窗口时使用的类名一致，否则编译可通过，但无法运行。</p>
+
+<h5>6.在CMyPad类中添加一个用于注册窗口的成员函数BOOL RegisterWndClass()</h5>
+
+<p>具体实现为：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>BOOL CMyPad :: RegisterWndClass()
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>   WNDCLASS windowclass ;
+</span><span class='line'>   HINSTANCE hInst = AfxGetInstanceHandle ();
+</span><span class='line'>
+</span><span class='line'>   //Check weather the class is registerd already
+</span><span class='line'>   if (!(::GetClassInfo ( hInst, MYWNDCLASS , &amp;windowclass )))
+</span><span class='line'>   {
+</span><span class='line'>         //If not then we have to register the new class
+</span><span class='line'>         windowclass .style = CS_DBLCLKS; // | CS_HREDRAW | CS_VREDRAW;
+</span><span class='line'>         windowclass .lpfnWndProc = :: DefWindowProc;
+</span><span class='line'>         windowclass .cbClsExtra = windowclass. cbWndExtra = 0;
+</span><span class='line'>         windowclass .hInstance = hInst;
+</span><span class='line'>         windowclass .hIcon = NULL;
+</span><span class='line'>         windowclass .hCursor = AfxGetApp ()-&gt;LoadStandardCursor ( IDC_ARROW);
+</span><span class='line'>         windowclass .hbrBackground = ::GetSysColorBrush (COLOR_WINDOW );
+</span><span class='line'>         windowclass .lpszMenuName = NULL;
+</span><span class='line'>         windowclass .lpszClassName = MYWNDCLASS;
+</span><span class='line'>
+</span><span class='line'>         if (!AfxRegisterClass (&amp; windowclass))
+</span><span class='line'>         {
+</span><span class='line'>               AfxThrowResourceException ();
+</span><span class='line'>               return FALSE ;
+</span><span class='line'>         }
+</span><span class='line'>   }
+</span><span class='line'>
+</span><span class='line'>   return TRUE ;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>其中，MYWNDCLASS是在MyPad.h中定义的宏：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>define MYWNDCLASS  L "MyDrawPad"&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>(工程属性中设置为Unicode，API会调用对应的Unicode版本，因此字符串前需加上L)</p>
+
+<h5>7.在主对话框类CDemoUIDlg中关联自定义控件类CMyPad</h5>
+
+<p>首先在CDemoUIDlg类中添加一个成员：<code>CMyPad m_Pad</code> ;</p>
+
+<p>然后进行关联，方法有两种：</p>
+
+<ul>
+<li><p>在<code>CDemoUIDlg ::OnInitDialog</code>中关联：<code>m_Pad .SubclassDlgItem(IDC_CUSTOM_PAD, this)</code>;</p></li>
+<li><p>在<code>CDemoUIDlg ::DoDataExchange</code>中关联：<code>DDX_Control(pDX, IDC_CUSTOM_PAD, m_Pad)</code>;</p></li>
+</ul>
+
+
+<p>两种方法只能用其中一种，不可同时使用。</p>
+
+<h5>8.为CMyPad添加消息响应函数</h5>
+
+<p>在Class View中选择CMyPad，右击打开其属性界面，选择消息一栏，选择需要响应的消息，并增加对应的消息处理函数。</p>
+
+<p>如选择<code>WM_PAINT</code>，选择<code>&lt;Add&gt;OnPaint</code>，这样就在CMyPad中自动添加了响应WM_PAINT消息的处理函数OnPaint()。</p>
+
+<p>简单测试一下, OnPaint函数的实现如下：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>void CMyPad:: OnPaint ()
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>   CPaintDC dc ( this); // device context for painting
+</span><span class='line'>   // TODO: Add your message handler code here
+</span><span class='line'>   // Do not call CWnd::OnPaint() for painting messages
+</span><span class='line'>   dc .DrawText ( L"test123" , CRect(0,0,100,100), DT_LEFT );
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h5>9.效果测试</h5>
+
+<p>编译运行，即可看到在Custom Control中绘制出"test123"字符。</p>
+
+<p>（完）</p>
+]]></content>
+  </entry>
+  
+</feed>

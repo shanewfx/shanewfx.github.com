@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Thinking | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/thinking/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[一道智力题引发的思考]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/04/29/a-story/"/>
+    <updated>2012-04-29T21:01:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/04/29/a-story</id>
+    <content type="html"><![CDATA[<p>前一段时间在<a href="http://cooffee.net/">酷啡生活</a>的博客中看到这样的一道智力题:</p>
+
+<p><strong>"荷塘里有一片荷叶，它每天会增长一倍。假使30天会长满整个荷塘，请问第28天，荷塘里有多少荷叶?"</strong></p>
+
+<!--more-->
+
+
+<p>答案要从后往前推，即有四分之一荷塘的荷叶。</p>
+
+<p>这时，如果站在荷塘的对岸，也会发现荷叶是那样的少，似乎只有那么一点点，但是，第29天就会占满一半，第30天就会长满整个荷塘。</p>
+
+<p>在荷叶长满荷塘的整个过程中，荷叶每天变化的速度都是一样的，可是前期花了漫长的28天。那时，我们看到荷叶只能占领一个小小的角落。</p>
+
+<p>在积累知识、实现自己梦想的过程中，即使我们每天都在进步，然而，前面那漫长的"28天"因无法享受到结果，常常令人难以忍受, 大多数人在这28天以前就放弃。人们常常只对"第29天"的希望与"第30天"的结果感兴趣，但是不愿忍受漫长的成功过程。</p>
+
+<p><em>(以上内容来自<a href="http://cooffee.net/?p=3258">酷啡生活</a>，作者hellen)</em></p>
+
+<h2>可见，在通往成功的道路上，耐心和持之以恒是必备的"干粮"!</h2>
+]]></content>
+  </entry>
+  
+</feed>

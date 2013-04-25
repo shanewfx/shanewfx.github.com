@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Octopress主题改造 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="Octopress是一个非常不错的博客系统，具有很好的扩展性，默认也提供了一个很好的博客主题。 随着越来越多的人开始使用Octopress搭建自己的个人博客，网络上出现了很多外观基本相同的博客。
+虽然Octopress默认的主题设计的很简洁、美观，但为了打造一个属于自己的博客， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/08/13/improve-blog-theme">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Octopress主题改造</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T21:38:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Octopress是一个非常不错的博客系统，具有很好的扩展性，默认也提供了一个很好的博客主题。</p>
+
+<p>随着越来越多的人开始使用Octopress搭建自己的个人博客，网络上出现了很多外观基本相同的博客。
+虽然Octopress默认的主题设计的很简洁、美观，但为了打造一个属于自己的博客，还是希望能够做的更美观一些。
+当然，借此机会自己也能够学习一点Web前端设计方面的知识。</p>
+
+<!--more-->
+
+
+<p>Octopress支持SASS语法，改造Octopress主题基本是通过修改“sass\custom“下以scss为后缀名的文件来完成，大多数的改造是在_styles.scss这个文件中来实现。</p>
+
+<h2>1. 为博客添加背景图片</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>html {
+</span><span class='line'>  background: #555555 url("/images/wood.jpg");
+</span><span class='line'>  //background: #555555;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>body &gt; div { 
+</span><span class='line'>  background-image: none; 
+</span><span class='line'>//background: #F5F5D5
+</span><span class='line'>} //侧边栏
+</span><span class='line'>
+</span><span class='line'>body &gt; div &gt; div { //文章内容
+</span><span class='line'>  background-image: none; 
+</span><span class='line'>  //background: #F5F5D5; 
+</span><span class='line'>  //background: url("/images/textbg.jpg");
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>2. 改造博客的Header区域</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>html {
+</span><span class='line'>  body &gt; header {
+</span><span class='line'>    background: none;
+</span><span class='line'>  padding: 1.6em 0 1em 0;
+</span><span class='line'>  h1 {
+</span><span class='line'>      @include text-shadow(0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135);
+</span><span class='line'>    }
+</span><span class='line'>    h2 {
+</span><span class='line'>      margin-top: .5em;
+</span><span class='line'>      display: none;
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>3. 改造导航栏</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>body &gt; nav {
+</span><span class='line'>  //background: url("/images/nav.jpg");
+</span><span class='line'>  //background: #555555;
+</span><span class='line'>  ul.main-navigation {
+</span><span class='line'>    padding-left: 3px;
+</span><span class='line'>  }
+</span><span class='line'>  ul.subscription {
+</span><span class='line'>    //display: none;
+</span><span class='line'>  }
+</span><span class='line'>  a {
+</span><span class='line'>    &:hover {
+</span><span class='line'>      color: hsl(209.01, 86.94%, 50.04%);
+</span><span class='line'>      text-shadow:
+</span><span class='line'>        hsl(209.01, 86.94%, 42.04%) 0px 0px 5px,
+</span><span class='line'>        hsl(209.01, 86.94%, 42.04%) 0px 0px 7px,
+</span><span class='line'>        hsl(209.01, 86.94%, 52.04%) 0px 0px 9px,
+</span><span class='line'>        hsl(209.01, 86.94%, 52.04%) 0px 0px 11px,
+</span><span class='line'>        hsl(0, 0%, 0%) 0 0 2px;
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>    i {
+</span><span class='line'>      color: hsl(209.01, 86.94%, 50.04%);
+</span><span class='line'>      text-shadow:
+</span><span class='line'>        hsl(209.01, 86.94%, 42.04%) 0px 0px 5px,
+</span><span class='line'>        hsl(209.01, 86.94%, 42.04%) 0px 0px 7px,
+</span><span class='line'>        hsl(209.01, 86.94%, 52.04%) 0px 0px 9px,
+</span><span class='line'>        hsl(209.01, 86.94%, 52.04%) 0px 0px 11px,
+</span><span class='line'>        hsl(0, 0%, 0%) 0 0 2px;
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>4. 倒圆角</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@media only screen and (min-width: 1040px) {
+</span><span class='line'>  body &gt; nav {
+</span><span class='line'>    @include border-top-radius(.4em);
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  body &gt; footer {
+</span><span class='line'>    @include border-bottom-radius(.4em);
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>5. 给博客加上LOGO图片</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@media only screen and (min-width: 550px) {
+</span><span class='line'>
+</span><span class='line'>  body &gt; header h1{
+</span><span class='line'>      background: url("/images/logo3.png") no-repeat 0 1px;
+</span><span class='line'>      padding-left: 65px;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  body &gt; header h2 { padding-left: 65px; }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>6. 改造侧边栏</h2>
+
+<p>在”source_includes\asides“下创建侧边栏相关模块的html文件，修改博客根目录下的_config.yml文件，主要是default_asides、blog_index_asides、post_asides这几项。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>default_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_posts.html, custom/asides/category_cloud.html, custom/asides/recent_comment.html, custom/asides/blog_link.html, custom/asides/douban.html, custom/asides/license.html]
+</span><span class='line'>blog_index_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_posts.html, custom/asides/category_cloud.html, custom/asides/recent_comment.html, custom/asides/blog_link.html, custom/asides/douban.html, custom/asides/license.html]
+</span><span class='line'>post_asides: [custom/asides/about.html, custom/asides/weibo.html, asides/recent_posts.html, custom/asides/category_cloud.html, custom/asides/recent_comment.html, custom/asides/blog_link.html, custom/asides/douban.html, custom/asides/license.html]</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>在custom/asides/about.html中添加About Me信息</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;section&gt;
+</span><span class='line'>  &lt;h1&gt;About Me&lt;/h1&gt;
+</span><span class='line'>  &lt;p&gt;&lt;img src="/images/blogImgs/about.jpg"&gt;&lt;/p&gt;
+</span><span class='line'>  &lt;p&gt;C++程序员，在Windows上搞音视频开发4年有余&lt;/p&gt;
+</span><span class='line'>  &lt;p&gt;爱电子产品，爱Google, 爱折腾&lt;/p&gt; 
+</span><span class='line'>  &lt;p&gt;喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西&lt;/p&gt;
+</span><span class='line'>  &lt;p&gt;&lt;img src="/images/myemail.png"  alt="shanewfx@gmail.com" /&gt;&lt;/p&gt;
+</span><span class='line'>&lt;/section&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>在custom/asides/weibo.html中添加新浪微博模块</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;section&gt;
+</span><span class='line'>  &lt;h1&gt;Sina围脖&lt;/h1&gt;
+</span><span class='line'>  &lt;iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"&gt;&lt;/iframe&gt;
+</span><span class='line'>&lt;/section&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中，iframe中的代码是来自新浪微博中”账号->我的工具->微博秀“，可以做一些简单的设置，并自动产生出嵌入代码。</p>
+
+<ul>
+<li>在custom/asides/douban.html中添加豆瓣读书列表</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>&lt;section&gt;
+</span><span class='line'>&lt;h1&gt;My Douban&lt;/h1&gt;
+</span><span class='line'>&lt;div&gt;
+</span><span class='line'>&lt;script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=wishlist&amp;n=9&amp;columns=3&amp;hidelogo=yes&amp;cat=movie|book" &gt;&lt;/script&gt;
+</span><span class='line'>&lt;/div&gt;
+</span><span class='line'>&lt;/section&gt;
+</span><span class='line'></span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中，div中的代码来自<a href="http://www.douban.com/service/badgemakerjs">豆瓣</a>。
+同时，要在_config.yml中添加douban_user: XXX (XXX为你的豆瓣用户名)。</p>
+
+<ul>
+<li>在custom/asides/blog_link.html中添加友情链接</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;section&gt;
+</span><span class='line'>  &lt;h1&gt;大牛博客&lt;/h1&gt;
+</span><span class='line'>  &lt;ul&gt;
+</span><span class='line'>    &lt;li&gt;
+</span><span class='line'>      &lt;a href="http://coolshell.cn/"&gt;酷壳CoolShell&lt;/a&gt;
+</span><span class='line'>    &lt;/li&gt;
+</span><span class='line'>    &lt;li&gt;
+</span><span class='line'>      &lt;a href="http://mindhacks.cn/"&gt;刘未鹏MIND HACKS&lt;/a&gt;
+</span><span class='line'>    &lt;/li&gt;
+</span><span class='line'>    &lt;li&gt;
+</span><span class='line'>      &lt;a href="http://blog.codingnow.com/"&gt;云风&lt;/a&gt;
+</span><span class='line'>    &lt;/li&gt;
+</span><span class='line'>    &lt;li&gt;
+</span><span class='line'>      &lt;a href="http://www.cnblogs.com/Solstice/"&gt;陈硕&lt;/a&gt;
+</span><span class='line'>    &lt;/li&gt;
+</span><span class='line'>  &lt;/ul&gt;
+</span><span class='line'>&lt;/section&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>在custom/asides/recent_comment.html中添加Disqus评论</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;section&gt;
+</span><span class='line'>  &lt;h1&gt;最新评论&lt;/h1&gt;
+</span><span class='line'>  &lt;script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"&gt;&lt;/script&gt;
+</span><span class='line'>&lt;/section&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中，script中的代码由Disqus产生。
+同时，需要修改_config.yml中Disqus的相关参数:
+disqus_short_name: XXX (XXX为你的Disqus用户名)
+disqus_show_comment_count: true</p>
+
+<p>增加文章的评论需要将该文章对应的markdown文件开始部分中的comments设置为true（冒号后需有一个空格）。</p>
+
+<h2>7. 增加一键分享</h2>
+
+<p>我目前使用的是<a href="http://www.bshare.cn/">bshare</a>。</p>
+
+<p>在_config.yml中增加bshare: true。
+在“source_includes\post”下的sharing.html中增加如下代码：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>    &lt;a class="bshareDiv" href="http://www.bshare.cn/share"&gt;Sharing&lt;/a&gt;&lt;script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"&gt;&lt;/script&gt;
+</span><span class='line'></span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述的代码由bshare产生，可以自己选择所需的外观。
+这样，在每一篇文章的最下方会出现一个分享的小工具。</p>
+
+<h2>8. 添加标签云</h2>
+
+<p>这部分需要第三方的plugin支持，目前我还没有解决中文标签在上传到github上连接出错的问题，在本地是OK的。
+具体可参看<a href="http://tinyxd.me/blog/2012/06/25/octopress-add-tag-cloud/">这篇文章</a>。</p>
+
+<p>（完）</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T21:38:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/octopress/'>Octopress</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/08/05/notepad-plus-plus/" title="Previous Post: 善用佳软 Notepad++">&laquo; 善用佳软 Notepad++</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/09/01/learning-regex/" title="next Post: 正则表达式初学笔记">正则表达式初学笔记 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/08/13/improve-blog-theme/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/08/13/improve-blog-theme/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>正则表达式初学笔记 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="最近一直在做MPEG2 TS-Mux，在开发调试的过程中有大量的log数据需要分析，特别是长时间测试，log文件往往会达到几百兆。 这时遇到问题，要自己逐行去分析log定位问题往往是不太现实的事情。 为了提高log文件分析的效率，我们利用Python编写分析log的脚本， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/09/01/learning-regex">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">正则表达式初学笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-01T13:43:00+08:00" pubdate data-updated="true">Sep 1<span>st</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>最近一直在做MPEG2 TS-Mux，在开发调试的过程中有大量的log数据需要分析，特别是长时间测试，log文件往往会达到几百兆。</p>
+
+<p>这时遇到问题，要自己逐行去分析log定位问题往往是不太现实的事情。</p>
+
+<p>为了提高log文件分析的效率，我们利用Python编写分析log的脚本，每个脚本分析log文件中一类信息，如从前端Encoder中接受到的PTS，分析PTS是否有错误或跳变等情况。</p>
+
+<p>为了从原始的log文件中提取出我们关心的log部分，使用了一个命令行工具<a href="http://gnuwin32.sourceforge.net/packages/sed.htm">Sed</a>。</p>
+
+<p>Sed(streams editor)的具体使用方法可参考这篇文章<a href="http://blog.csdn.net/cxqdong/article/details/2007884">sed命令+正则表达式</a>。</p>
+
+<p>在一个数据量很大的文本中要查找出所有符合特定规则的文本，使用文本编辑器中简单查找功能往往很难达到要求。</p>
+
+<p>不过现在的文本编辑器也越来越强大，我熟悉的如VIM、Notepad++、UltraEdit等都是支持使用<a href="http://deerchao.net/tutorials/regex/regex.htm">正则表达式</a>来完成复杂的、自定义规则的文本查找功能。
+上述的Sed也是使用正则表达式来实现强大的文本查找功能。</p>
+
+<p>下面将会简单介绍一些关于正则表达式的知识，以后有时间会写一篇关于如何使用Python和matplotlib库来分析log数据并图形化显示分析结果的文章。</p>
+
+<!--more-->
+
+
+<p>对于正则表达式，我基本也是属于初学，这里主要是记录一下正则表达式的基本语法，学会如何使用这些基本语法来构建符合自己查找意图的正则表达式。</p>
+
+<p>网上关于正则表达式的教程有很多，我主要参考了如下几篇：</p>
+
+<ul>
+<li><p><a href="http://deerchao.net/tutorials/regex/regex.htm">正则表达式30分钟入门教程</a></p></li>
+<li><p><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></p></li>
+</ul>
+
+
+<h2>什么是正则表达式?</h2>
+
+<p>正则表达式(Regular Expression)，实际上就是一个描述待查找文本特征的字符串，这些字符串就构成了查找的规则，如下面的这些例子：</p>
+
+<ul>
+<li><p>abc                ->  描述了待查找文本的特征是：待查找的就是包含abc的文本</p></li>
+<li><p>\d&#8230;\s123         ->  描述了待查找文本的特征是：以数字开关(在0至9范围内)，后面跟3个任意字符，再跟一个任意类型的空格，之后跟着123</p></li>
+<li><p>[1-9][0-9]{4, 11}  ->  描述了待查找文本的特征是：以1至9范围内任一数字为开头，后面最少跟4个，最多跟11个数字(在0至9范围内)</p></li>
+<li><p>\d{4}-?\d{7, 8}    ->  描述了待查找文本的特征是：以4个数字开头，中间可以有也可以没有-，后面最少跟7个，最多跟8个数字(在0至9范围内)</p></li>
+</ul>
+
+
+<p>如果之前没有接触过正则表达式，初次看到上述的这几个字符串，肯定不知所云，觉得莫名其妙。
+没关系，我相信大多数人在开始学习正则表达式时会有这样的感觉。</p>
+
+<p>实际上，通过上述的一些解释，我们可以看到正则表达式中使用了一些特殊的符号来表示一类字符，如使用\d来表示0至9范围内的数字等。</p>
+
+<p>要想对正则表达式有深入了解，我们需要去学习一下正则表达式的基本语法，熟悉之后，我们就可以根据实际的需要来构建自己的正则表达式。</p>
+
+<h2>正则表达式的基本语法</h2>
+
+<p>注：文中的部分例子来自于<a href="http://deerchao.net/tutorials/regex/regex.htm">正则表达式30分钟入门教程</a>。</p>
+
+<h3>元字符</h3>
+
+<p>元字符是正则表达式中一种特殊的字符，是用来表示其他字符的字符，实际查找的文本并不包含自身，相当于是信息的一种描述。</p>
+
+<p>在正则表达式中，有如下几种元字符：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>元字符    |     描述的特征
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>  .      |     匹配除换行符以外的任意字符
+</span><span class='line'>  \w     |     匹配字母或数字或下划线或汉字
+</span><span class='line'>  \s     |     匹配任意的空白符
+</span><span class='line'>  \d     |     匹配数字
+</span><span class='line'>  \b     |     匹配单词的开始或结束
+</span><span class='line'>  ^      |     匹配字符串的开始
+</span><span class='line'>  $      |     匹配字符串的结束
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>转义字符</h3>
+
+<p>元字符是用来表示其他的字符，而不能用来表达自身，因此，如果我们查找的文本中的确是要包含元字符时，这时就需要使用转义字符。</p>
+
+<p>熟悉C/C++的同学应该对转义字符会很熟悉，转义字符就是使用反斜杠&#8217;&#39;来取消元字符的特殊意义，而表达自身的一种方法，类似上述元字符中的\w,\s,\d,\b。</p>
+
+<p>上述的这几个在形式上类似转义字符的元字符在实际中是不需要转义的，因为它们相当于是2个字符，而如果要查找的文本中要包含., ^, $，则需要转义., \<sup>,</sup> \$。</p>
+
+<h3>指定重复的次数</h3>
+
+<p>在正则表达式中，允许使用特殊的符合来指定其面前一个字符或一个组合单元重复的次数。</p>
+
+<p>有如下几种指定重复次数的方法：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'> 限定符   |     描述的特征
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>   *     |     重复0零次或更多次
+</span><span class='line'>   +     |       重复1次或更多次
+</span><span class='line'>   ?     |     重复0次或1次
+</span><span class='line'>  {n}    |     重复n次
+</span><span class='line'>  {n,}   |     重复n次或更多次
+</span><span class='line'>  {n,m}  |     重复n到m次
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>指定字符集</h3>
+
+<p>如果我们事先知道在查找文本规则的特定位置的字符是在某个具体范围内，如某个位置上出现的字符只能是a,b,c,1,2,3中的一个时，正则表达式允许我们指定出这个字符集。</p>
+
+<p>方法也很简单，就是将可能出现的字符放在方括号之中，如[abc123]即可。</p>
+
+<p>对于连续的数字和字母，也可以用更简单的方法，如[0-9]表示出现的字符在数字0至9中的一个，类似的有[a-z]，[A-Z]。</p>
+
+<p>还可以将上面的组合起来，如[0-9a-zA-Z]。</p>
+
+<p>正则表达式中的那些有特殊意义的符合也可以不用转义直接放在其中，如[.?+]可匹配., ?, +。</p>
+
+<h3>组合字符</h3>
+
+<p>我们已经知道，要重复单个字符，可直接在这个字符后加上指定重复次数的限定符即可。</p>
+
+<p>如果我们要指定一组连续的字符的重复次数，该如何做呢？</p>
+
+<p>方法是先将这组连续的字符放到圆括号()中，然后在后面加上指定重复次数的限定符就可以了。</p>
+
+<p>如(abc){2}，就描述了重复2次abc, 即abcabc。</p>
+
+<p>更复杂的一个例子：(?0\d{2}[) -]?\d{8}</p>
+
+<p>这个正则表达式可以这样来分析：</p>
+
+<p>首先是一个转义字符(, 它能出现0次或1次(?), 然后是一个0，后面跟着2个数字(\d{2})，然后是)或-或空格中的一个，它出现1次或不出现(?)，最后是8个数字(\d{8})。</p>
+
+<h3>匹配多个正则表达式中的一个</h3>
+
+<p>有时候一个正则表达式可能匹配出比我们预想要多的文本，如用于匹配电话号码的正则表达式(?0\d{2}[)-]?\d{8}，不仅可匹配(010)88886666、022-22334455、02912345678等正常的号码，还会匹配出010)12345678或(022-87654321等这样的&#8221;不正确&#8221;的格式。</p>
+
+<p>要解决这个问题，我们可以明确指定出每一种电话号码的匹配规则，各个匹配规则之间用&#8217;|&#8217;来分隔，这样只有符合指定规则中的一种时才会被匹配，这有点类似于C/C++中的&#8217;或&#8217;运算。</p>
+
+<p>例如，0\d{2}-\d{8}|0\d{3}-\d{7}这个表达式能匹配两种以连字号分隔的电话号码：一种是三位区号，8位本地号(如010-12345678)，一种是4位区号，7位本地号(0512-6733445)。</p>
+
+<h3>取反</h3>
+
+<p>如果我们事先知道要查找的文本中肯定没有哪些字符，或者是要匹配除了某某字符之外的任意字符这种情况时，我们可以用类似C/C++中的&#8217;取反&#8217;运算来实现。</p>
+
+<p>正则表达式允许的&#8217;取反&#8217;：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>元字符    |     描述的特征
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>  \W     |     匹配任意不是字母，数字，下划线，汉字的字符
+</span><span class='line'>  \S     |     匹配任意不是空白符的字符
+</span><span class='line'>  \D     |     匹配任意非数字的字符
+</span><span class='line'>  \B     |     匹配不是单词开头或结束的位置
+</span><span class='line'> [^x]    |     匹配除了x以外的任意字符
+</span><span class='line'> [^abc]  |     匹配除了abc这几个字母以外的任意字符
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一些例子：</p>
+
+<p>\S+        匹配不包含空白符的字符串</p>
+
+<p>&lt;a[<sup>>]+></sup>   匹配用尖括号括起来的以a开头的字符串</p>
+
+<h3>两种匹配模式：贪婪和懒惰</h3>
+
+<p>当正则表达式中包含能接受重复的限定符时，通常的行为是（在使整个表达式能得到匹配的前提下）匹配尽可能多的字符。</p>
+
+<p>例如，&#8221;a.*b&#8221; 它将会匹配最长的以a开始，以b结束的字符串。如果用它来搜索aabab的话，它会匹配整个字符串aabab。这被称为贪婪匹配。</p>
+
+<p>如果我们希望匹配尽可能少的字符，只需在之前的限定符后加个问号&#8217;?&#8217;，这样将会以懒惰模式进行匹配。</p>
+
+<p>例如，a.*?b 匹配最短的，以a开始，以b结束的字符串。如果把它应用于aabab的话，它会匹配aab（第一到第三个字符）和ab（第四到第五个字符）。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'> 限定符   |     描述的特征
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>   \*?   |     重复任意次，但尽可能少重复
+</span><span class='line'>   +?    |       重复1次或更多次，但尽可能少重复
+</span><span class='line'>   ??    |     重复0次或1次，但尽可能少重复
+</span><span class='line'>  {n,}?  |     重复n次以上，但尽可能少重复
+</span><span class='line'>  {n,m}? |     重复n到m次，但尽可能少重复
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>这些语法应该是正则表达式的最基础部分，还有一些高级的特性文中并没有涉及。</p>
+
+<p>如果能够掌握并熟练使用上述的这些正则表达式的基本语法的话，我相信对于大多数的情况，正则表达式能够帮助我们快速的从复杂的文本中匹配出我们需要的内容。</p>
+
+<p>从现在开始，慢慢感受正则表达式的强大吧!</p>
+
+<p>(完)</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-01T13:43:00+08:00" pubdate data-updated="true">Sep 1<span>st</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/python/'>Python</a>, <a class='category' href='/blog/categories/regex/'>Regex</a>, <a class='category' href='/blog/categories/sed/'>Sed</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/08/13/improve-blog-theme/" title="Previous Post: Octopress主题改造">&laquo; Octopress主题改造</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/09/03/analyze-log-file-based-on-python/" title="next Post: 使用Python图形化分析大Log文件">使用Python图形化分析大Log文件 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/09/01/learning-regex/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/09/01/learning-regex/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

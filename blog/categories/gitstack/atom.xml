@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: GitStack | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/gitstack/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[基于GitStack搭建Git中心服务器]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/05/03/git-server-based-on-gitstack/"/>
+    <updated>2012-05-03T20:10:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/05/03/git-server-based-on-gitstack</id>
+    <content type="html"><![CDATA[<p>通过前一段时间对Git的学习，基本掌握了Git常用命令的使用方法，并进行了总结，有兴趣的可以看看<a href="http://shanewfx.github.com/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a>和<a href="http://shanewfx.github.com/blog/2012/04/21/learn-git-command/">Git学习笔记</a>。</p>
+
+<p>在<a href="http://shanewfx.github.com/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a>中提到过多人协作的项目往往是需要一个中心服务器来同步多人之间的工作成果，另外，最终的工作成果通常也是中心服务器上的代码为准（为了项目管理的需要），因此，备份时往往需要对中心服务器上的仓库进行刻盘。</p>
+
+<p>中心服务器上创建的项目仓库一般为裸仓库（没有工作目录），且需要为项目开发人员设置访问和操作中心服务器上仓库的权限（访问、读、写）。</p>
+
+<p>本文将介绍如何使用开源软件<a href="http://gitstack.com/">GitStack</a>在Windows上搭建Git中心服务器。</p>
+
+<!--more-->
+
+
+<p>为了学习如何在Windows上搭建Git服务器，用Google搜索了一下，发现多数的方案是采用CopSSH + msysgit + PuTTY的方式来实现，这种方案使用<a href="http://zh.wikipedia.org/wiki/SSH">SSH</a>协议（采用公钥和私钥进行身份验证，用<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">PuTTY</a>可以产生公钥和私钥，关于公钥和私钥可参考<a href="http://www.360doc.com/content/12/0502/18/1016783_208170505.shtml">这篇</a>入门介绍）与Git服务器通信，在安全性上应该来说是比较高的，但缺点就是搭建过程比较麻烦，且要清楚一些概念才知道自己在做什么，因此对新手来说有一定的难度。</p>
+
+<p>另外，让我暂时没采用这种的方案的原因是CopSSH已经不再免费了（找到一个免费的版本<a href="http://sourceforge.net/projects/sereds/files/Copssh/3.0.3/">Copssh 3.0.3</a>，需要将<a href="http://sea.tomsk.ru/pub/soft/git/Copssh_3.0.3_Installer/">icwbase-2.0.3-patch-100.exe</a>这个补丁拷贝到Copssh的安装目录下运行来修复回退键和左右方向键不能正常的问题），对于喜欢开源软件的我来说，还是希望能够找到其他的开源软件来代替。</p>
+
+<p>关于这种方案的几篇文章：</p>
+
+<ul>
+<li><p><a href="http://www.codeproject.com/Articles/296398/Step-by-Step-Setup-Git-Server-on-Windows-with-CopS">Step by Step Setup Git Server on Windows with CopSSH + msysGit and Integrate Git with Visual Studio</a></p></li>
+<li><p><a href="http://www.timdavis.com.au/git/setting-up-a-msysgit-server-with-copssh-on-windows/">Setting up a Msysgit Server with copSSH on Windows</a></p></li>
+<li><p><a href="http://www.cnblogs.com/Yinner/archive/2011/05/01/2034147.html">如何在WINDOWS XP下使用copSSH配置GIT服务器 + TortiseGIT客户端</a></p></li>
+</ul>
+
+
+<p>另外，还有一种采用Gitolite来搭建的方案，可参考<a href="http://www.ossxp.com/doc/git/gitolite.html">Gitolite构建Git服务器</a>，讲的很详细。</p>
+
+<p>无意之中，通过google发现了<a href="http://gitstack.com/">GitStack</a>，查看了官方文档，感觉不需要做什么特殊的设置就可以在Windows上搭建Git服务器，并且对用户权限的设置也很简单，故决定下载下来试用一下，测试下来果然很方便，且在Client端也成功进行了clone和push等操作（虽然中间遇到一个问题，后面会提到）。</p>
+
+<p>为了以后有个参考，特在此记录下用GitStack搭建Git服务器的主要过程。</p>
+
+<p>工具列表：</p>
+
+<ul>
+<li>服务器端：<a href="http://gitstack.com/download/">GitStack 1.4.1</a>，GitStack中已经集成了Git，可以不用再独立安装msysgit</li>
+<li>客户端：<a href="http://code.google.com/p/msysgit/downloads/list">msysgit 1.7.10</a></li>
+</ul>
+
+
+<h3>下载并安装GitStack</h3>
+
+<p>到其<a href="http://gitstack.com/">官方网站</a>上下载最新版的<a href="http://gitstack.com/download/">GitStack 1.4.1</a>。</p>
+
+<p>安装文件有100M，要注意的是，目前GitStack只支持下面几个系统（不支持Windows XP）：</p>
+
+<ul>
+<li>Windows Server 2008</li>
+<li>Windows Server 2008 R2</li>
+<li>Windows Vista</li>
+<li>Windows 7</li>
+</ul>
+
+
+<p>另外，GitStack是一个新的开源软件（可以看看<a href="http://gitstack.com/category/releases/">release的历史</a>），目前有些功能可能还不是很完善，文档也不是很全面，好在GitStack并不复杂。</p>
+
+<p>安装和普通的Windows软件一样，双击安装包自动进行安装，要注意的是最好其安装路径中不要包括空格，所以不建议安装到C:\Program Files下，默认是安装到C:\GitStack下。</p>
+
+<p>安装好GitStack后，下面主要就是配置GitStack和仓库管理。</p>
+
+<p>提醒一下，只需要在服务器上安装GitStack即可，其他的客户机上是不要安装的。安装好GitStack后，可以在任意机器上通过浏览器登录到Git服务器上（当然实际上只有仓库的管理员才有权限登录）。</p>
+
+<h3>GitStack的配置</h3>
+
+<p>在服务器上，可以通过开始菜单找到GitStack打开，也可以直接打开浏览器，在地址栏里输入http://localhost/gitstack/打开登录界面。</p>
+
+<p>另外，也可以通过server机的IP地址来登录，如server的IP地址为：192.168.0.105，则可以直接在浏览器的地址栏中输入http://192.168.0.105/gitstack/打开登录界面(注意在客户机上只能使用这种方式来打开登录界面，通过ipconfig可以查看本机的IP地址)。</p>
+
+<p>初始状态下，默认的登录账户为admin，登录密码也为admin。管理员登录后可在Settings->General中修改admin的登录密码。</p>
+
+<p>勾选Enable web based repository browsing选项开启在浏览器中直接查看Git仓库的内容。</p>
+
+<p>另外还有两个Repositories和Users &amp; Groups两个界面，其中在Repositories中可以在服务器上创建项目的裸仓库，直接输入仓库名（如输入ProjectRepos），然后点击Create按钮即可（会在服务器C:\GitStack\repositories下创建一个ProjectRepos.git裸仓库），创建好的仓库也会在Repositories中显示出来，并显示出该仓库的clone的地址git clone http://localhost/ProjectRepos.git，之后就可以在Action下通过浏览器查看仓库、添加用户/Group并设置用户/Group权限等。</p>
+
+<p>在Users &amp; Groups中，Users下是用来创建用户或修改用户密码等，每个用户对应一个Username和其Password，已有的用户会在上面的列表中显示出来；Groups下用于创建组，可以在每个Group下添加或移除用户，已有的Group也会在列表中显示出来。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/7163525050/" title="Flickr 上 shanewfx 的 gitstack_1.5"><img src="http://farm9.staticflickr.com/8164/7163525050_4e0a696de9.jpg" width="500" height="370" alt="gitstack_1.5"></a></p>
+
+<h3>牛刀小试</h3>
+
+<p>上述已经在服务器上创建了一个ProjectRepos.git裸仓库，现在我们在服务器上来克隆该仓库。
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd d:
+</span><span class='line'>mkdir project
+</span><span class='line'>cd project
+</span><span class='line'>git clone http://192.168.0.105/ProjectRepos LocalRepos 或 git clone http://localhost/ProjectRepos LocalRepos 或 git clone http://localhost:80/ProjectRepos LocalRepos</span></code></pre></td></tr></table></div></figure></notextile></div>
+默认的是80端口，可以修改为其他端口。
+这里，会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。</p>
+
+<p>cd LocalRepos
+进入了工作目录，我们可以添加文件到工作区，并提交到本地仓库中。</p>
+
+<p>然后，将本地修改推送到服务器的仓库里：git push origin master，这里会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。
+通过git remote -v，我们可以查看origin对应的服务器上的仓库地址。</p>
+
+<p>这时打开GitStack，可以看到服务器上仓库有了提交的内容。</p>
+
+<h3>在客户机上克隆服务器的仓库到本地</h3>
+
+<p>先在客户机上安装msysgit 1.7.10。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd d:
+</span><span class='line'>mkdir project
+</span><span class='line'>cd project
+</span><span class='line'>git clone http://192.168.0.105/ProjectRepos LocalRepos</span></code></pre></td></tr></table></div></figure></notextile></div>
+这里，会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。</p>
+
+<p>cd LocalRepos
+进入了工作目录，我们可以添加文件到工作区，并提交到本地仓库中。</p>
+
+<p>然后，将本地修改推送到服务器的仓库里：git push origin master，这里会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。
+通过git remote -v，我们可以查看origin对应的服务器上的仓库地址。</p>
+
+<p>这时打开GitStack，可以看到服务器上仓库有了提交的内容。</p>
+
+<p>在客户机上也可以打开GitStack，直接在浏览器的地址栏中输入http://192.168.0.105/gitstack/打开登录界面，当然这需要知道管理员密码。</p>
+
+<p>（这里要注意的是，要保证在客户机上能够成功打开GitStack或者从服务器上克隆仓库，必须将服务器的防火墙关闭，否则在客户机上的这些操作就会失败。这个问题一直困扰了我好几个小时。）</p>
+
+<p>可见，服务器和客户机在操作上已经没有什么区别了，这正是Git作为分布式版本控制系统的体现。</p>
+
+<p>（全文完）</p>
+]]></content>
+  </entry>
+  
+</feed>

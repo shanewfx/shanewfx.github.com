@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Boost | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/boost/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Compile Boost v1.49.0]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/03/17/compile-boost-v1-dot-49-dot-0/"/>
+    <updated>2012-03-17T21:15:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/03/17/compile-boost-v1-dot-49-dot-0</id>
+    <content type="html"><![CDATA[<p>对C++程序员来说，Boost是一个非常有名的库，里面提供了很多强大的功能。</p>
+
+<p>不过，我之前一直没有使用和研究过Boost，最近看一些开源的代码中有使用Boost，感觉很不错，于是，今天抽一点时间先将Boost的使用环境先搭起来，后面慢慢学习。</p>
+
+<!--more-->
+
+
+<h2>编译Boost</h2>
+
+<ul>
+<li><p>先到<a href="http://www.boost.org/">Boost的官方网站</a>上下载最新的版本Boost v1.49.0, 我选择的是<a href="http://sourceforge.net/projects/boost/files/boost/1.49.0/">boost_1_49_0.7z</a>;</p></li>
+<li><p>将下载的boost_1_49_0.7z解压缩到D:\Program Files\boost_1_49_0中;</p></li>
+<li><p>为了自动编译Boost，编写了下面的Batch，将Batch代码拷贝到文本文件中，重新命名为为compile_boost_1_49_0.bat;</p></li>
+</ul>
+
+
+<p><div><script src='https://gist.github.com/2058696.js?file='></script>
+<noscript><pre><code></code></pre></noscript></div>
+</p>
+
+<p>由于我使用的VS2005，所以使用了<code>--toolset=msvc-8.0</code>。</p>
+
+<p>如果使用的是其他版本的VS，则上述的代码要作一点小修改，具体就是：</p>
+
+<p>VS2008 -> <code>--toolset=msvc-9.0</code>     VS2010 -> <code>--toolset=msvc-10.0</code></p>
+
+<p>当然，lib的存放的路径也可以改动一下。</p>
+
+<ul>
+<li><p>将上面的compile_boost_1_49_0.bat文件拷贝到D:\Program Files\boost_1_49_0目录中;</p></li>
+<li><p>双击运行compile_boost_1_49_0.bat，这样就开始了漫长的自动编译过程，整个过程大概要2小时（编译了32位和64位的全部lib）;</p></li>
+<li><p>编译结束后，生成的Libs都在D:\Program Files\boost_1_49_0\stage\lib\win32\vs8_0和D:\Program Files\boost_1_49_0\stage\lib\x64\vs8_0两个文件夹下；</p></li>
+</ul>
+
+
+<p>到这里Boost编译的过程就结束了。</p>
+
+<h2>设置VS2005</h2>
+
+<ul>
+<li><p>在Tools->Options->Projects and Solutions->VC++ Directories中：</p>
+
+<pre><code>- Win32平台加入Include files和Library files的路径
+    - Include files: D:\Program Files\boost_1_49_0
+    - Library files: D:\Program Files\boost_1_49_0\stage\lib\win32\vs8_0
+
+- X64平台加入Include files和Library files的路径
+    - Include files: D:\Program Files\boost_1_49_0
+    - Library files: D:\Program Files\boost_1_49_0\stage\lib\x64\vs8_0
+</code></pre></li>
+<li><p>通过上述的设置，在VS2005中就可以正常使用Boost了。</p></li>
+</ul>
+
+
+<p><strong>相信此时你一定很激动，赶紧写个测试程序，来体验一下Boost的强大功能吧!</strong></p>
+]]></content>
+  </entry>
+  
+</feed>

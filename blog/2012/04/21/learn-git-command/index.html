@@ -1,0 +1,665 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Git学习笔记 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="前一段时间在Github上用Octopress搭建了博客，从此，就需要和Git不断打交道，虽然用到的Git命令不是很多。 刚好，这几天x64移植项目告一段落，有了点空闲时间，想想还是系统地去学习一下Git吧。 当然，学习Git，我也希望在今后的开发中能够用Git来管理自己的Code， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/04/21/learn-git-command">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Git学习笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-21T13:39:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前一段时间在<a href="https://github.com/">Github</a>上用<a href="https://github.com/imathis/octopress">Octopress</a>搭建了博客，从此，就需要和<strong>Git</strong>不断打交道，虽然用到的Git命令不是很多。</p>
+
+<p>刚好，这几天x64移植项目告一段落，有了点空闲时间，想想还是系统地去学习一下Git吧。</p>
+
+<p>当然，学习Git，我也希望在今后的开发中能够用Git来管理自己的Code，结束之前那种最原始的、靠每天备份的笨方法。</p>
+
+<p>关于Git的教程，网上有不少，感觉用的人也挺多的，所以一般的资料和问题解决方法基本通过Google都能够获得。</p>
+
+<p>这里，关于Git的历史、原理等不会涉及太多，主要是从自身日常管理Code这个角度去谈谈如何使用Git管理代码，让自己先达到能够熟练Git这个目标。</p>
+
+<!--more-->
+
+
+<h2>起点</h2>
+
+<p>我学习Git的起点是从阅读<a href="http://progit.org/book/zh/">Pro Git</a>开始，感觉各种概念讲解的还是蛮清楚的，涉及Git的很多方面，是一份很不错的资料。</p>
+
+<p>另外，<a href="http://gitbook.liuhui998.com/index.html">git community book</a>和<a href="http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_tw/index.html">Git Magic</a>也值得参考一下。</p>
+
+<p>还有一份<a href="http://files.cnblogs.com/phphuaibei/git%E6%90%AD%E5%BB%BA.pdf">Git使用指南</a> 作为使用Git管理Code的入门资料也是很不错的。</p>
+
+<h2>工具</h2>
+
+<p>我学习和使用Git的平台是<strong>Windows</strong>，所以安装一下<a href="http://code.google.com/p/msysgit/">msysGit</a>提供的安装文件即可，我安装的是<a href="http://code.google.com/p/msysgit/downloads/list">Git-1.7.7-preview20111014.exe</a>，不过目前已经更新到Git 1.7.10了。</p>
+
+<p>安装完，就可以通过命令行工具<strong>Git Bash</strong>来使用Git了，我使用Git大多数时候是通过命令行的方式，当然在Windows下也支持图形界面的方式来使用Git，使用<strong>Git GUI</strong>就可以了。</p>
+
+<p>不过，在Git GUI里有些特殊的功能可能没有支持，需要这些功能还是要切换到Git Bash中。</p>
+
+<p>该工具还集成到了Windows的资源管理器中，在文件夹上右键，可以点击<strong>Git Bash Here</strong>和<strong>Git GUI Here</strong>快速启动Git并自动切换到指定的文件夹，方便了不少。</p>
+
+<p>但有时，不知怎么突然无法通过该方法启动Git，上Google查了一下，发现是与Git相关的注册表项被修改了，可能是我使用了注册表清理工具造成的吧？</p>
+
+<p>知道了原因，修复的方法也很简单，将下面的内容复制到一个文本文件中，保存后，将文件的扩展名修改为.reg，双击注册即可。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>REGEDIT4
+</span><span class='line'>
+</span><span class='line'>[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\git_shell]
+</span><span class='line'>@="Git Ba&sh Here"
+</span><span class='line'>
+</span><span class='line'>[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\git_shell\command]
+</span><span class='line'>@="wscript \"C:\\Program Files\\Git\\Git Bash.vbs\" %1"
+</span><span class='line'>
+</span><span class='line'>[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\git_gui]
+</span><span class='line'>@="Git &GUI Here"
+</span><span class='line'>
+</span><span class='line'>[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\git_gui\command]
+</span><span class='line'>@="\"C:\\Program Files\\Git\\bin\\wish.exe\" \"C:\\Program Files\\Git\\libexec\\git-core\\git-gui\" --working-dir %1"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>值得一提的是，如果开发工具是MS Virtual Studio的话，则有另外一个Git图形界面工具<a href="http://code.google.com/p/gitextensions/">Git Extension</a>可以使用，安装之后会集成到<strong>VS2005、VS2008、VS2010</strong>中，当然脱离MS Virtual Studio也可以单独使用，其图形界面的功能比上述的Git GUI要强大不少；同时，也集成到Windows资源管理器中，可以通过在文件夹上右键进入。</p>
+
+<p>为了更深入地了解和掌握Git，下面基本是采用Git命令才演示各种操作。</p>
+
+<h2>Git基本概念</h2>
+
+<p>Git作为一个版本控制软件，相比其他版本控制软件有什么不同呢？</p>
+
+<ul>
+<li><p>Git是一个<strong>分布式</strong>的版本控制系统，一般来讲，各个Git仓库没有主次之分；</p></li>
+<li><p>大多数的操作可以在本地完成，事后方便时，再推送到中心服务器的仓库中；</p></li>
+<li><p>采用<strong>&#8220;直接记录快照，而非差异比较&#8221;</strong>的版本控制策略，内部只关心<strong>文件数据的整体是否发生改变，而不是文件内容的具体差异</strong>（Git内部被实现为一种微型的文件系统）；</p></li>
+<li><p>Git工作时就是在<strong>工作目录（工作区、work tree）、暂存区（索引、index file）、本地仓库</strong>三者之间管理文件的变化情况，Git会监视工作目录中的文件变化(增加新文件，删除文件，修改文件等)，需要我们自己手动将变化的文件添加(git add)到暂存区中（这就是文件快照），然后再提交(git  commit)到本地仓库中；上述过程，涉及Git内部的三种对象：commit对象、tree对象和blob对象，blob对象会对应的文件快照中那些变化的文件内容，tree对象记录了文件快照中各个目录和文件的结构关系，从概念上讲，tree对象和blob对象组成了文件快照，commit对象则记录了这次要提交到本地仓库的文件快照，同时也会指向上次的commit对象，它也是Git内部进行版本控制的重点（Git内部会记录各个commit对象，并用HEAD来指示当前分支中最新的commit对象），很多重要的功能，如分支、版本回溯、Git仓库内部状态等都是在commit对象基础上实现的；上述的每一个对象都对应一个独一无二的ID，该ID是一个由40个字符组成的哈希码，由SHA-1算法计算而来；Git能够通过ID的前几个字符就识别出对应的对象；</p></li>
+<li><p>Git的分支功能很强大，很灵活，切换速度非常快，并且实现成本很低，这也是Git比其他版本控制软件要受欢迎的原因之一；</p></li>
+<li><p>Git拥有丰富的、功能强大的命令，一个命令通过配置不同的选项可以实现不同的功能；要学好Git，关键就是要掌握这些命令，并灵活使用它们；</p></li>
+</ul>
+
+
+<h2>Git常用命令解析</h2>
+
+<p>Git中有许多命令，并且每种命令都有一些功能选项可被选择，因此，在不熟悉Git这些命令的时候，查阅这些命令的使用说明是不错的选择。</p>
+
+<p>要查询Git命令，可以使用git help 命令或者git 命令 &#8211;help的方式，它会自动打开浏览器来查看。</p>
+
+<h3>1. Git仓库创建</h3>
+
+<p><code>git init</code></p>
+
+<p>在项目的开始，必须使用该命令来创建和初始化Git仓库，它会在项目的文件夹下生成一个隐藏的<strong>.git文件夹</strong>，这就是这个项目的Git本地仓库，后面所有的Git命令操作都是针对该文件夹里的内容。执行过该命令后，原来的文件夹就成为了Git的工作目录。</p>
+
+<p><em>Note：在一个已经初始化过的文件夹下再次执行<code>git init</code>，Git并不会将之前的.git文件夹的内容清除，这应该是Git的一种保护。</em></p>
+
+<p>.git文件夹的初始组成如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.git
+</span><span class='line'>   |
+</span><span class='line'>   |--HEAD
+</span><span class='line'>   |--description
+</span><span class='line'>   |--config
+</span><span class='line'>   |--[refs]
+</span><span class='line'>   |----|
+</span><span class='line'>   |----|--[heads]
+</span><span class='line'>   |----|--[tags]
+</span><span class='line'>   |--[objects]
+</span><span class='line'>   |----|
+</span><span class='line'>   |----|--[info]
+</span><span class='line'>   |----|--[pack]
+</span><span class='line'>   |--[info]
+</span><span class='line'>   |----|
+</span><span class='line'>   |----|--exclude
+</span><span class='line'>   |--[hooks]
+</span><span class='line'>   |----|
+</span><span class='line'>   |----|--*.sample</span></code></pre></td></tr></table></div></figure>
+
+
+<p>初始状态下，Git默认处于master分支，HEAD文件的内容为ref: refs/heads/master，但在refs/heads目录下却没有master文件；而objects文件夹下则没有文件。</p>
+
+<p>在有过一次提交后，.git文件夹就会产生变化，如增加了logs文件夹，里面记录了git各种操作产生的log，我们通过git命令，如git log, git show, git reflog等可以查看这些log内容；
+产生了一个index文件，这就是暂存区对应的文件; objects文件夹下新增了很多文件夹和文件，它们实际就是文件快照（tree对象和blob对象）存放的地方；
+refs/heads文件夹下这时生成了master文件，其内容就是master分支最新commit对象对应的ID；如果有其他分支，则在refs/heads文件夹下也会生成以分支名命名的文件，里面存储着该分支最新commit对象的ID。</p>
+
+<h3>2. 文件快照</h3>
+
+<p><code>git add .</code></p>
+
+<p>在Git中，工作目录下文件的状态可以分为已跟踪和未跟踪两大类状态，其中，已跟踪的文件是指已经被提交到git仓库的那些文件，而未跟踪的文件是指还没被提交到Git仓库中的那些非Git忽略的文件（Git可以通过在项目根目录下产生一个.gitignore文件，在里面指定要忽略的文件类型，这样Git就不会去监视这些文件的变化），如果工作目录中已跟踪的文件被修改或者删除，或者有新的文件（包括非空文件夹）加入，则通过<code>git status</code>可以查看到Git监视到文件变化情况，然后通过<code>git add .</code>做一次文件快照，并将其存储到暂存区（index文件）中，等待被提交到Git仓库中。</p>
+
+<h3>3. 文件快照提交至仓库</h3>
+
+<p><code>git commit -m '本次提交文件变化的描述信息'</code></p>
+
+<p>如果工作目录中的文件变化已经被暂存（也可以同<code>git status</code>来查看），则说明这次的文件快照可以被提交到仓库中，并一直保存。</p>
+
+<p>提交时，需要添加一些信息，这里最好要将这次的文件变化情况描述清楚，以便以后在版本回溯时能够了解到各版本之间的差别。</p>
+
+<p>如果工作目录中仅是已跟踪的文件被修改或被删除，则可以不用先<code>git add .</code>，直接使用<code>git commit -am "描述信息"</code>即可。</p>
+
+<h3>4. 查看工作目录文件状态</h3>
+
+<p><code>git status</code></p>
+
+<p>在git命令执行后，要养成通过<code>git status</code>查看git状态的习惯，以便及时了解文件变化的情况。通过<code>git status</code>可以知道文件的状态（已修改未暂存、已删除、已修改并已暂存等待提交、未跟踪）。</p>
+
+<h3>5. 查看提交历史</h3>
+
+<p><code>git log</code></p>
+
+<p>通过<code>git log</code>可以查看当前分支的所有提交历史，知道每次提交的commit对象的ID以及提交时附加的描述信息等。要显示更多的信息，需要使用其支持的选项，如<code>git log -p</code>可以将每次提交的文件变化也显示出来。</p>
+
+<p><em>Note ： <code>git log</code>显示的内容可能会比较多，但git bash上显示不下时，最下面会有一个冒号：，指示还有更多的内容，这是通过上下箭头就可以选择内容进行查看，要退出按q键即可，要查看其他命令，按h键。</em></p>
+
+<h3>6. 查看指定的提交对象</h3>
+
+<p><code>git show commit-id</code></p>
+
+<p>通过<code>git log</code>可以显示整个提交历史，而通过<code>git show commit-id</code>则可以查看指定的某次提交内存，当然<code>git show -all</code>也可以显示出提交历史，另外还可以格式化显示内容。具体请查看其help。</p>
+
+<p><em>Note : commit-id可以是commit对象对应的ID，也可以是HEAD，分支名，tag等。</em></p>
+
+<h3>7. 查看工作目录/暂存区/仓库之间的差异</h3>
+
+<ul>
+<li><code>git diff</code>是比较工作目录与暂存区的差异</li>
+<li><code>git diff HEAD</code>则是比较工作目录与仓库中最近一次的提交间的差异</li>
+<li><code>git diff --cached</code>比较了暂存区与仓库中最近一次的提交间的差异。</li>
+</ul>
+
+
+<h3>8. 分支的创建、删除、切换、合并、查看</h3>
+
+<p>Git一个比较吸引人的功能就是其强大的分支和合并功能。初始状态下，Git默认的分支为master。</p>
+
+<ul>
+<li>通过<code>git branch</code>可以查看目前Git仓库中已有的分支；</li>
+<li>创建分支 ：<code>git branch 新分支名 [分支起点]</code>，没有分支起点的话，则默认在当前分支的最新的提交上创建分支</li>
+<li>切换分支 ：<code>git checkout 分支名</code></li>
+<li>创建同时切换到新分支 ：<code>git checkout -b 新分支名  [分支起点]</code></li>
+<li>合并分支到master分支 ：<code>git checkout master</code>  <code>git merge 要被合并的分支名</code>，合并过程中如果发生冲突则需要自己手动解决冲突，然后再提交。有冲突时，Git会显示哪个文件有冲突，并在冲突的文件中加上特殊的标识符号，解决完冲突后，要手动去掉这些被添加的标识符号。如果冲突比较复杂的话，最好使用其他工具来协助，通过git mergetool来启动。冲突一般是在不同的分支上对同一文件的同一位置内容进行了改动，并已提交到仓库中，这样在合并的时候就会发生冲突。</li>
+<li>删除已经被合并过的分支 ： <code>git branch -d 要删除的分支</code>名，如果分支没有被合并过，该命令会执行失败</li>
+<li>删除分支，不管有没有被合并过 : <code>git branch -D 要删除的分支名</code></li>
+<li>用图形界面查看分支提交历史 ： <code>gitk</code></li>
+</ul>
+
+
+<p><strong>充分利用好分支，可以帮助我们进行很好的版本控制与管理，如何用好分支其实是门艺术。</strong></p>
+
+<p>基于分支的版本控制模型有一篇文章进行了很好的阐述。</p>
+
+<p><a href="http://nvie.com/posts/a-successful-git-branching-model/">A succeddful Git branching model</a></p>
+
+<p>中文翻译：<a href="http://roclinux.cn/?p=2129">Git分支管理是一门艺术</a></p>
+
+<p><img src="/images/blogImgs/201204/git-branch-all.png"></p>
+
+<h3>9. 标签的添加、删除、查看</h3>
+
+<p>标签可以在需要的地方，为某个提交对象创建别名，这样以后我们就可以通过标签来查看一些信息，创建分支等。</p>
+
+<ul>
+<li>查看标签 ：<code>git tag</code></li>
+<li>创建简单的标签 ： <code>git tag 标签名</code></li>
+<li>创建附加信息的标签 ： <code>git tag -a 标签名 -m '附加信息'</code></li>
+<li>通过标签查看信息 ： <code>git show 标签名</code></li>
+<li>删除标签 ： <code>git tag -d 标签名</code></li>
+</ul>
+
+
+<h3>10. 与远程仓库的交互</h3>
+
+<p>Git相比其他版本控制软件的一个优点就是大多数的操作都可以在本地进行，而不用管远程的仓库，因为操作是在本地，且操作的数据也是在本地，所以执行的速度就会比较快。
+在多人协作的项目中，就需要涉及与远程仓库交互的问题，主要是如何从远程仓库抓取最新数据合并到自己的本地分支上，将自己的最新成果分享给其他人或让别人审查等 。</p>
+
+<ul>
+<li>查看本地已经添加的远程仓库 ： <code>git remote</code>仅显示已添加的远程仓库名，<code>git remote -v</code>可以一并查看远程仓库的地址</li>
+<li>在本添加远程仓库 ： <code>git remote add 远程仓库名 远程仓库地址</code></li>
+<li>删除本地添加的远程仓库 ：<code>git remote rm 远程仓库名</code></li>
+<li>重命名远程仓库名 ： <code>git remote rename 原名 新名</code></li>
+<li>克隆远程仓库到本地 ： <code>git clone 远程仓库地址 [克隆到指定文件夹]</code></li>
+<li>从远程仓库抓取最新数据到本地但不与本地分支进行合并 ： <code>git fetch 远程仓库名</code></li>
+<li>从远程仓库抓取最新数据并自动与本地分支进行合并 ： <code>git pull 远程仓库名 本地要合并的分支名</code></li>
+<li>将本地仓库推送到远程仓库中 ：<code>git push 远程仓库名 本地分支名</code></li>
+<li>查看远程仓库信息 ： <code>git remote show 远程仓库名</code></li>
+<li>将标签推送到远程仓库 ： <code>git push 远程仓库名 标签名</code>, 默认Git是不会将标签推送到远程仓库的</li>
+</ul>
+
+
+<h3>11. 查看所有分支的所有的commit和reset操作记录（包括已删除的commit记录）</h3>
+
+<p>通过<code>git reflog</code>可以帮助我们获得将工作目录恢复到某个状态所需的ID(可以用HEAD@{数字}来表示对应的ID)。</p>
+
+<h3>12. 撤销操作和版本回溯</h3>
+
+<p>有时候，由于我们的误操作，产生了一些错误，我们发现后希望能够及时纠正这些因为误操作而产生的结果，将工作目录恢复到某个正常状态。</p>
+
+<ul>
+<li>撤销文件暂存，但还没有提交的文件： <code>git checkout -- filename</code> 或<code>git reset HEAD</code> ,修改的文件会被恢复到上次提交时的状态，修改的内容会丢失</li>
+<li>版本回溯 ： [方法1] 根据分支或者标签将工作目录恢复到指定版本 : <code>git checkout 分支名或标签名</code>；
+[方法2] 先通过<code>git reflog</code>找到某个版本的commit-ID，然后用<code>git reset --hard commit-ID</code>将工作目录的文件恢复到指定的版本</li>
+<li>恢复工作目录中被删除的文件 (文件之前被提交到仓库中)：<code>git checkout -- filename</code> 或 <code>git checkout -f</code> 或 <code>git ls-files -d | xargs git checkout --</code></li>
+</ul>
+
+
+<h3>13. 备份工作目录</h3>
+
+<p><code>git stash</code> <code>git stash list</code> <code>git stash apply</code> <code>git stash pop</code> <code>git stash clear</code></p>
+
+<p>如果正在一个develop分支上正在开发新功能，但这时master分支(稳定版本)突然发现了bug，并需要及时修复，而develop分支此时的工作还没有完成，且不希望将之前的工作就这样提交到仓库中时，这时就可以用git stash来暂时保存这些状态到Git内部栈中，并用当前分支上一次的提交内容来恢复工作目录，然后切换到master分支进行bug修复工作，等修复完毕并提交到仓库上后，再使用<code>git stash apply [stash@{0}]</code>或者<code>git stash pop</code>将工作目录恢复到之前的状态，继续之前的工作。</p>
+
+<p>同时也可以多次使用<code>git stash</code>将未提交的代码压入到Git栈中，但当多次使用&#8217;git stash&#8217;命令后，Git栈里将充满了未提交的代码，这时候到底要用哪个版本来恢复工作目录呢？<code>git stash list</code>命令可以将当前的Git栈信息打印出来，我们只需要将找到对应的版本号，例如使用<code>git stash apply stash@{1}</code>就可以用版本号为stash@{1}的内容来恢复工作目录。</p>
+
+<p>当Git栈中所有的内容都被恢复后，可以使用<code>git stash clear</code>来将栈清空。</p>
+
+<h3>14. 二分查找</h3>
+
+<p><code>git bisect</code></p>
+
+<h3>15. 垃圾回收</h3>
+
+<p><code>git gc</code></p>
+
+<h3>16. 将当前工作目录文件压缩归档（不包括.git目录）</h3>
+
+<p><code>git archive --format=zip -o arch.zip HEAD</code> 或 <code>git arch --format zip head&gt;arch.zip</code></p>
+
+<h3>17. 跟上游分支同步</h3>
+
+<p><code>git rebase 上游分支名</code></p>
+
+<p>假设master和develop是一个项目的两个分支，其中master是主分支，develop是从master而来的开发分支，如果在develop分支上提交过2次，之后又切换到master分支，做了一些修改并提交2次，这时，如果想将master分支的最新修改内容合并到develop分支，但同时也不能影响master分支时，就需要使用git rebase了，这时的上游分支为master。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>执行git rebase master前：
+</span><span class='line'>              develop: 1 --> develop: 2
+</span><span class='line'>            /
+</span><span class='line'>master: 0 --> master: 1 --> master: 2
+</span><span class='line'>
+</span><span class='line'>执行git rebase master后：
+</span><span class='line'>                                    develop: 1 --> develop: 2
+</span><span class='line'>                                   /
+</span><span class='line'>master: 0 --> master: 1 --> master: 2</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>18. 查看commit的次数</h3>
+
+<p><code>git shortlog -s -n</code>会显示出总的提交次数。</p>
+
+<h3>19. 查看仓库中commit对象、tree对象和blob对象</h3>
+
+<p>在我们将文件提交到Git仓库后，我们可以通过每次的commit对象的ID来查看文件快照的内容。</p>
+
+<p>具体的方法就是：</p>
+
+<ul>
+<li><p>先通过<code>git log</code>查看提交历史，选择需要查看的commit-id</p></li>
+<li><p><code>git cat-file -t id</code>可以知道拥有该ID的对象是属于哪种类型：<strong>commit、tree、blob</strong></p></li>
+<li><p><code>git cat-file commit id</code>可以查看到该commit对象指向的tree对象的ID</p></li>
+<li><p><code>git ls-tree tree-id</code>可以查看该tree中的blob对象的ID和其他tree对象的ID（如果有）</p></li>
+<li><p><code>git cat-file blob blob-id</code></p></li>
+</ul>
+
+
+<h3>20. 查看仓库中index文件</h3>
+
+<p>通过<code>git ls-files --stage</code>可以查看当前分支的index文件中有哪些文件，它列出了文件名及对应的blob对象的ID。</p>
+
+<h3>21. 查看仓库目录结构</h3>
+
+<p><code>find</code>可以列出.git目录下所有目录和文件，这样就可以清楚地知道当前仓库的目录结构。</p>
+
+<h3>22. 查看文件的修改历史</h3>
+
+<p><code>git blame filename</code>可以列出该文件每次被修改的时间和内容。</p>
+
+<h3>23. 常用的linux命令</h3>
+
+<ul>
+<li>创建文件夹 <code>mkdir</code></li>
+<li>删除文件夹 <code>rmdir</code></li>
+<li>查看文件列表 <code>ls</code></li>
+<li>查看文件内容 <code>cat</code></li>
+<li>回显 和 管道命令 <code>echo "hello" &gt;&gt; file.txt</code></li>
+</ul>
+
+
+<p>上述的这些命令应该能够帮助我们实现多数的版本控制需求，当然其中的每一个命令都会有一些其他的选项功能这里没有提到，希望在以后使用Git的过程中能够慢慢发掘，感受Git的强大！</p>
+
+<p>很多内容是基于自己的理解，如有误请指正。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-21T13:39:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/git/'>Git</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/04/11/x64-filter-porting/" title="Previous Post: x64 filter移植笔记">&laquo; x64 filter移植笔记</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/04/28/git-command-note/" title="next Post: Git常用命令的使用情景">Git常用命令的使用情景 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/04/21/learn-git-command/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/04/21/learn-git-command/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

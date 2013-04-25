@@ -1,0 +1,705 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="软件开发过程中少不了要通过查看Log文件来定位Bug，这当然需要有一个好用的文本编辑软件来配合。 目前为止，我使用过的文本编辑软件主要有：UltraEdit、VIM、Notepad++。 虽然UltaEdit功能强大，但可惜是收费软件，而且许多功能平时也用不上， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/page/2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/05/notepad-plus-plus/">善用佳软 Notepad++</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-05T11:40:00+08:00" pubdate data-updated="true">Aug 5<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/05/notepad-plus-plus/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>软件开发过程中少不了要通过查看Log文件来定位Bug，这当然需要有一个好用的文本编辑软件来配合。</p>
+
+<p>目前为止，我使用过的文本编辑软件主要有：UltraEdit、<a href="http://www.vim.org/">VIM</a>、<a href="http://notepad-plus-plus.org/">Notepad++</a>。</p>
+
+<p>虽然UltaEdit功能强大，但可惜是收费软件，而且许多功能平时也用不上，在如今优秀开源软件蓬勃发展的今天完全是可以找到一款替代软件。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/08/05/notepad-plus-plus/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/09/migrate-from-vss-to-git/">迁移VSS版本库到Git</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-09T16:10:00+08:00" pubdate data-updated="true">May 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/05/09/migrate-from-vss-to-git/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>公司最近有意将版本控制工具从VSS和CVS切换到Git上，由于之前的项目一直是使用VSS和CVS进行版本管理，这次迁移免不了要涉及VSS和CVS版本库向Git进行转换的工作。</p>
+
+<p>带着这个目的，我先尝试着找到VSS到Git迁移的可行方案，因为我之前的项目一直也是用VSS进行版本管理，相对于从没有使用过的CVS而言，应该更容易上手一些。至于CVS如何迁移到Git会在后面进行研究。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/05/09/migrate-from-vss-to-git/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/03/git-server-based-on-gitstack/">基于GitStack搭建Git中心服务器</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-03T20:10:00+08:00" pubdate data-updated="true">May 3<span>rd</span>, 2012</time>
+        
+         | <a href="/blog/2012/05/03/git-server-based-on-gitstack/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>通过前一段时间对Git的学习，基本掌握了Git常用命令的使用方法，并进行了总结，有兴趣的可以看看<a href="http://shanewfx.github.com/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a>和<a href="http://shanewfx.github.com/blog/2012/04/21/learn-git-command/">Git学习笔记</a>。</p>
+
+<p>在<a href="http://shanewfx.github.com/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a>中提到过多人协作的项目往往是需要一个中心服务器来同步多人之间的工作成果，另外，最终的工作成果通常也是中心服务器上的代码为准（为了项目管理的需要），因此，备份时往往需要对中心服务器上的仓库进行刻盘。</p>
+
+<p>中心服务器上创建的项目仓库一般为裸仓库（没有工作目录），且需要为项目开发人员设置访问和操作中心服务器上仓库的权限（访问、读、写）。</p>
+
+<p>本文将介绍如何使用开源软件<a href="http://gitstack.com/">GitStack</a>在Windows上搭建Git中心服务器。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/05/03/git-server-based-on-gitstack/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/02/binary-compatibility/">库的可扩展性与二进制兼容性</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-02T15:44:00+08:00" pubdate data-updated="true">May 2<span>nd</span>, 2012</time>
+        
+         | <a href="/blog/2012/05/02/binary-compatibility/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>读了<a href="http://www.cnblogs.com/Solstice/">陈硕</a>写的关于库的<strong>二进制兼容(binary compatibility)</strong>方面的文章，深感此内容的重要性，值得在以后的设计中多加考虑和实践。</p>
+
+<p>在此，记录一下读后感，总结一下在设计库接口时应该考虑的事项，以备后用。</p>
+
+<p>参考的文章如下:</p>
+
+<ul>
+<li><p><a href="http://www.cnblogs.com/Solstice/archive/2011/03/09/1978024.html">二进制兼容性</a></p></li>
+<li><p><a href="http://www.cnblogs.com/Solstice/archive/2011/03/13/1982563.html">避免使用虚函数作为库的接口</a></p></li>
+</ul>
+
+
+<p>另外，作者将其博文整理出一份<a href="http://cloud.github.com/downloads/chenshuo/documents/CppPractice.pdf">C++工程实践经验谈</a>，很值得一读。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/05/02/binary-compatibility/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/29/a-story/">一道智力题引发的思考</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-29T21:01:00+08:00" pubdate data-updated="true">Apr 29<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/04/29/a-story/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前一段时间在<a href="http://cooffee.net/">酷啡生活</a>的博客中看到这样的一道智力题:</p>
+
+<p><strong>&#8220;荷塘里有一片荷叶，它每天会增长一倍。假使30天会长满整个荷塘，请问第28天，荷塘里有多少荷叶?&#8221;</strong></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/04/29/a-story/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-28T13:43:00+08:00" pubdate data-updated="true">Apr 28<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/04/28/git-command-note/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在<a href="http://shanewfx.github.com/blog/2012/04/21/learn-git-command/">上一篇</a>已经大概讲了一下Git中的常用命令，本文希望能够在此基础上再做些总结，以结束Git第一阶段的学习。</p>
+
+<p>本文尽量指出在不同情景下如何选择合适的Git命令来达到自己的目的，当然，由于Git太过强大、灵活，有时同一问题可以有多种不同的解决方案，这里不太可能全部列出，只会选择一些自己测试可用的方法。</p>
+
+<p>文中会稍微谈一些Git内部实现的细节，但不会太具体，同时这些内容大部分是基于自己在学习过程中的一些理解，所以也不能保证相关的解释一定是正确的。</p>
+
+<p>如发现有误，请告之，在此谢过!</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/04/28/git-command-note/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/21/learn-git-command/">Git学习笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-21T13:39:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2012</time>
+        
+         | <a href="/blog/2012/04/21/learn-git-command/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前一段时间在<a href="https://github.com/">Github</a>上用<a href="https://github.com/imathis/octopress">Octopress</a>搭建了博客，从此，就需要和<strong>Git</strong>不断打交道，虽然用到的Git命令不是很多。</p>
+
+<p>刚好，这几天x64移植项目告一段落，有了点空闲时间，想想还是系统地去学习一下Git吧。</p>
+
+<p>当然，学习Git，我也希望在今后的开发中能够用Git来管理自己的Code，结束之前那种最原始的、靠每天备份的笨方法。</p>
+
+<p>关于Git的教程，网上有不少，感觉用的人也挺多的，所以一般的资料和问题解决方法基本通过Google都能够获得。</p>
+
+<p>这里，关于Git的历史、原理等不会涉及太多，主要是从自身日常管理Code这个角度去谈谈如何使用Git管理代码，让自己先达到能够熟练Git这个目标。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/04/21/learn-git-command/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/11/x64-filter-porting/">X64 Filter移植笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T17:53:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/04/11/x64-filter-porting/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>64位filter开发工具为VS2005，原来使用VC6开发的filter要转换到VS2005下。</p>
+
+<p>32位的filter移植到x64平台上，对于没有汇编的filter，工作比较简单，主要就是编译选项的设置和修改指针与整形数相互强制转换的地方，以及部分数据类型不匹配等。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/04/11/x64-filter-porting/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/03/26/vs2005-64bit-programming/">VS2005 64-bit Programming Note</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-26T17:47:00+08:00" pubdate data-updated="true">Mar 26<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/03/26/vs2005-64bit-programming/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近接到的任务是将32位的directshow filter移植到64位平台下，因此，借此机会学习了一点关于64位编程方面的内容。</p>
+
+<p>由于平时的开发环境是Windows + VS2005，所以，下面的内容也主要是讨论VS2005下64位编程的一些主要事项。不过，对于其他平台下的64位编程也有参考价值。</p>
+
+<p>之前已经讲过如何搭建VS2005下64位编程环境，看<a href="http://shanewfx.github.com/blog/2012/03/18/64bit-programming/">这里</a>。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/26/vs2005-64bit-programming/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/03/18/a-simple-log-tool/">A Simple Log Tool</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-18T20:10:00+08:00" pubdate data-updated="true">Mar 18<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/03/18/a-simple-log-tool/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>对于程序员来说，debug是再正常不过的事。</p>
+
+<p>在遇到问题时，通过分析程序的产生的Log文件来查找和验证问题发生的原因。</p>
+
+<p>下面是一个简单的log tool，可以满足一般的log需求。</p>
+
+<p>代码已经放到Github上了，需要的可到<a href="https://github.com/shanewfx/Log">这里</a>下载。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/18/a-simple-log-tool/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器&#8211;Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

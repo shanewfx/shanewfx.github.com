@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Log | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/log/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A Simple Log Tool]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/03/18/a-simple-log-tool/"/>
+    <updated>2012-03-18T20:10:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/03/18/a-simple-log-tool</id>
+    <content type="html"><![CDATA[<p>对于程序员来说，debug是再正常不过的事。</p>
+
+<p>在遇到问题时，通过分析程序的产生的Log文件来查找和验证问题发生的原因。</p>
+
+<p>下面是一个简单的log tool，可以满足一般的log需求。</p>
+
+<p>代码已经放到Github上了，需要的可到<a href="https://github.com/shanewfx/Log">这里</a>下载。</p>
+
+<!--more-->
+
+
+<p>该log tool实现了log分级，也支持自己指定log file的存放位置，缺省情况下，log文件为<code>C:\DebugInfo.log</code>。</p>
+
+<p>因为log没有加锁，所以在多线程下产生的log会有错乱的现象，因此，在多线程中，可以在Log()函数的开始处加锁来解决。</p>
+
+<hr />
+
+<h3>log.h</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>ifndef _LOG_H&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>define _LOG_H&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>include &lt;string>&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>define TEST&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>define LOG_FILE_PATH "C:\DebugInfo.log"&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>ifdef TEST&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>#define LogData Logger::Instance().Log
+</span><span class='line'>#define SetLogFile Logger::SetLogFilePath
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>else&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>#define LogData
+</span><span class='line'>#define SetLogFile
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>endif&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>typedef enum tagLogLevel
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>LOG_TRACE,
+</span><span class='line'>LOG_INFO,
+</span><span class='line'>LOG_WARNING,
+</span><span class='line'>LOG_ERROR,
+</span><span class='line'>LOG_FATAL,
+</span><span class='line'>LOG_NONE = 10,
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}LogLevel;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>class Logger
+</span><span class='line'>{
+</span><span class='line'>public:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>static Logger&amp; Instance();
+</span><span class='line'>
+</span><span class='line'>static void SetLogFilePath(const std::string&amp; strFilePath, bool bAppend = false);
+</span><span class='line'>static void SetLogLevel(const LogLevel Level);
+</span><span class='line'>static void Initialise(bool bAppend = false);
+</span><span class='line'>static void Dispose();
+</span><span class='line'>
+</span><span class='line'>void Log(const LogLevel Level, const char *Format, ...);
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>private:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Logger();
+</span><span class='line'>Logger(Logger const&amp;);
+</span><span class='line'>Logger&amp; operator=(Logger const&amp;);
+</span><span class='line'>~Logger();
+</span><span class='line'>
+</span><span class='line'>static FILE*        m_hLogFile;
+</span><span class='line'>static std::string  m_strFilePath;
+</span><span class='line'>static LogLevel     m_LogLevel;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>};&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>endif//_LOG_H&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<hr />
+
+<h3>log.cpp</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>include "log.h"&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>include &lt;stdarg.h>&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>include &lt;windows.h>&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FILE* Logger::m_hLogFile = NULL;
+</span><span class='line'>LogLevel Logger::m_LogLevel = LOG_TRACE;
+</span><span class='line'>std::string Logger::m_strFilePath = LOG_FILE_PATH;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>const char* LogLevelStr[] = {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"TRACE",
+</span><span class='line'>"INFO",
+</span><span class='line'>"WARNING",
+</span><span class='line'>"ERROR",
+</span><span class='line'>"CRITICAL",
+</span><span class='line'>"FATAL",
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>};&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Logger&amp; Logger::Instance()
+</span><span class='line'>{
+</span><span class='line'>  static Logger LoggerInstance;
+</span><span class='line'>  return LoggerInstance;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>void Logger::SetLogFilePath(const std::string&amp; strFilePath, bool bAppend)
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>m_strFilePath = strFilePath;
+</span><span class='line'>Dispose();
+</span><span class='line'>Initialise(bAppend);
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>void Logger::SetLogLevel(const LogLevel Level)
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>m_LogLevel = Level;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Logger::Logger()
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Initialise(false);
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Logger::~Logger()
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Dispose();
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>void Logger::Initialise(bool bAppend)
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>if (m_strFilePath.length() &gt; 0) {
+</span><span class='line'>    m_hLogFile = bAppend ? fopen(m_strFilePath.c_str(), "a+") 
+</span><span class='line'>                     : fopen(m_strFilePath.c_str(), "w+");  
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>void Logger::Dispose()
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>if (NULL != m_hLogFile) {
+</span><span class='line'>    fflush(m_hLogFile);
+</span><span class='line'>    fclose(m_hLogFile);
+</span><span class='line'>    m_hLogFile = NULL;
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>void Logger::Log(const LogLevel Level, const char *Format, ...)
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>if (m_LogLevel &gt; Level) return;
+</span><span class='line'>
+</span><span class='line'>if (NULL == m_hLogFile) return; 
+</span><span class='line'>
+</span><span class='line'>char szBuffer[1024];
+</span><span class='line'>
+</span><span class='line'>va_list args;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  va_start(args, Format);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>vsprintf(szBuffer, Format, args);
+</span><span class='line'>va_end(args);
+</span><span class='line'>
+</span><span class='line'>SYSTEMTIME st;      
+</span><span class='line'>GetLocalTime(&amp;st);
+</span><span class='line'>if (0 &gt; fprintf(m_hLogFile, "[%02u:%02u:%02u:%03u]\t[%s]\t%s\n", 
+</span><span class='line'>    st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, 
+</span><span class='line'>    LogLevelStr[Level], szBuffer)) {
+</span><span class='line'>    Dispose();
+</span><span class='line'>}
+</span><span class='line'>else {
+</span><span class='line'>    fflush(m_hLogFile);
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<hr />
+
+<h3>log的使用示例</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>include "Log.h"&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>LogData(LOG_TRACE, "log information\n");&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>int i = 100;
+</span><span class='line'>LogData(LOG_TRACE, "i = %d\n", i);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>int j = 10;
+</span><span class='line'>LogData(LOG_TRACE, "i = %d, j = %d\n", i, j);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>SetLogFile("c:\log.txt"); //set log file path</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>

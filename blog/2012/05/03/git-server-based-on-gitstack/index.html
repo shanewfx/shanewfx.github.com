@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>基于GitStack搭建Git中心服务器 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="通过前一段时间对Git的学习，基本掌握了Git常用命令的使用方法，并进行了总结，有兴趣的可以看看Git常用命令的使用情景和Git学习笔记。 在Git常用命令的使用情景中提到过多人协作的项目往往是需要一个中心服务器来同步多人之间的工作成果，另外，最终的工作成果通常也是中心服务器上的代码为准（ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/05/03/git-server-based-on-gitstack">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">基于GitStack搭建Git中心服务器</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-03T20:10:00+08:00" pubdate data-updated="true">May 3<span>rd</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>通过前一段时间对Git的学习，基本掌握了Git常用命令的使用方法，并进行了总结，有兴趣的可以看看<a href="http://shanewfx.github.com/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a>和<a href="http://shanewfx.github.com/blog/2012/04/21/learn-git-command/">Git学习笔记</a>。</p>
+
+<p>在<a href="http://shanewfx.github.com/blog/2012/04/28/git-command-note/">Git常用命令的使用情景</a>中提到过多人协作的项目往往是需要一个中心服务器来同步多人之间的工作成果，另外，最终的工作成果通常也是中心服务器上的代码为准（为了项目管理的需要），因此，备份时往往需要对中心服务器上的仓库进行刻盘。</p>
+
+<p>中心服务器上创建的项目仓库一般为裸仓库（没有工作目录），且需要为项目开发人员设置访问和操作中心服务器上仓库的权限（访问、读、写）。</p>
+
+<p>本文将介绍如何使用开源软件<a href="http://gitstack.com/">GitStack</a>在Windows上搭建Git中心服务器。</p>
+
+<!--more-->
+
+
+<p>为了学习如何在Windows上搭建Git服务器，用Google搜索了一下，发现多数的方案是采用CopSSH + msysgit + PuTTY的方式来实现，这种方案使用<a href="http://zh.wikipedia.org/wiki/SSH">SSH</a>协议（采用公钥和私钥进行身份验证，用<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">PuTTY</a>可以产生公钥和私钥，关于公钥和私钥可参考<a href="http://www.360doc.com/content/12/0502/18/1016783_208170505.shtml">这篇</a>入门介绍）与Git服务器通信，在安全性上应该来说是比较高的，但缺点就是搭建过程比较麻烦，且要清楚一些概念才知道自己在做什么，因此对新手来说有一定的难度。</p>
+
+<p>另外，让我暂时没采用这种的方案的原因是CopSSH已经不再免费了（找到一个免费的版本<a href="http://sourceforge.net/projects/sereds/files/Copssh/3.0.3/">Copssh 3.0.3</a>，需要将<a href="http://sea.tomsk.ru/pub/soft/git/Copssh_3.0.3_Installer/">icwbase-2.0.3-patch-100.exe</a>这个补丁拷贝到Copssh的安装目录下运行来修复回退键和左右方向键不能正常的问题），对于喜欢开源软件的我来说，还是希望能够找到其他的开源软件来代替。</p>
+
+<p>关于这种方案的几篇文章：</p>
+
+<ul>
+<li><p><a href="http://www.codeproject.com/Articles/296398/Step-by-Step-Setup-Git-Server-on-Windows-with-CopS">Step by Step Setup Git Server on Windows with CopSSH + msysGit and Integrate Git with Visual Studio</a></p></li>
+<li><p><a href="http://www.timdavis.com.au/git/setting-up-a-msysgit-server-with-copssh-on-windows/">Setting up a Msysgit Server with copSSH on Windows</a></p></li>
+<li><p><a href="http://www.cnblogs.com/Yinner/archive/2011/05/01/2034147.html">如何在WINDOWS XP下使用copSSH配置GIT服务器 + TortiseGIT客户端</a></p></li>
+</ul>
+
+
+<p>另外，还有一种采用Gitolite来搭建的方案，可参考<a href="http://www.ossxp.com/doc/git/gitolite.html">Gitolite构建Git服务器</a>，讲的很详细。</p>
+
+<p>无意之中，通过google发现了<a href="http://gitstack.com/">GitStack</a>，查看了官方文档，感觉不需要做什么特殊的设置就可以在Windows上搭建Git服务器，并且对用户权限的设置也很简单，故决定下载下来试用一下，测试下来果然很方便，且在Client端也成功进行了clone和push等操作（虽然中间遇到一个问题，后面会提到）。</p>
+
+<p>为了以后有个参考，特在此记录下用GitStack搭建Git服务器的主要过程。</p>
+
+<p>工具列表：</p>
+
+<ul>
+<li>服务器端：<a href="http://gitstack.com/download/">GitStack 1.4.1</a>，GitStack中已经集成了Git，可以不用再独立安装msysgit</li>
+<li>客户端：<a href="http://code.google.com/p/msysgit/downloads/list">msysgit 1.7.10</a></li>
+</ul>
+
+
+<h3>下载并安装GitStack</h3>
+
+<p>到其<a href="http://gitstack.com/">官方网站</a>上下载最新版的<a href="http://gitstack.com/download/">GitStack 1.4.1</a>。</p>
+
+<p>安装文件有100M，要注意的是，目前GitStack只支持下面几个系统（不支持Windows XP）：</p>
+
+<ul>
+<li>Windows Server 2008</li>
+<li>Windows Server 2008 R2</li>
+<li>Windows Vista</li>
+<li>Windows 7</li>
+</ul>
+
+
+<p>另外，GitStack是一个新的开源软件（可以看看<a href="http://gitstack.com/category/releases/">release的历史</a>），目前有些功能可能还不是很完善，文档也不是很全面，好在GitStack并不复杂。</p>
+
+<p>安装和普通的Windows软件一样，双击安装包自动进行安装，要注意的是最好其安装路径中不要包括空格，所以不建议安装到C:\Program Files下，默认是安装到C:\GitStack下。</p>
+
+<p>安装好GitStack后，下面主要就是配置GitStack和仓库管理。</p>
+
+<p>提醒一下，只需要在服务器上安装GitStack即可，其他的客户机上是不要安装的。安装好GitStack后，可以在任意机器上通过浏览器登录到Git服务器上（当然实际上只有仓库的管理员才有权限登录）。</p>
+
+<h3>GitStack的配置</h3>
+
+<p>在服务器上，可以通过开始菜单找到GitStack打开，也可以直接打开浏览器，在地址栏里输入http://localhost/gitstack/打开登录界面。</p>
+
+<p>另外，也可以通过server机的IP地址来登录，如server的IP地址为：192.168.0.105，则可以直接在浏览器的地址栏中输入http://192.168.0.105/gitstack/打开登录界面(注意在客户机上只能使用这种方式来打开登录界面，通过ipconfig可以查看本机的IP地址)。</p>
+
+<p>初始状态下，默认的登录账户为admin，登录密码也为admin。管理员登录后可在Settings->General中修改admin的登录密码。</p>
+
+<p>勾选Enable web based repository browsing选项开启在浏览器中直接查看Git仓库的内容。</p>
+
+<p>另外还有两个Repositories和Users &amp; Groups两个界面，其中在Repositories中可以在服务器上创建项目的裸仓库，直接输入仓库名（如输入ProjectRepos），然后点击Create按钮即可（会在服务器C:\GitStack\repositories下创建一个ProjectRepos.git裸仓库），创建好的仓库也会在Repositories中显示出来，并显示出该仓库的clone的地址git clone http://localhost/ProjectRepos.git，之后就可以在Action下通过浏览器查看仓库、添加用户/Group并设置用户/Group权限等。</p>
+
+<p>在Users &amp; Groups中，Users下是用来创建用户或修改用户密码等，每个用户对应一个Username和其Password，已有的用户会在上面的列表中显示出来；Groups下用于创建组，可以在每个Group下添加或移除用户，已有的Group也会在列表中显示出来。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/7163525050/" title="Flickr 上 shanewfx 的 gitstack_1.5"><img src="http://farm9.staticflickr.com/8164/7163525050_4e0a696de9.jpg" width="500" height="370" alt="gitstack_1.5"></a></p>
+
+<h3>牛刀小试</h3>
+
+<p>上述已经在服务器上创建了一个ProjectRepos.git裸仓库，现在我们在服务器上来克隆该仓库。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd d:
+</span><span class='line'>mkdir project
+</span><span class='line'>cd project
+</span><span class='line'>git clone http://192.168.0.105/ProjectRepos LocalRepos 或 git clone http://localhost/ProjectRepos LocalRepos 或 git clone http://localhost:80/ProjectRepos LocalRepos</span></code></pre></td></tr></table></div></figure>
+
+
+<p>默认的是80端口，可以修改为其他端口。
+这里，会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。</p>
+
+<p>cd LocalRepos
+进入了工作目录，我们可以添加文件到工作区，并提交到本地仓库中。</p>
+
+<p>然后，将本地修改推送到服务器的仓库里：git push origin master，这里会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。
+通过git remote -v，我们可以查看origin对应的服务器上的仓库地址。</p>
+
+<p>这时打开GitStack，可以看到服务器上仓库有了提交的内容。</p>
+
+<h3>在客户机上克隆服务器的仓库到本地</h3>
+
+<p>先在客户机上安装msysgit 1.7.10。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd d:
+</span><span class='line'>mkdir project
+</span><span class='line'>cd project
+</span><span class='line'>git clone http://192.168.0.105/ProjectRepos LocalRepos</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里，会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。</p>
+
+<p>cd LocalRepos
+进入了工作目录，我们可以添加文件到工作区，并提交到本地仓库中。</p>
+
+<p>然后，将本地修改推送到服务器的仓库里：git push origin master，这里会提示输入用户名和密码，注意输入的用户名和密码不会被显示出来。
+通过git remote -v，我们可以查看origin对应的服务器上的仓库地址。</p>
+
+<p>这时打开GitStack，可以看到服务器上仓库有了提交的内容。</p>
+
+<p>在客户机上也可以打开GitStack，直接在浏览器的地址栏中输入http://192.168.0.105/gitstack/打开登录界面，当然这需要知道管理员密码。</p>
+
+<p>（这里要注意的是，要保证在客户机上能够成功打开GitStack或者从服务器上克隆仓库，必须将服务器的防火墙关闭，否则在客户机上的这些操作就会失败。这个问题一直困扰了我好几个小时。）</p>
+
+<p>可见，服务器和客户机在操作上已经没有什么区别了，这正是Git作为分布式版本控制系统的体现。</p>
+
+<p>（全文完）</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-03T20:10:00+08:00" pubdate data-updated="true">May 3<span>rd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/git/'>Git</a>, <a class='category' href='/blog/categories/gitstack/'>GitStack</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/05/02/binary-compatibility/" title="Previous Post: 库的可扩展性与二进制兼容性">&laquo; 库的可扩展性与二进制兼容性</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/05/09/migrate-from-vss-to-git/" title="next Post: 迁移VSS版本库到Git">迁移VSS版本库到Git &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/05/03/git-server-based-on-gitstack/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/05/03/git-server-based-on-gitstack/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

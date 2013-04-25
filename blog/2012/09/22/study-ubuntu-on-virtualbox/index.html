@@ -1,0 +1,460 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>在VirtualBox上小玩Ubuntu - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="第一次接触Linux应该是读研时，当时自己在实验室里捣鼓着嵌入式开发，慢慢也就了解了一些Linux的东西，不过当时完全很业余，很多东西都不太懂。 后来，跟其他实验室的同学借了Linux的安装光盘，在自己的机器上第一次装上Linux，不过后来好像也没什么深入的使用。 工作以后， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/09/22/study-ubuntu-on-virtualbox">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">在VirtualBox上小玩Ubuntu</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-22T18:08:00+08:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>第一次接触Linux应该是读研时，当时自己在实验室里捣鼓着嵌入式开发，慢慢也就了解了一些Linux的东西，不过当时完全很业余，很多东西都不太懂。</p>
+
+<p>后来，跟其他实验室的同学借了Linux的安装光盘，在自己的机器上第一次装上Linux，不过后来好像也没什么深入的使用。</p>
+
+<p>工作以后，一直是在Windows上做开发，基本不涉及Linux，不过自己对Linux还是蛮感兴趣的，在家里的电脑上也一直安装着Ubuntu，偶尔也会上去玩一玩。</p>
+
+<p>随着和开源软件的接触，发现很多的开源Code都是来自于Linux，自己也一直想学习一下Linux中C/C++开发的方法。</p>
+
+<p>由于自己大部分的工作和家人对电脑的使用都是集中在Windows上，不希望来回切换系统，故多数是在Windows上使用VirtualBox虚拟机安装Ubuntu来使用。</p>
+
+<p>虚拟机上的Ubuntu，我只会安装Linux C/C++开发所必要的一些软件，如代码编辑器Vim, C/C++编译调试工具，代码版本控制工具Git等。</p>
+
+<!--more-->
+
+
+<p>我使用的Ubuntu版本是10.04，之前安装过11.10这个版本，不过在虚拟机上运行速度不是很好。</p>
+
+<p>如何使用VirtualBox安装Ubuntu，请Google参考相关教程，要注意的是下载下来的Ubuntu的ISO镜像文件，最好验证一下MD5码，以确保镜像文件是完整正确的，否则安装可能会失败。</p>
+
+<p>另外，中文拼音输入法ibus-pinyin还算比较好用，在Ubuntu软件中心搜索ibus-pinyin并安装，然后“系统->首选项->IBUS首选项”切换到输入法选项卡，添加“汉语->拼PINYIN”即可。</p>
+
+<p>下面主要是讲一讲Linux下C/C++开发的一些话题：</p>
+
+<ul>
+<li>Linux C/C++开发环境的搭建</li>
+<li>Linux常用shell命令</li>
+<li>vim的基本操作</li>
+<li>gcc/g++/gdb/make工具的熟悉和使用</li>
+<li>makefile的编写</li>
+<li>autoconf和automake自动生成makefile的方法</li>
+</ul>
+
+
+<h2>1.搭建Ubuntu下C/C++开发环境</h2>
+
+<p>安装C/C++编译工具，包括gcc, g++, gdb, make等，只需要执行下面这条命令即可：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install build-essential</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用&#8221;gcc -v&#8221;来检查一下安装是否成功。</p>
+
+<p>安装自动生成makefile的相关工具,只需要执行下面这条命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install automake1.9</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样，依赖的工具也会被安装，包括autoscan、aclocal、autoconf、automake等。
+有了这些工具，在大的开发项目中，就可以不用自己去编写makefile了。</p>
+
+<p>安装源代码编辑器Vim，会比Ubuntu原本自带的vi更好用些。
+关于如何将Vim打造成一个IDE，以后再研究吧，网上也有相关的文章可参考，主要是使用Vim插件并修改Vim配置文件。
+安装Vim执行下面这条命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install vim</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样以后在shell下可直接使用&#8221;vim 文件名&#8221;，在当前目录下创建一个新文件并打开文件进行编辑或直接打开已存在的文件进行编辑。</p>
+
+<p>安装源代码版本控制工具Git，只需要执行下面这条命令即可：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install git-core</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述工具都安装成功后，在Ubuntu上就已经具备开发C/C++程序的基本环境了。</p>
+
+<p>当然，在Linux上做开发也是有IDE可供选择的，如Eclipse、NetBeans等，据同事介绍，似乎NetBeans还算好用，和Windows下VC比较相似了，而做Android开发一般都是用Eclipse。</p>
+
+<p>目前, 我还不打算使用这些IDE，而是想从底层学习这种在shell下用Vim编写源代码和makefile来完成Code编译和调试的开发模式。</p>
+
+<p>这样，不但有助于掌握Vim和常用的shell命令，而且对相关编译工具的使用、makefile的编写以及理解编译的过程都是有帮助的，当然这样感觉上也会更酷。</p>
+
+<h2>2.Linux常用shell命令</h2>
+
+<p>Linux中的命令有很多，这里只列出在开发过程中一些比较常用的命令。
+每一个命令可能都有一些选项参数可以使用，用<code>man 命令</code>或者<code>命令 --help</code>可来查看相关说明。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>shell命令     |      功能说明
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>mkdir                创建目录
+</span><span class='line'>rmdir                删除目录
+</span><span class='line'>ls                   查看当前目录下的文件和目录(不包括隐藏文件)
+</span><span class='line'>ls -a                查看当前目录下的文件和目录(包括隐藏文件)
+</span><span class='line'>cd                   切换到指定目录（/表示系统根目录 ./表示当前目录 ../表示当前目录的上一级目录）
+</span><span class='line'>pwd                  查看当前目录的绝对路径
+</span><span class='line'>cat                  查看文件内容
+</span><span class='line'>touch                修改文件日期或创建新文件
+</span><span class='line'>rm                   删除文件
+</span><span class='line'>mv                   移动文件或修改文件名
+</span><span class='line'>cp                   复制文件或目录
+</span><span class='line'>chmod                修改文件操作权限
+</span><span class='line'>find                 查找文件或目录
+</span><span class='line'>grep                 查找文件里符合正则表达式的字符串
+</span><span class='line'>sed                  处理和编辑文本
+</span><span class='line'>diff                 比较文件间的差异
+</span><span class='line'>tar                  文件打包和解包，通过cvf参数打包，通过xvf解包
+</span><span class='line'>zip                  压缩工具，.zip
+</span><span class='line'>unzip                解压缩zip文件
+</span><span class='line'>gzip                 压缩解压缩工具，.gz，通过-d参数进行解压缩
+</span><span class='line'>man                  查看命令说明
+</span><span class='line'>file                 查看文件类型
+</span><span class='line'>which                查看命令文件安装的位置
+</span><span class='line'>whereis              查找软件的安装路径
+</span><span class='line'>++++++++++++++++++++++++++++++++++++++++++++++++++++++</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>3.Vim基本操作</h2>
+
+<p>被尊称为程序员神器的Vim有着比较高的学习曲线，不过掌握一些基本的Vim命令，足以让你应付一般的文本编辑。</p>
+
+<p>这里有一份<a href="http://coolshell.cn/articles/5479.html">Vim命令的速查卡</a>：</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/8011943417/" title="Flickr 上 shanewfx 的 vim"><img src="http://farm9.staticflickr.com/8296/8011943417_b813b2b38a.jpg" width="500" height="386" alt="vim"></a></p>
+
+<p>常用的Vim操作请参考陈皓的<a href="http://coolshell.cn/articles/5426.html">简明Vim练级攻略</a>，按照攻略来练习吧。</p>
+
+<hr />
+
+<p>（未完待续）</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-22T18:08:00+08:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>Linux</a>, <a class='category' href='/blog/categories/ubuntu/'>Ubuntu</a>, <a class='category' href='/blog/categories/virtualbox/'>Virtualbox</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/09/06/my-favorite-software/" title="Previous Post: 思维导图: 我的常用软件">&laquo; 思维导图: 我的常用软件</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/" title="next Post: 在Ubuntu中下载编译ffmpeg的过程">在Ubuntu中下载编译ffmpeg的过程 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/09/22/study-ubuntu-on-virtualbox/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/09/22/study-ubuntu-on-virtualbox/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

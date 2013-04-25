@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: DTVCC | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/dtvcc/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ISDB-T/SBTVD-T Closed Caption]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/03/07/isdb-t-slash-sbtvd-t-closed-caption/"/>
+    <updated>2012-03-07T16:40:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/03/07/isdb-t-slash-sbtvd-t-closed-caption</id>
+    <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/Closed_captioning">Closed Caption</a>（可简称为CC）可以简单来看作为一种字幕，最初设计的目的是为了帮助有听力障碍的人理解电视节目的内容，即将节目中的Audio（背景音乐显示音乐符号）通过文字在屏幕上显示出来。</p>
+
+<p>目前，Closed Caption的标准主要有ATSC定义的608和708，日本ARIB STD-B24等，而巴西的数字电视标准SBTVD-T是在日本的ISDB-T标准基础上稍作修改而来，因此，巴西数字电视的Closed Caption标准也是采用了ARIB STD-B24。</p>
+
+<p>ARIB STD-B24定义的Closed Caption下面被简称为ARIB CC。</p>
+
+<!--more-->
+
+
+<p>ATSC CC与ARIB CC的数据传输区别在于:</p>
+
+<ul>
+<li>ATSC的CC数据是通过MPEG-2 Video中的User Data部分进行传输；</li>
+<li>ARIB的CC数据是在TS流中以独立的ES进行传输。</li>
+</ul>
+
+
+<p>下面将介绍ARIB STD-B24标准中Closed Caption的一些细节内容。</p>
+
+<h3>ARIB CC传输层</h3>
+
+<p>ARIB CC数据首先被打包为Synchronized PES（Independent PES），然后，Synchronized PES会继续被打包为PES packet中，该PES packet的stream id为0xBD，同时PES packet header中需要含有PTS，最后，该PES会被打包为TS packet，在TS中进行传输。</p>
+
+<p>如果TS流中含有Closed Caption，则在TS流的PMT和EIT中会有相应的descriptors进行描述。载有Closed Caption的ES流在PMT中的stream type值为0x06，因此，可通过在PMT表中查找stream type为0x06的Closed Caption ES对应的PID，从而，可从TS流中过滤出Closed Caption ES对应的TS packet。</p>
+
+<h3>ARIB CC Data的语法结构:</h3>
+
+<p>Synchronized PES -> Data Group -> Caption Management
+Synchronized PES -> Data Group -> Caption Statement -> data_unit</p>
+
+<p>Caption Management包含了Closed Caption的全局信息，并以一定的时间间隔来发送。另外，Caption Management中一般不会含有Closed Caption字符编码数据（没有包含data_unit）。</p>
+
+<p>Caption Statement是Closed Caption数据传输的主要载体。CC数据主要由Control Code（控制字）和Character Code（字符码）组成，其中，控制字规定了CC的字符集、显示位置及文本格式等信息，而通过字符码可以从指定的字符集中取得CC字符。Closed Caption的控制字和字符码都在data_unit中。</p>
+
+<h3>ARIB CC的控制字</h3>
+
+<p>ARIB CC的整个字符集被分为4个区域：C0、GL、C1、GR，其中C0和C1对应是Control Code，而GL和GR对应的则是CC当前使用的字符集。可以使用不同的控制字（LS0、LS1、LS1R、LS2、LS3、LS2R、LS3R、SS2、SS3）将不同的字符集(G0、G1、G2、G3)调用到GL和GR中，而G0、G1、G2、G3具体对应哪一个字符集则可以用ESC控制字来指明。</p>
+
+<p>除了C0和C1中的控制字之外，通过CSI控制字又扩展出一些其他的控制字: SWF、SDF、SDP、SSM、SHS、SVS、RCS、ACPS、ORN、SCR、TCC、SCS、ACS、PPA、XCS、MDF、CFS、SRC、GAA、GSM、PLD、PLU、CCC。</p>
+
+<p>在这些控制字中，有一些控制字没有被使用，有些则不是必须实现的: BEL、CAN、RS、CDC、WMM、MACRO、TIME、TCC、SCS、ACS、PPA、XCS、MDF、CFS、SRC、GAA、GSM、PLD、PLU、CCC。</p>
+
+<p>CC的控制字基本可以分为以下几类：</p>
+
+<ul>
+<li>Display Format：SWF、SDF、SDP、SSM、SHS、SVS</li>
+<li>Color：BKF、RDF、GRF、YLF、BLF、MGF、CNF、WHF、COL、RCS、POL</li>
+<li>Cursor Position：APB、APF、APD、APU、APR、APS、PAPF、ACPS</li>
+<li>Character Set：LS0、LS1、SS2、SS3、ESC</li>
+<li>Character Size：SSZ、MSZ、NSZ、SZX</li>
+<li>Display Effect：ORN、SCR、FLC、HLC、SPL、STL （可选）</li>
+<li>Clear Screen：CS</li>
+</ul>
+
+
+<h3>CC显示相关的控制字</h3>
+
+<ul>
+<li>SWF指定了Caption Plane的大小和Caption Text的Print Direction;</li>
+<li>SDF指定了Caption Display Window的size, Caption Display Window始终在Caption Plane内;</li>
+<li>SDP指定了Caption display window左上角的坐标，该坐标值是相对于Caption Plane的左上角坐标（0, 0）;</li>
+<li>根据SDF和SDP就可以确定Caption display window在Caption Plane内的位置及Size;</li>
+<li>SSM指定了Normal Font的Size;</li>
+<li>SHS指定了同一行字符之间的间隔;</li>
+<li>SVS指定了行与行之间的间隔;</li>
+</ul>
+
+
+<p>根据SSM、SHS、SVS可以知道每个字符所占Size, 不同字体大小的字符Size也不尽相同;</p>
+
+<p>上述的这些控制字一般在每个Caption Statement的开始都会出现，通过这些控制字，则可以推断出在Caption display window内所能够容纳的字符个数，即总的行数和每行可以显示字符的最大个数。</p>
+
+<h3>CC字符的颜色和背景色控制字</h3>
+
+<p>BKF、RDF、GRF、YLF、BLF、MGF、CNF、WHF这8个控制字指定字符的前景色(foreground color)，而字符的背景色(background color)和half foreground color及half background color均是通过COL控制字来指定。</p>
+
+<p>Closed Caption总共使用了128种颜色，这些控制字除了指定了color值，同时也指定了改color值在Color map table中Index的低4位（CMLA），而Color map table Index的高4位（Pallete Number）也由COL来指定（取值范围：0~7）。</p>
+
+<h3>CC字符显示位置的控制字</h3>
+
+<p>APB、APF、APD、APU、APR、APS、PAPF、ACPS控制了下一个字符在caption display window中插入的位置。</p>
+
+<p>APB、APF、APD、APU分别控制了当前Cursor向后、向前、向下、向上移动一个字符的位置；</p>
+
+<p>APR控制了字符的换行；</p>
+
+<p>APS控制了新的Caption起始的Cursor位置；</p>
+
+<p>PAPF跟有一个参数P1，控制了当前Cursor向前移动其参数P1指定的字符个数；</p>
+
+<p>ACPS指定了Cursor在Caption Plane中的绝对位置（字符的左下角坐标）。</p>
+
+<h3>CC字符集相关的控制字</h3>
+
+<p>LS0、LS1、SS2、SS3控制调用指明了的字符集（G0、G1、G2、G3）到GL或者GR中。</p>
+
+<ul>
+<li>LS0调用G0对应的字符集到GL中；</li>
+<li>LS1调用G1对应的字符集到GL中；</li>
+<li>SS2临时调用G2中的字符到GL中；</li>
+<li>SS3临时调用G3中的字符到GL中。</li>
+</ul>
+
+
+<p>除了C0中明确定义的这几个字符集控制字外，其他的字符集控制字则通过ESC控制字扩展来定义（LS2、LS3、LS1R、LS2R、LS3R）。</p>
+
+<p>ESC控制字除了上述用来扩展字符集调用命令控制字外，还可以用来指明G0、G1、G2、G3分别对应何种字符集。G0、G1、G2、G3、GL、GR的初始值在Spec中也指定了。</p>
+
+<h3>CC字符Font相关的控制字</h3>
+
+<p>SSZ、MSZ、NSZ、SZX用于控制了相对于SSM指定的Normal Font Size的字符大小。</p>
+
+<p>SSZ、MSZ、NSZ分别指定了字符的大小为samll、middle、normal。</p>
+
+<hr />
+
+<p>这两周一直在做日本DTVCC，不过这次不是从零开始，而是在之前巴西的DTVCC Decoder上增加对日本Closed Caption的支持，主要的工作集中在对日本字符集的支持上，最复杂的部分就是构建一个Kanji字符集（JIS X 213 : 2004）的Unicode映射表。</p>
+
+<p>JIS X 213 : 2004表见<a href="http://seiai.ed.jp/sys/text/cs/mcodes/jis0213table.html">这里</a>。</p>
+
+<h3>ISDB-T/SBTVD-T Closed Caption相关的Spec</h3>
+
+<ul>
+<li><p>ARIB STD-B24 VOL1 PART2 (Chapter 7: Character Coding): CC字符集；</p></li>
+<li><p>ARIB STD-B24 VOL1 PART3 (Coding of Caption and Superimpose): CC Data的syntax；</p></li>
+<li><p>ARIB STD-B24 VOL3 (Chapter 5: Independent PES): Independent PES的syntax；</p></li>
+<li><p>ARIB TR-B14 VOL3 Section2 (Chapter 4: Operation of caption and superimpose encoding): Closed Caption的显示；</p></li>
+<li><p>ABNT NBR 15606-1 (11.4 Character coding): 关于巴西Closed Caption在字符编码上的一些限制</p></li>
+<li><p>ABNT NBR 15608-3 (Chapter 5 / 14 / 22): 关于巴西Closed Caption在PMT及EIT上descriptor的定义和解释</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

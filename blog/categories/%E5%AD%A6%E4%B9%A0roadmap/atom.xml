@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 学习Roadmap | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/%E5%AD%A6%E4%B9%A0roadmap/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[个人技术提升Roadmap]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/10/09/my-technology-roadmap/"/>
+    <updated>2012-10-09T16:37:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/10/09/my-technology-roadmap</id>
+    <content type="html"><![CDATA[<p>长假之后果然不在状态，今天抽空给自己未来的学习做了一个简单的规划，也算一个简单的总结和回顾。</p>
+
+<p>为了便于查看，特在<a href="http://tu.mindpin.com/">MindPin</a>上绘制了一张个人技术规划的思维导图。</p>
+
+<p><a href="http://www.flickr.com/photos/shanewfx/8070062706/" title="Flickr 上 shanewfx 的 技术Roadmap"><img src="http://farm9.staticflickr.com/8459/8070062706_8221e32965_b.jpg" width="792" height="1024" alt="技术Roadmap"></a></p>
+
+<p>如果图片不清晰的话，请移步<a href="http://tu.mindpin.com/mindmaps/54700">这里</a>直接查看原始文件。</p>
+
+<!--more-->
+
+
+<p>随便介绍一下<a href="http://tu.mindpin.com/">MindPin</a>，这是一个在线<a href="http://zh.wikipedia.org/zh-cn/%E5%BF%83%E6%99%BA%E5%9B%BE">思维导图</a>绘制工具。</p>
+
+<p>使用下来感觉还是蛮不错的，UI简洁、快捷键也随手、自动保存、支持多种格式导出。</p>
+
+<p>（完）</p>
+]]></content>
+  </entry>
+  
+</feed>

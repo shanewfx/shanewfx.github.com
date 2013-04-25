@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>x64 filter移植笔记 - 思考的轨迹</title>
+  <meta name="author" content="Shane">
+
+  
+  <meta name="description" content="64位filter开发工具为VS2005，原来使用VC6开发的filter要转换到VS2005下。 32位的filter移植到x64平台上，对于没有汇编的filter，工作比较简单，主要就是编译选项的设置和修改指针与整形数相互强制转换的地方，以及部分数据类型不匹配等。 x64编译选项 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2012/04/11/x64-filter-porting">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="思考的轨迹" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29234594-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">思考的轨迹</a></h1>
+  
+    <h2>人若无名 专心练剑</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shanewfx.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/blog/archives">文章列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">X64 Filter移植笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T17:53:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>64位filter开发工具为VS2005，原来使用VC6开发的filter要转换到VS2005下。</p>
+
+<p>32位的filter移植到x64平台上，对于没有汇编的filter，工作比较简单，主要就是编译选项的设置和修改指针与整形数相互强制转换的地方，以及部分数据类型不匹配等。</p>
+
+<!--more-->
+
+
+<h3>x64编译选项</h3>
+
+<p>对于从VC6转换到VS2005的Project，其中x64编译选项主要注意以下几个地方：</p>
+
+<ul>
+<li><p>C/C++->Preprocessor->Preprocessor Definitions : 检查或移除、添加编译器预定义常量；对于Release版的filter，一般会包含WIN32;NDEBUG;<em>WINDOWS;</em>USRDLL;UNICODE版本要添加UNICODE;</p></li>
+<li><p>C/C++->Code Generation->Runtime Library : 对于Release版本这里可能选择Multi-threaded(/MT)或者Multi-threaded DLL(/MD)，如果选择Multi-threaded(/MT)，如果编译报错则在Linker->Input->Addtional Dependencies中增加MSVCRT.LIB试试；</p></li>
+<li><p>C/C++->Optimization->Whole Program Optimization : <strong>如果该选项为No，则用/MT编译出来的文件会比用/MD编译出来的文件大很多</strong>，因此，Release版本，该选项要设置为Enable link-time code generation(/GL)，不过对于Debug版本，该选择一般设为No，否则编译器有可能会报/GL与/ZI冲突；</p></li>
+<li><p>Linker->Input->Addtional Dependencies : 至少包括 strmbase.lib strmiids.lib winmm.lib，其中 strmbase.lib根据编译环境（是不是预定义了UNICODE或Release版本/Debug版本）的不同可能为ustrmbase.lib,  strmbasd.lib或 ustrmbasd.lib；</p></li>
+<li><p>Linker->Input->Ignore All Default Libraries : 要选择No，否则编译可能会报错；</p></li>
+<li><p>Linker->Advanced->Entry Point : 如果填的是DllEntryPointer@12，则在x64下编译器会报错，win32下则不会报错（建议不要这样设定，而应该在代码中指定DLL入口为DllMain，并在DllMain中调用DllEntryPoint即可）；在x64下不要填；</p></li>
+<li><p>Linker->Advanced->Base Address : 在x64下不要填，win32下如果Linker->Advanced->Entry Point填了DllEntryPointer@12，则这里通常设为0x1c400000；（建议不要这样设定）</p></li>
+</ul>
+
+
+<h3>指针与回调函数</h3>
+
+<p>指针部分重点是要检查使用回调函数的地方，在Win32下，指针和int/long转换是可以的，因为都是32位长度，而在x64下，指针的长度为64位，而int/long仍是32位，这样原有的转换在x64下就会出现问题。在这些地方，要将int/long替换为ULONG_PTR，ULONG_PTR在Win32下为32位，而在x64下则为64位。</p>
+
+<h3>数据类型warnings</h3>
+
+<p>不对编译器报出的关于数据类型不匹配的Warnings，要检查并确认不会发生溢出或者截断，没有改变原有的值的情况下可以不用修改。当然，最好Coding的过程中就要避免数据类型可能存在的不匹配问题，否则出现问题时，查找原有就会麻烦了。</p>
+
+<h3>汇编代码的修改</h3>
+
+<p>对于有汇编的filter，移植64位版本，除了上述的问题，还涉及汇编代码的修改。</p>
+
+<p>在VS2005 x64中不再支持内联汇编，编译器不再认识__asm关键字。</p>
+
+<p>所以，对于内联汇编的代码，要将函数提取到单独的.asm文件中，并修改函数参数传递、局部变量的分配及堆栈、寄存器管理。这部分可参看<a href="http://shanewfx.github.com/blog/2012/03/26/vs2005-64bit-programming/">上篇</a>内容。</p>
+
+<p>对于寄存器，在x64平台中，原来的32位寄存器被扩展到64位，并新增了8个64位的通用寄存器R8~R15，另外还增加了8个128位的XMM寄存器XMM8~XMM15。</p>
+
+<p>同时，原来的32位通用寄存器仍然可以使用，但32位寄存器和新的64位寄存器混合使用时，要注意相互赋值的地方，应该要匹配。</p>
+
+<p>另外，在内存访问的地方，x64中必须要通过PTR指明数据的类型，否则编译器会报错；而在Win32下则可以省略。</p>
+
+<p>下面是ARGB转AYUV的一部分x64汇编代码示例：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>; extern "C" void ARGB2AYUV(BYTE* pDest, BYTE* pSrc, LONG lWidth, LONG lHeight, LONG lStride)
+</span><span class='line'>; X64 assembly version
+</span><span class='line'>
+</span><span class='line'>.data
+</span><span class='line'>ALIGN 16
+</span><span class='line'>mask0000ffff   DQ    000000000ffffffffH, 000000000ffffffffH
+</span><span class='line'>YbYgYrYa       DW    3736, 19235, 9798, 0, 3736, 19235, 9798, 0
+</span><span class='line'>UbUgUrUa       DW    16384, -10879, -5505, 0, 16384, -10879, -5505, 0
+</span><span class='line'>VbVgVrVa       DW    -2654, -13730, 16384, 0, -2654, -13730, 16384, 0
+</span><span class='line'>const128       DW    128, 0, 128, 0, 128, 0, 128, 0
+</span><span class='line'>F000           DW    0, 65280, 0, 65280, 0, 65280, 0, 65280
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>.code
+</span><span class='line'>PUBLIC ARGB2AYUV
+</span><span class='line'>ARGB2AYUV PROC
+</span><span class='line'>    mov qword ptr [rsp+ 8], rcx ;pDest
+</span><span class='line'>    mov qword ptr [rsp+16], rdx ;pSrc
+</span><span class='line'>    mov dword ptr [rsp+24], r8d ;lWidth
+</span><span class='line'>    mov dword ptr [rsp+32], r9d ;lHeight
+</span><span class='line'>   
+</span><span class='line'>    push rbp
+</span><span class='line'>    push rdi
+</span><span class='line'>    push rsi
+</span><span class='line'>    mov rbp, rsp
+</span><span class='line'>    sub rsp, 16
+</span><span class='line'>   
+</span><span class='line'>    ;int iCycle  = lWidth >> 2;
+</span><span class='line'>    mov eax, dword ptr [rbp+48]  ;lWidth
+</span><span class='line'>    sar eax, 2                   ;lWidth>>2
+</span><span class='line'>    mov dword ptr [rbp-16], eax  ;iCycle
+</span><span class='line'>   
+</span><span class='line'>    ;int iRemain = lStride - (lWidth &lt;&lt; 2);
+</span><span class='line'>    mov eax, dword ptr [rbp+48]  ;lWidth
+</span><span class='line'>    shl eax, 2                   ;lWidth&lt;&lt;2
+</span><span class='line'>    mov ecx, dword ptr [rbp+64]  ;lStride
+</span><span class='line'>    sub     ecx, eax
+</span><span class='line'>    mov     eax, ecx
+</span><span class='line'>    mov qword ptr [rbp-8], 0     ;add for iRemain = 0
+</span><span class='line'>    mov dword ptr [rbp-8], eax   ;iRemain
+</span><span class='line'>
+</span><span class='line'>    ;prepare 
+</span><span class='line'>    mov rdx, qword ptr [rbp+32]  ;pDest
+</span><span class='line'>    mov rcx, qword ptr [rbp+40]  ;pSrc
+</span><span class='line'>    mov edi, dword ptr [rbp+56]  ;lHeight
+</span><span class='line'>    mov rsi, qword ptr [rbp- 8]  ;iRemain
+</span><span class='line'>    
+</span><span class='line'>    pxor xmm0, xmm0
+</span><span class='line'>    
+</span><span class='line'>NextLine:
+</span><span class='line'>    mov     eax, dword ptr [rbp-16]  ;iCycle
+</span><span class='line'>NextCycle:
+</span><span class='line'>    movdqa xmm1, [rcx]       ;A3 R3 G3 B3 A2 R2 G2 B2 A1 R1 G1 B1 A0 R0 G0 B0
+</span><span class='line'>    movdqa xmm2, xmm1        ;A3 R3 G3 B3 A2 R2 G2 B2 A1 R1 G1 B1 A0 R0 G0 B0
+</span><span class='line'>
+</span><span class='line'>    punpcklbw xmm1, xmm0     ;00 A1 00 R1 00 G1 00 B1 00 A0 00 R0 00 G0 00 B0
+</span><span class='line'>    punpckhbw xmm2, xmm0     ;00 A3 00 R3 00 G3 00 B3 00 A2 00 R2 00 G2 00 B2
+</span><span class='line'>
+</span><span class='line'>    ;y = (9798*r + 19235*g + 3736*b) / 32768
+</span><span class='line'>    movdqa     xmm3, xmm1    ;00 A1 00 R1 00 G1 00 B1 00 A0 00 R0 00 G0 00 B0
+</span><span class='line'>    movdqa     xmm4, xmm2    ;00 A3 00 R3 00 G3 00 B3 00 A2 00 R2 00 G2 00 B2
+</span><span class='line'>
+</span><span class='line'>    pmaddwd     xmm3, xmmword ptr YbYgYrYa    
+</span><span class='line'>    pmaddwd xmm4, xmmword ptr YbYgYrYa    
+</span><span class='line'>
+</span><span class='line'>    pshufd     xmm5, xmm3, 0b1h
+</span><span class='line'>    pshufd     xmm6, xmm4, 0b1h
+</span><span class='line'>
+</span><span class='line'>    paddd     xmm3, xmm5      ;Y1 Y1 Y0 Y0
+</span><span class='line'>    paddd     xmm4, xmm6      ;Y3 Y3 Y2 Y2
+</span><span class='line'>
+</span><span class='line'>    psrad xmm3, 15
+</span><span class='line'>    psrad xmm4, 15
+</span><span class='line'>    pand  xmm3, xmmword ptr mask0000ffff ;0 Y1 0 Y0
+</span><span class='line'>    pand  xmm4, xmmword ptr mask0000ffff ;0 Y3 0 Y2
+</span><span class='line'>
+</span><span class='line'>    packssdw xmm3, xmm4        ;0 Y3 0 Y2 0 Y1 0 Y0........
+</span><span class='line'>
+</span><span class='line'>    ;u = (-5505*r - 10879*g + 16384*b) / 32768
+</span><span class='line'>    ;此处省略
+</span><span class='line'>    ;v = (16384*r - 13730*g - 2654*b) / 32768
+</span><span class='line'>    ;此处省略
+</span><span class='line'>
+</span><span class='line'>    ;begin to next
+</span><span class='line'>    add rdx, 16
+</span><span class='line'>    add rcx, 16
+</span><span class='line'>    dec eax
+</span><span class='line'>    jnz NextCycle
+</span><span class='line'>    add rdx, rsi
+</span><span class='line'>
+</span><span class='line'>    dec edi
+</span><span class='line'>    jnz NextLine
+</span><span class='line'>    
+</span><span class='line'>    ;exit
+</span><span class='line'>    add rsp, 16
+</span><span class='line'>    pop rsi
+</span><span class='line'>    pop rdi
+</span><span class='line'>    pop rbp    
+</span><span class='line'>    emms
+</span><span class='line'>    ret
+</span><span class='line'>      
+</span><span class='line'>ARGB2AYUV ENDP
+</span><span class='line'>End</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T17:53:00+08:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-/'>C++</a>, <a class='category' href='/blog/categories/vs2005/'>VS2005</a>, <a class='category' href='/blog/categories/x64/'>X64</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/03/26/vs2005-64bit-programming/" title="Previous Post: VS2005 64-bit Programming Note">&laquo; VS2005 64-bit Programming Note</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/04/21/learn-git-command/" title="next Post: Git学习笔记">Git学习笔记 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/blogImgs/about.jpg"></p>
+  <p>C++程序员，在Windows上搞音视频开发5年有余</p>
+  <p>爱电子产品，爱Google, 爱折腾</p> 
+  <p>喜欢开源的东西, 喜欢读书和思考, 喜欢做一些geek的事情/东西</p>
+  <p><img src="/images/myemail.png"  alt="shanewfx@gmail.com" /></p>
+</section>
+<section>
+  <h1>Sina围脖</h1>
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=300&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1684299551&verifier=e30813de&dpc=1"></iframe>
+</section>
+
+<section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/06/sublime-text2-for-programmer/">程序员的代码编辑器--Sublime Text 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/12/software-design-principle/">软件设计的几点思考和总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/my-technology-roadmap/">个人技术提升Roadmap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/24/compile-ffmpeg-on-ubuntu/">在Ubuntu中下载编译ffmpeg的过程</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/boost' style='font-size: 110.0%'>Boost(1)</a> <a href='/blog/categories/c-' style='font-size: 160.0%'>C++(6)</a> <a href='/blog/categories/closed-caption' style='font-size: 110.0%'>Closed caption(1)</a> <a href='/blog/categories/design' style='font-size: 110.0%'>Design(1)</a> <a href='/blog/categories/design-principle' style='font-size: 110.0%'>Design-principle(1)</a> <a href='/blog/categories/dtvcc' style='font-size: 110.0%'>Dtvcc(1)</a> <a href='/blog/categories/ffmpeg' style='font-size: 110.0%'>Ffmpeg(1)</a> <a href='/blog/categories/freesoftware' style='font-size: 120.0%'>Freesoftware(2)</a> <a href='/blog/categories/git' style='font-size: 150.0%'>Git(5)</a> <a href='/blog/categories/gitstack' style='font-size: 110.0%'>Gitstack(1)</a> <a href='/blog/categories/linux' style='font-size: 110.0%'>Linux(1)</a> <a href='/blog/categories/log' style='font-size: 110.0%'>Log(1)</a> <a href='/blog/categories/markdown' style='font-size: 110.0%'>Markdown(1)</a> <a href='/blog/categories/matplotlib' style='font-size: 110.0%'>Matplotlib(1)</a> <a href='/blog/categories/mfc' style='font-size: 110.0%'>Mfc(1)</a> <a href='/blog/categories/notepad-' style='font-size: 110.0%'>Notepad++(1)</a> <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(2)</a> <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a> <a href='/blog/categories/python' style='font-size: 120.0%'>Python(2)</a> <a href='/blog/categories/regex' style='font-size: 110.0%'>Regex(1)</a> <a href='/blog/categories/sed' style='font-size: 120.0%'>Sed(2)</a> <a href='/blog/categories/software' style='font-size: 110.0%'>Software(1)</a> <a href='/blog/categories/sublime-text2' style='font-size: 110.0%'>Sublime-text2(1)</a> <a href='/blog/categories/thinking' style='font-size: 110.0%'>Thinking(1)</a> <a href='/blog/categories/ubuntu' style='font-size: 120.0%'>Ubuntu(2)</a> <a href='/blog/categories/ui' style='font-size: 110.0%'>Ui(1)</a> <a href='/blog/categories/virtualbox' style='font-size: 110.0%'>Virtualbox(1)</a> <a href='/blog/categories/vs2005' style='font-size: 120.0%'>Vs2005(2)</a> <a href='/blog/categories/vss' style='font-size: 110.0%'>Vss(1)</a> <a href='/blog/categories/vss2git' style='font-size: 110.0%'>Vss2git(1)</a> <a href='/blog/categories/x64' style='font-size: 130.0%'>X64(3)</a> <a href='/blog/categories/个人规划' style='font-size: 110.0%'>个人规划(1)</a> <a href='/blog/categories/学习roadmap' style='font-size: 110.0%'>学习roadmap(1)</a> <a href='/blog/categories/开源软件' style='font-size: 110.0%'>开源软件(1)</a> </span>
+</section>
+<section>
+  <h1>最新评论</h1>
+  <script type="text/javascript" src="http://shanewfx.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script>
+</section>
+<section>
+  <h1>大牛博客</h1>
+  <ul>
+    <li>
+      <a href="http://coolshell.cn/">酷壳CoolShell</a>
+    </li>
+    <li>
+      <a href="http://mindhacks.cn/">刘未鹏MIND HACKS</a>
+    </li>
+    <li>
+      <a href="http://blog.codingnow.com/">云风</a>
+    </li>
+    <li>
+      <a href="http://www.cnblogs.com/Solstice/">陈硕</a>
+    </li>
+  </ul>
+</section>
+
+
+<section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/shanewfx/?show=dolist&amp;n=9&amp;columns=3&amp;hidelogo=yes" ></script>
+</div>
+</section>
+
+<section>
+  <h1>License</h1>
+  <p>
+   <img class="center" alt="License" src="/images/CC.png" />
+  本站所有作品采用<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5 中国大陆许可协议</a>进行许可。
+  </p>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Shane -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shanewfx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2012/04/11/x64-filter-porting/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2012/04/11/x64-filter-porting/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

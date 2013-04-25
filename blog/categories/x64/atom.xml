@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: X64 | 思考的轨迹]]></title>
+  <link href="http://shanewfx.github.com/blog/categories/x64/atom.xml" rel="self"/>
+  <link href="http://shanewfx.github.com/"/>
+  <updated>2013-04-25T13:36:45+08:00</updated>
+  <id>http://shanewfx.github.com/</id>
+  <author>
+    <name><![CDATA[Shane]]></name>
+    <email><![CDATA[shanewfx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[x64 filter移植笔记]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/04/11/x64-filter-porting/"/>
+    <updated>2012-04-11T17:53:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/04/11/x64-filter-porting</id>
+    <content type="html"><![CDATA[<p>64位filter开发工具为VS2005，原来使用VC6开发的filter要转换到VS2005下。</p>
+
+<p>32位的filter移植到x64平台上，对于没有汇编的filter，工作比较简单，主要就是编译选项的设置和修改指针与整形数相互强制转换的地方，以及部分数据类型不匹配等。</p>
+
+<!--more-->
+
+
+<h3>x64编译选项</h3>
+
+<p>对于从VC6转换到VS2005的Project，其中x64编译选项主要注意以下几个地方：</p>
+
+<ul>
+<li><p>C/C++->Preprocessor->Preprocessor Definitions : 检查或移除、添加编译器预定义常量；对于Release版的filter，一般会包含WIN32;NDEBUG;<em>WINDOWS;</em>USRDLL;UNICODE版本要添加UNICODE;</p></li>
+<li><p>C/C++->Code Generation->Runtime Library : 对于Release版本这里可能选择Multi-threaded(/MT)或者Multi-threaded DLL(/MD)，如果选择Multi-threaded(/MT)，如果编译报错则在Linker->Input->Addtional Dependencies中增加MSVCRT.LIB试试；</p></li>
+<li><p>C/C++->Optimization->Whole Program Optimization : <strong>如果该选项为No，则用/MT编译出来的文件会比用/MD编译出来的文件大很多</strong>，因此，Release版本，该选项要设置为Enable link-time code generation(/GL)，不过对于Debug版本，该选择一般设为No，否则编译器有可能会报/GL与/ZI冲突；</p></li>
+<li><p>Linker->Input->Addtional Dependencies : 至少包括 strmbase.lib strmiids.lib winmm.lib，其中 strmbase.lib根据编译环境（是不是预定义了UNICODE或Release版本/Debug版本）的不同可能为ustrmbase.lib,  strmbasd.lib或 ustrmbasd.lib；</p></li>
+<li><p>Linker->Input->Ignore All Default Libraries : 要选择No，否则编译可能会报错；</p></li>
+<li><p>Linker->Advanced->Entry Point : 如果填的是DllEntryPointer@12，则在x64下编译器会报错，win32下则不会报错（建议不要这样设定，而应该在代码中指定DLL入口为DllMain，并在DllMain中调用DllEntryPoint即可）；在x64下不要填；</p></li>
+<li><p>Linker->Advanced->Base Address : 在x64下不要填，win32下如果Linker->Advanced->Entry Point填了DllEntryPointer@12，则这里通常设为0x1c400000；（建议不要这样设定）</p></li>
+</ul>
+
+
+<h3>指针与回调函数</h3>
+
+<p>指针部分重点是要检查使用回调函数的地方，在Win32下，指针和int/long转换是可以的，因为都是32位长度，而在x64下，指针的长度为64位，而int/long仍是32位，这样原有的转换在x64下就会出现问题。在这些地方，要将int/long替换为ULONG_PTR，ULONG_PTR在Win32下为32位，而在x64下则为64位。</p>
+
+<h3>数据类型warnings</h3>
+
+<p>不对编译器报出的关于数据类型不匹配的Warnings，要检查并确认不会发生溢出或者截断，没有改变原有的值的情况下可以不用修改。当然，最好Coding的过程中就要避免数据类型可能存在的不匹配问题，否则出现问题时，查找原有就会麻烦了。</p>
+
+<h3>汇编代码的修改</h3>
+
+<p>对于有汇编的filter，移植64位版本，除了上述的问题，还涉及汇编代码的修改。</p>
+
+<p>在VS2005 x64中不再支持内联汇编，编译器不再认识__asm关键字。</p>
+
+<p>所以，对于内联汇编的代码，要将函数提取到单独的.asm文件中，并修改函数参数传递、局部变量的分配及堆栈、寄存器管理。这部分可参看<a href="http://shanewfx.github.com/blog/2012/03/26/vs2005-64bit-programming/">上篇</a>内容。</p>
+
+<p>对于寄存器，在x64平台中，原来的32位寄存器被扩展到64位，并新增了8个64位的通用寄存器R8~R15，另外还增加了8个128位的XMM寄存器XMM8~XMM15。</p>
+
+<p>同时，原来的32位通用寄存器仍然可以使用，但32位寄存器和新的64位寄存器混合使用时，要注意相互赋值的地方，应该要匹配。</p>
+
+<p>另外，在内存访问的地方，x64中必须要通过PTR指明数据的类型，否则编译器会报错；而在Win32下则可以省略。</p>
+
+<p>下面是ARGB转AYUV的一部分x64汇编代码示例：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>; extern "C" void ARGB2AYUV(BYTE&lt;em> pDest, BYTE&lt;/em> pSrc, LONG lWidth, LONG lHeight, LONG lStride)
+</span><span class='line'>; X64 assembly version&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>.data
+</span><span class='line'>ALIGN 16
+</span><span class='line'>mask0000ffff   DQ    000000000ffffffffH, 000000000ffffffffH
+</span><span class='line'>YbYgYrYa       DW    3736, 19235, 9798, 0, 3736, 19235, 9798, 0
+</span><span class='line'>UbUgUrUa       DW    16384, -10879, -5505, 0, 16384, -10879, -5505, 0
+</span><span class='line'>VbVgVrVa       DW    -2654, -13730, 16384, 0, -2654, -13730, 16384, 0
+</span><span class='line'>const128       DW    128, 0, 128, 0, 128, 0, 128, 0
+</span><span class='line'>F000           DW    0, 65280, 0, 65280, 0, 65280, 0, 65280&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>.code
+</span><span class='line'>PUBLIC ARGB2AYUV
+</span><span class='line'>ARGB2AYUV PROC&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>mov qword ptr [rsp+ 8], rcx ;pDest
+</span><span class='line'>mov qword ptr [rsp+16], rdx ;pSrc
+</span><span class='line'>mov dword ptr [rsp+24], r8d ;lWidth
+</span><span class='line'>mov dword ptr [rsp+32], r9d ;lHeight
+</span><span class='line'>
+</span><span class='line'>push rbp
+</span><span class='line'>push rdi
+</span><span class='line'>push rsi
+</span><span class='line'>mov rbp, rsp
+</span><span class='line'>sub rsp, 16
+</span><span class='line'>
+</span><span class='line'>;int iCycle  = lWidth &gt;&gt; 2;
+</span><span class='line'>mov eax, dword ptr [rbp+48]  ;lWidth
+</span><span class='line'>sar eax, 2                   ;lWidth&gt;&gt;2
+</span><span class='line'>mov dword ptr [rbp-16], eax  ;iCycle
+</span><span class='line'>
+</span><span class='line'>;int iRemain = lStride - (lWidth &lt;&lt; 2);
+</span><span class='line'>mov eax, dword ptr [rbp+48]  ;lWidth
+</span><span class='line'>shl eax, 2                   ;lWidth&lt;&lt;2
+</span><span class='line'>mov ecx, dword ptr [rbp+64]  ;lStride
+</span><span class='line'>sub     ecx, eax
+</span><span class='line'>mov     eax, ecx
+</span><span class='line'>mov qword ptr [rbp-8], 0     ;add for iRemain = 0
+</span><span class='line'>mov dword ptr [rbp-8], eax   ;iRemain
+</span><span class='line'>
+</span><span class='line'>;prepare 
+</span><span class='line'>mov rdx, qword ptr [rbp+32]  ;pDest
+</span><span class='line'>mov rcx, qword ptr [rbp+40]  ;pSrc
+</span><span class='line'>mov edi, dword ptr [rbp+56]  ;lHeight
+</span><span class='line'>mov rsi, qword ptr [rbp- 8]  ;iRemain
+</span><span class='line'>
+</span><span class='line'>pxor xmm0, xmm0
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>NextLine:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>mov     eax, dword ptr [rbp-16]  ;iCycle
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>NextCycle:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>movdqa xmm1, [rcx]       ;A3 R3 G3 B3 A2 R2 G2 B2 A1 R1 G1 B1 A0 R0 G0 B0
+</span><span class='line'>movdqa xmm2, xmm1        ;A3 R3 G3 B3 A2 R2 G2 B2 A1 R1 G1 B1 A0 R0 G0 B0
+</span><span class='line'>
+</span><span class='line'>punpcklbw xmm1, xmm0     ;00 A1 00 R1 00 G1 00 B1 00 A0 00 R0 00 G0 00 B0
+</span><span class='line'>punpckhbw xmm2, xmm0     ;00 A3 00 R3 00 G3 00 B3 00 A2 00 R2 00 G2 00 B2
+</span><span class='line'>
+</span><span class='line'>;y = (9798*r + 19235*g + 3736*b) / 32768
+</span><span class='line'>movdqa     xmm3, xmm1    ;00 A1 00 R1 00 G1 00 B1 00 A0 00 R0 00 G0 00 B0
+</span><span class='line'>movdqa     xmm4, xmm2    ;00 A3 00 R3 00 G3 00 B3 00 A2 00 R2 00 G2 00 B2
+</span><span class='line'>
+</span><span class='line'>pmaddwd     xmm3, xmmword ptr YbYgYrYa    
+</span><span class='line'>pmaddwd xmm4, xmmword ptr YbYgYrYa    
+</span><span class='line'>
+</span><span class='line'>pshufd     xmm5, xmm3, 0b1h
+</span><span class='line'>pshufd     xmm6, xmm4, 0b1h
+</span><span class='line'>
+</span><span class='line'>paddd     xmm3, xmm5      ;Y1 Y1 Y0 Y0
+</span><span class='line'>paddd     xmm4, xmm6      ;Y3 Y3 Y2 Y2
+</span><span class='line'>
+</span><span class='line'>psrad xmm3, 15
+</span><span class='line'>psrad xmm4, 15
+</span><span class='line'>pand  xmm3, xmmword ptr mask0000ffff ;0 Y1 0 Y0
+</span><span class='line'>pand  xmm4, xmmword ptr mask0000ffff ;0 Y3 0 Y2
+</span><span class='line'>
+</span><span class='line'>packssdw xmm3, xmm4        ;0 Y3 0 Y2 0 Y1 0 Y0........
+</span><span class='line'>
+</span><span class='line'>;u = (-5505*r - 10879*g + 16384*b) / 32768
+</span><span class='line'>;此处省略
+</span><span class='line'>;v = (16384*r - 13730*g - 2654*b) / 32768
+</span><span class='line'>;此处省略
+</span><span class='line'>
+</span><span class='line'>;begin to next
+</span><span class='line'>add rdx, 16
+</span><span class='line'>add rcx, 16
+</span><span class='line'>dec eax
+</span><span class='line'>jnz NextCycle
+</span><span class='line'>add rdx, rsi
+</span><span class='line'>
+</span><span class='line'>dec edi
+</span><span class='line'>jnz NextLine
+</span><span class='line'>
+</span><span class='line'>;exit
+</span><span class='line'>add rsp, 16
+</span><span class='line'>pop rsi
+</span><span class='line'>pop rdi
+</span><span class='line'>pop rbp    
+</span><span class='line'>emms
+</span><span class='line'>ret
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>ARGB2AYUV ENDP
+</span><span class='line'>End&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VS2005 64-bit Programming Note]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/03/26/vs2005-64bit-programming/"/>
+    <updated>2012-03-26T17:47:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/03/26/vs2005-64bit-programming</id>
+    <content type="html"><![CDATA[<p>最近接到的任务是将32位的directshow filter移植到64位平台下，因此，借此机会学习了一点关于64位编程方面的内容。</p>
+
+<p>由于平时的开发环境是Windows + VS2005，所以，下面的内容也主要是讨论VS2005下64位编程的一些主要事项。不过，对于其他平台下的64位编程也有参考价值。</p>
+
+<p>之前已经讲过如何搭建VS2005下64位编程环境，看<a href="http://shanewfx.github.com/blog/2012/03/18/64bit-programming/">这里</a>。</p>
+
+<!--more-->
+
+
+<h2>关于Windows下64位编程，有如下几篇文章可做参考：</h2>
+
+<ul>
+<li><p><a href="http://www.microsoft.com/china/MSDN/library/Windev/64bit/issuesx64.mspx?mfr=true">开始进行64位Windows系统编程之前需要了解的所有信息</a></p></li>
+<li><p><a href="http://www.viva64.com/en/l/full/">Lessons on development of 64-bit C/C++ applications</a>, <a href="http://www.cnblogs.com/walfud/articles/2291839.html">中文学习笔记</a></p></li>
+<li><p><a href="http://msdn.microsoft.com/en-us/library/bb427430.aspx">Programming Guide for 64-bit Windows</a></p></li>
+<li><p><a href="http://msdn.microsoft.com/en-us/library/aa384198.aspx">Getting Ready for 64-bit Windows</a></p></li>
+<li><p><a href="http://msdn.microsoft.com/en-us/library/aa384214.aspx">Migration Tips</a></p></li>
+<li><p><a href="http://www.usidcbbs.com/read.php?tid=5247">用VC进行64位编程</a></p></li>
+<li><p><a href="http://wenku.baidu.com/view/61804438376baf1ffc4fad48.html">Introduction_to_x64_Assembly</a></p></li>
+</ul>
+
+
+<h2>VS2005下64位编程注意事项</h2>
+
+<h3>1. 数据类型模型改变</h3>
+
+<p>Windows 32位平台下使用的是ILP32模型，而Windows 64位平台下使用LLP64模型。</p>
+
+<p>在LLP64模型中，只有指针为64位，其余的类型则保证和32位平台一致:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>char   -> 1byte
+</span><span class='line'>short  -> 2bytes
+</span><span class='line'>int    -> 4bytes
+</span><span class='line'>long   -> 4bytes</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Windows平台为开发者提供了很多的数据类型别名，合理使用这些数据类型为我们编写32位和64位共用代码是有帮助的。</p>
+
+<p>长度固定的类型：
+INT32、UINT32、LONG32、ULONG32、DWORD32、INT64、UINT64、LONG64、ULONG64、DWORD64</p>
+
+<p>随平台长度变化的类型（32位平台->32位，64位平台->64位）：
+INT_PTR、UINT_PTR、LONG_PTR、ULONG_PTR、DWORD_PTR、SIZE_T、SSIZE_T、HALF_PTR、UHALF_PTR</p>
+
+<p>指针：
+POINTER_32、POINTER_64</p>
+
+<p>由于数据类型模型的改变，因此，如果原代码中有涉及指针与整数类型之间相互转换（如在设置回调函数指针时，通常会将原模块的this指针作为long型保存起来），则这部分代码必须要改变（将long改为ULONG_PTR），即任何在代码中有假设指针与整数类型位数相同的代码在64位下都会有问题。</p>
+
+<p>涉及指针运算的地方，要检测偏移量是否可能会溢出的问题。（偏移量是通过无符号数和有符号数运算得来的，特别容易出现问题）</p>
+
+<p>另外，64位系统的API函数参数的数据类型可能发生了改变，如LPARAM，WPARAM，LRESULT在32位平台下是32位整型，而在64位平台下则为64位整型，这也是在移植过程中需要注意的地方，防止出现数据截断。</p>
+
+<p>如果API或者自己代码中使用了size_t和ptrdiff_t，要注意它们的长度在32位平台为32位，在64位平台则是64位，这是特别容易出现数据截断的地方。</p>
+
+<p>函数重载（多态）也要留意是否是仅依靠参数的数据类型来区分的。</p>
+
+<p>代码中魔术数也是要check的地方，如果是魔术数是用来假设数据类型的size时，最好要使用sizeof来确定数据类型的size; 另外，魔术数不管是在32位平台还是在64位平台都是被当作一个32位的整型数来处理，特别要留意将-1作为错误码的地方，在32位平台下为0xFFFFFFFF, 而在64为平台下则应该为0xFFFFFFFFFFFFFFFF。如果代码中使用了0xFFFFFFFF这个整型数，那么在32位平台下为-1, 但在64位下却是一个很大的值(0x00000000FFFFFFFF)。因此，代码中有移位操作和使用MASK的地方，也是容易出现数据溢出的地方。</p>
+
+<p>在代码中，打印整型数和指针的地方也需要注意，打印UINT_PTR整数将%u改为%Iu, 对于指针使用%p。</p>
+
+<h3>2. 汇编代码</h3>
+
+<p>在VS2005下64位编程不再支持内联汇编，汇编代码需要提取到一个单独的.ASM文件中。</p>
+
+<p>编写64位平台汇编代码需要注意以下几个与32位平台汇编的不同的地方：</p>
+
+<ul>
+<li>扩展并增加了寄存器</li>
+</ul>
+
+
+<p>[32位] EAX、EBX、ECX、EDX、ESI、EDI、EBP、ESP -> [64位] RAX、RBX、RCX、RDX、RSI、RDI、RBP、RSP</p>
+
+<p>可以在64位程序中调用32位的寄存器，如RAX（64位）、EAX（低32）、AX（低16位）、AL（低8位）、AH（8到15位），
+相应的有R8、R8D、R8W和R8B，不过不要在程序中使用如AH之类的寄存器</p>
+
+<p>增加了以下寄存器：R8 ~ R15  XMM8 ~ XMM15</p>
+
+<ul>
+<li>函数调用约定和参数传递方式</li>
+</ul>
+
+
+<p>x64平台函数calling convention与x86平台函数calling convention是不同的。</p>
+
+<p>在x86平台下，函数调用约定有：<code>__cdecl、__stdcall、__fastcall、__thiscall</code>等，而x64下的调用约定只作如下限制：</p>
+
+<ul>
+<li>前4个整数参数（从左至右）通过4个寄存器传递：RCX、RDX、R8、R9，前4个以外的整数参数将传递到堆栈, 指针被视为整数参数;</li>
+</ul>
+
+
+<p>对于浮点参数，前4个参数将传入XMM0到XMM3的寄存器，后续的浮点参数也是通过堆栈传递。</p>
+
+<p>即使参数可以是通过寄存器传递，但在堆栈上仍需为其预留空间，每个函数至少要在堆栈上预留32个字节（为前4个参数预留空间）, 该空间允许将传递函数函数的寄存器轻松地复制到堆栈中。</p>
+
+<p>当然，如果要传递4个以上的参数，则必须为其预额外的堆栈空间。</p>
+
+<ul>
+<li>调用者负责椎栈空间的分配与回收，被调用函数不需要自己负责平衡堆栈（仅用于传递参数的这部分堆栈空间）</li>
+</ul>
+
+
+<p>注意，被调用函数中有局部变量和保存其他寄存器时，其空间是由被调用函数来分配，并在结束时由自己去回收这部分堆栈空间</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>|参数6| &lt;-------------------- rsp + 48  &lt;------------ 栈底
+</span><span class='line'>|参数5| &lt;-------------------- rsp + 40
+</span><span class='line'>|参数4| &lt;-------------------- rsp + 32 (R9)
+</span><span class='line'>|参数3| &lt;-------------------- rsp + 24 (R8)
+</span><span class='line'>|参数2| &lt;-------------------- rsp + 16 (RDX)
+</span><span class='line'>|参数1| &lt;-------------------- rsp + 8  (RCX)
+</span><span class='line'>|函数返回地址| &lt;------------- rsp
+</span><span class='line'>|局部变量...|  &lt;------------- rsp会向低地址移动，上述的取参数的偏移地址也需要改动</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>如int foo(int a, int b, int c, int d, int e, int f) { int i, j; return 0; }</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>|参数f| &lt;-------------------- rbp + 80  &lt;------------ 栈底
+</span><span class='line'>|参数e| &lt;-------------------- rbp + 72
+</span><span class='line'>|参数d| &lt;-------------------- rbp + 64 (R9)
+</span><span class='line'>|参数c| &lt;-------------------- rbp + 56 (R8)
+</span><span class='line'>|参数b| &lt;-------------------- rbp + 48 (RDX)
+</span><span class='line'>|参数a| &lt;-------------------- rbp + 40 (RCX)
+</span><span class='line'>|函数返回地址| &lt;------------- rbp + 32 ==> 没有分配局部变量空间和保存寄存器前的rsp
+</span><span class='line'>|保存RBP|      &lt;------------- rbp + 24
+</span><span class='line'>|保存RBX|      &lt;------------- rbp + 16
+</span><span class='line'>|保存RSI|      &lt;------------- rbp + 8
+</span><span class='line'>|保存RDI|      &lt;------------- rbp - 0  ==> 分配局部变量空前的rsp，并将rsp保存到rbp中       &lt;br/>
+</span><span class='line'>|局部变量j|    &lt;------------- rbp - 8   &lt;------------ rsp' + 8
+</span><span class='line'>|局部变量i|    &lt;------------- rbp - 24  &lt;------------ rsp'     (局部变量先定义的在低地址)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>MOV [RSP+ 8], RCX
+</span><span class='line'>MOV [RSP+16], RDX
+</span><span class='line'>MOV [RSP+24], R8
+</span><span class='line'>MOV [RSP+32], R9
+</span><span class='line'>PUSH RBP
+</span><span class='line'>PUSH RBX
+</span><span class='line'>PUSH RSI
+</span><span class='line'>PUSH RDI
+</span><span class='line'>MOV RBP, RSP
+</span><span class='line'>SUB RSP, 16&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>ADD RSP, 16
+</span><span class='line'>POP RDI
+</span><span class='line'>POP RSI
+</span><span class='line'>POP RBX
+</span><span class='line'>POP RBP
+</span><span class='line'>RET</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VS2005下的64位编程与移植]]></title>
+    <link href="http://shanewfx.github.com/blog/2012/03/18/64bit-programming/"/>
+    <updated>2012-03-18T17:34:00+08:00</updated>
+    <id>http://shanewfx.github.com/blog/2012/03/18/64bit-programming</id>
+    <content type="html"><![CDATA[<p>最近有个项目需要将32位下的代码移植到64位下，之前没有做过这方面的工作，特别向同事请教了这方面的知识，在此记录下来。</p>
+
+<!--more-->
+
+
+<h2>VS2005下64位编程环境</h2>
+
+<ol>
+<li><p>VS2005安装时要勾选X64 Compilers and Tools，如果安装时忘记了，则可以重新打开VS2005安装程序来添加；</p></li>
+<li><p>VS2005X64编程环境设置</p></li>
+<li><p>在VS2005的Build菜单下选择Configuration Management；</p></li>
+<li><p>在Configuration Management对话框中的Active solution platform下选择New；</p></li>
+<li><p>在New Solution Platform中的Type or select the new platform下选择x64，OK。</p></li>
+</ol>
+
+
+<p>对于没有汇编的程序，上述设置就可以了。但如果代码中有汇编代码，则还需要Project下的Custom Build Rules中切换到MASM64 Bulid Rule。</p>
+
+<p>缺省情况下，VS2005没有提供到MASM64 Bulid Rule，需要将原来的masm.rules（在C:\Program Files\Microsoft Visual Studio 8\VC\VCProjectDefaults文件夹下）文件拷贝一份，重新命名为masm64.rules，并在VS2005中修改rule中的ml.exe为ml64.exe即可。</p>
+
+<p>上面设置好之后，就可以在Win32和X64平台间自由切换，但要注意的是，切换的时候也需要将Custom Build Rules切换到相应的平台下。</p>
+
+<h2>VS2005下64位编程的注意事项</h2>
+
+<ul>
+<li><p>X64平台下，不支持内联汇编，必须将汇编代码提取到独立的.asm文件中去；</p></li>
+<li><p>指针不再是32位，而是64位，汇编代码中涉及32位寄存器间接寻址的，移植时需要修改；</p></li>
+<li><p>32位的寄存器被扩展为64位，又增加了一些新的寄存器；</p></li>
+<li><p>函数参数的传递与32位下汇编不再相同，而是前4个参数分别通过RCX, RDX, R8, R9来传递，其他的参数通过堆栈来传递；</p></li>
+</ul>
+
+
+<p>上述的应该是最基本的，要在64位平台中进行编程，还需要了解更多的这方面的知识。</p>
+]]></content>
+  </entry>
+  
+</feed>
