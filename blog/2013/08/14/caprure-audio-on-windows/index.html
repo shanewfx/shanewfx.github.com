@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: UI - 思考的轨迹</title>
+  <title>Windows上的音频采集技术 - 思考的轨迹</title>
   <meta name="author" content="Shane">
 
   
-  <meta name="description" content="Category: UI">
+  <meta name="description" content="前一段时间接到一个任务，需要采集到声卡的输出信号，以便与麦克风的输入信号进行混音。 之前一直没有研究过音频的相关技术，这次就顺便抽出一点时间去了解了一下Windows上采集音频的相关技术。 对于音频处理的技术，主要有如下几种： 采集麦克风输入
+采集声卡输出
+将音频数据送入声卡进行播放 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://shanewfx.github.comblog/categories/ui">
+  <link rel="canonical" href="http://shanewfx.github.com/blog/2013/08/14/caprure-audio-on-windows">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -77,36 +79,220 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: UI</h1>
+    
+      <h1 class="entry-title">Windows上的音频采集技术</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-14T13:56:00+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>前一段时间接到一个任务，需要采集到声卡的输出信号，以便与麦克风的输入信号进行混音。</p>
 
-  
-  <h2>2012</h2>
+<p>之前一直没有研究过音频的相关技术，这次就顺便抽出一点时间去了解了一下Windows上采集音频的相关技术。</p>
 
-<article>
-  
-<h1><a href="/blog/2012/11/23/mfc-custom-control/">使用MFC Custom Control实现界面的自绘</a></h1>
-<time datetime="2012-11-23T11:45:00+08:00" pubdate><span class='month'>Nov</span> <span class='day'>23</span> <span class='year'>2012</span></time>
+<p>对于音频处理的技术，主要有如下几种：</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/mfc/'>MFC</a>, <a class='category' href='/blog/categories/ui/'>UI</a></span>
-</footer>
+<ul>
+<li>采集麦克风输入</li>
+<li>采集声卡输出</li>
+<li>将音频数据送入声卡进行播放</li>
+<li>对多路音频输入进行混音处理</li>
+</ul>
 
 
-</article>
+<!--more-->
 
+
+<h3>1.Windows上音频处理的API</h3>
+
+<p>在Windows操作系统上，常用的音频处理技术主要包括：Wave系列API函数、DirectSound、Core Audio。</p>
+
+<p>其中，Core Audio只可以在Vista以上（包括Vista）的操作系统中才能使用，主要用来取代Wave系列API函数和DirectSound。</p>
+
+<p>Core Audio实现的功能也比较强大，能实现对麦克风的采集、声卡输出的采集、控制声音的播放。</p>
+
+<p>而Wave系列的API函数主要是用来实现对麦克风输入的采集（使用WaveIn系列API函数）和控制声音的播放（使用后WaveOut系列函数）。</p>
+
+<p>DirectSound能够实现的功能估计和Wave系列API差不多，可能会更强一些（由于没有使用过DirectSound，不太肯定!）。</p>
+
+<p>为了实现采集模块对操作系统的兼容性更好，基本上对麦克风输入的采集使用WaveIn系列API函数比较多；</p>
+
+<p>在Windows XP系统中，没有直接提供对声卡输出进行采集的API，因此，在Windows XP要实现对声卡输出的采集会比较麻烦。
+通常可选用支持混音的声卡，然后通过使用声卡的混音模块来实现采集，但并不是所有的声卡都支持混音的功能，这样的方案不具备通用性。</p>
+
+<p>要实现通用性，可以采用虚拟声卡的方式来实现，从驱动层获取声卡的输出数据，但这种方案实现难度会比较大。</p>
+
+<p>而在Vista以上的系统中，如Win7，则可以使用Core Audio中的API函数来实现采集声卡输出的功能。</p>
+
+<p>对于混音模块的实现，目前基本是使用自定义的混音算法来完成功能，系统没有直接的API函数可供调用。</p>
+
+<h3>2.使用WaveIn系列API函数实现麦克风输入采集</h3>
+
+<p>涉及的API函数：</p>
+
+<ul>
+<li><p>waveInOpen</p>
+
+<p>  开启音频采集设备，成功后会返回设备句柄，后续的API都需要使用该句柄</p>
+
+<p>  调用模块需要提供一个回调函数（waveInProc），以接收采集的音频数据</p></li>
+<li><p>waveInClose</p>
+
+<p>  关闭音频采集模块</p>
+
+<p>  成功后，由waveInOpen返回的设备句柄将不再有效
+</p></li>
+<li><p>waveInPrepareHeader</p>
+
+<p>  准备音频采集数据缓存的空间</p></li>
+<li><p>waveInUnprepareHeader</p>
+
+<p>  清空音频采集的数据缓存</p></li>
+<li><p>waveInAddBuffer</p>
+
+<p>  将准备好的音频数据缓存提供给音频采集设备</p>
+
+<p>  在调用该API之前需要先调用waveInPrepareHeader</p></li>
+<li><p>waveInStart</p>
+
+<p>  控制音频采集设备开始对音频数据的采集</p></li>
+<li><p>waveInStop</p>
+
+<p>  控制音频采集设备停止对音频数据的采集</p></li>
+</ul>
+
+
+<p>音频采集设备采集到音频数据后，会调用在waveInOpen中设置的回调函数。</p>
+
+<p>其中参数包括一个消息类型，根据其消息类型就可以进行相应的操作。</p>
+
+<p>如接收到WIM_DATA消息，则说明有新的音频数据被采集到，这样就可以根据需要来对这些音频数据进行处理。</p>
+
+<p>（示例以后补上）</p>
+
+<h3>3.使用Core Audio实现对声卡输出的捕捉</h3>
+
+<p>涉及的接口有：</p>
+
+<ul>
+<li><p>IMMDeviceEnumerator</p></li>
+<li><p>IMMDevice</p></li>
+<li><p>IAudioClient</p></li>
+<li><p>IAudioCaptureClient</p></li>
+</ul>
+
+
+<p>主要过程：</p>
+
+<ul>
+<li><p>创建多媒体设备枚举器(IMMDeviceEnumerator)</p></li>
+<li><p>通过多媒体设备枚举器获取声卡接口(IMMDevice)</p></li>
+<li><p>通过声卡接口获取声卡客户端接口(IAudioClient)</p></li>
+<li><p>通过声卡客户端接口(IAudioClient)可获取声卡输出的音频参数、初始化声卡、获取声卡输出缓冲区的大小、开启/停止对声卡输出的采集</p></li>
+<li><p>通过声卡采集客户端接口(IAudioCaptureClient)可获取采集的声卡输出数据，并对内部缓冲区进行控制</p></li>
+</ul>
+
+
+<p>（示例以后补上）</p>
+
+<h3>4.常用的混音算法</h3>
+
+<p>混音算法就是将多路音频输入信号根据某种规则进行运算（多路音频信号相加后做限幅处理），得到一路混合后的音频，并以此作为输出的过程。</p>
+
+<p>我目前还做过这一块，搜索了一下基本有如下几种混音算法：</p>
+
+<ul>
+<li><p>将多路音频输入信号直接相加取和作为输出</p></li>
+<li><p>将多路音频输入信号直接相加取和后，再除以混音通道数，防止溢出</p></li>
+<li><p>将多路音频输入信号直接相加取和后，做Clip操作（将数据限定在最大值和最小值之间），如有溢出就设最大值</p></li>
+<li><p>将多路音频输入信号直接相加取和后，做饱和处理，接近最大值时进行扭曲</p></li>
+<li><p>将多路音频输入信号直接相加取和后，做归一化处理，全部乘个系数，使幅值归一化</p></li>
+<li><p>将多路音频输入信号直接相加取和后，使用衰减因子限制幅值</p></li>
+</ul>
+
+
+<p>（完）</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Shane</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-14T13:56:00+08:00" pubdate data-updated="true">Aug 14<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/captureaudio/'>CaptureAudio</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+  
+    <a class="bshareDiv" href="http://www.bshare.cn/share">Sharing</a><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#uuid=25fcdf85-62f9-400e-b053-627f102edf5a&amp;style=999&amp;img=http%3A%2F%2Fstatic.bshare.cn%2Fimages%2Fbuttons%2Fbox-shareTo-zh.gif&amp;w=147&amp;h=21"></script>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/06/sublime-text2-for-programmer/" title="Previous Post: 程序员的代码编辑器--Sublime Text 2">&laquo; 程序员的代码编辑器--Sublime Text 2</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -212,7 +398,10 @@
       var disqus_shortname = 'shanewfx';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shanewfx.github.com/blog/2013/08/14/caprure-audio-on-windows/';
+        var disqus_url = 'http://shanewfx.github.com/blog/2013/08/14/caprure-audio-on-windows/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
