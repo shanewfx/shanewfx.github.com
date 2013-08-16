@@ -44,3 +44,6 @@ C++程序员，在Windows上搞音视频开发5年有余
 **我在知乎**: [shanewfx](http://www.zhihu.com/people/shanewfx)
 
 **网络文摘**: [http://shanewfx.360doc.com](http://shanewfx.360doc.com)
+
+
+另外，一个由我创建的C++音视频开发QQ群（42394443），欢迎志同道合者加进来一起讨论！
